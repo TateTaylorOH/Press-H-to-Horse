@@ -59,3 +59,9 @@ function renameWildHorse()
 	String defaultName = getRandomName(HorseNamesList)
 	renameHorse(PlayersHorse, defaultName)
 endFunction
+
+function renameCyrodiilHorse()
+	Actor PlayersHorse = Game.GetFormFromFile(0x65108, "BSHeartland.esm") as Actor
+	String defaultName = getRandomName(HorseFemaleNamesList)
+	renameHorse(PlayersHorse, defaultName)
+endFunction
