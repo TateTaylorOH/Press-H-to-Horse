@@ -1,4 +1,4 @@
-Scriptname DES_RegisterKeyOnLoad extends Actor
+Scriptname DES_RegisterKeyOnLoad extends ReferenceAlias
 
 GlobalVariable Property DES_PlayerOwnsHorse auto
 Quest Property DES_RenameHorseQuest Auto

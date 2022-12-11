@@ -6,6 +6,7 @@ ReferenceAlias Property Alias_BYOHFalkreathHorse auto
 ReferenceAlias Property Alias_BYOHMorthalHorse auto
 String[] Property HorseNamesList auto
 String[] Property HorseFemaleNamesList auto
+GlobalVariable Property DES_PlayerOwnsHorse auto
 
 bool function renameHorse(Actor horse, string defaultName = "Honse")
 	string newName = ((self as Form) as UILIB_1).showTextInput("Name Your Horse", DefaultName)
@@ -14,6 +15,7 @@ bool function renameHorse(Actor horse, string defaultName = "Honse")
 		return true
 	endIf
 	return false
+	DES_PlayerOwnsHorse.SetValue(1)
 endFunction
 
 string function getRandomName(string[] names = None)
