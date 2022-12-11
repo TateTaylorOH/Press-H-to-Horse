@@ -20,6 +20,7 @@ EndEvent
 Event OnAnimationEvent(ObjectReference akSource, string asEventName)
 	if (akSource == PlayerRef) && (asEventName == "tailHorseDismount")
 		If game.getPlayersLastRiddenHorse().isinfaction(PlayerHorseFaction)
+			(DES_RenameHorseQuest as DES_HorseCallScript).horsekey = papyrusinimanipulator.PullIntFromIni("Data/HorsesPlus.ini", "Hotkeys", "HorseCall", 35)
 			DES_RenameHorseQuest.RegisterForKey((DES_RenameHorseQuest as DES_HorseCallScript).horsekey)
 			Form BSHeartland = Game.GetFormFromFile(0xA764B, "BSHeartland.esm") as Worldspace
 			IF !DES_ValidWorldspaces.HasForm(BSHeartland)
