@@ -7,15 +7,26 @@ ReferenceAlias Property Alias_BYOHMorthalHorse auto
 String[] Property HorseNamesList auto
 String[] Property HorseFemaleNamesList auto
 GlobalVariable Property DES_PlayerOwnsHorse auto
+Armor Property HorseSaddle auto
+MiscObject Property DES_Saddle auto
+GlobalVariable Property CCHorseArmorIsInstalled auto
 
 bool function renameHorse(Actor horse, string defaultName = "Honse")
+	DES_PlayerOwnsHorse.SetValue(1)
+	if CCHorseArmorIsInstalled.GetValue() == 1
+		Actor PlayersHorse = Alias_PlayersHorse.getActorReference()
+		if PlayersHorse.IsEquipped(HorseSaddle)
+			PlayersHorse.AddItem(DES_Saddle, 1)
+			PlayersHorse.SetAv("CarryWeight", 75.0)
+			(Alias_PlayersHorse as DES_HorseEquipScript).NoSaddleBags == False
+		endif
+	endif
 	string newName = ((self as Form) as UILIB_1).showTextInput("Name Your Horse", DefaultName)
 	if newName != ""
 		horse.setDisplayName(newName, true)
 		return true
 	endIf
 	return false
-	DES_PlayerOwnsHorse.SetValue(1)
 endFunction
 
 string function getRandomName(string[] names = None)
