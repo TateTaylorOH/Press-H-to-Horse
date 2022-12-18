@@ -4,22 +4,27 @@ ReferenceAlias Property Alias_PlayersHorse auto
 ReferenceAlias Property Alias_BYOHDawnstarHorse auto
 ReferenceAlias Property Alias_BYOHFalkreathHorse auto
 ReferenceAlias Property Alias_BYOHMorthalHorse auto
+ReferenceAlias Property PlayersHorseEquipAlias auto
 String[] Property HorseNamesList auto
 String[] Property HorseFemaleNamesList auto
 GlobalVariable Property DES_PlayerOwnsHorse auto
 Armor Property HorseSaddle auto
 MiscObject Property DES_Saddle auto
 GlobalVariable Property CCHorseArmorIsInstalled auto
+Outfit Property DES_EmptyHorseOutfit auto
 
 bool function renameHorse(Actor horse, string defaultName = "Honse")
+	Actor PlayersHorse = Alias_PlayersHorse.getActorReference()
 	DES_PlayerOwnsHorse.SetValue(1)
-	if CCHorseArmorIsInstalled.GetValue() == 1
-		Actor PlayersHorse = Alias_PlayersHorse.getActorReference()
-		if PlayersHorse.IsEquipped(HorseSaddle)
-			PlayersHorse.AddItem(DES_Saddle, 1)
-			PlayersHorse.SetAv("CarryWeight", 75.0)
-			(Alias_PlayersHorse as DES_HorseEquipScript).NoSaddleBags == False
-		endif
+	if CCHorseArmorIsInstalled.GetValue() == 1 && PlayersHorse.IsEquipped(HorseSaddle)
+		PlayersHorse.UnequipAll()
+		PlayersHorse.RemoveAllItems()
+		PlayersHorse.SetOutfit(DES_EmptyHorseOutfit)
+		PlayersHorse.EquipItem(HorseSaddle)
+		PlayersHorse.AddItem(DES_Saddle, 1)
+		PlayersHorse.SetAV("CarryWeight", 75.0)
+		(Alias_PlayersHorse as DES_HorseEquipScript).AddInventoryEventFilter(HorseSaddle)
+		(Alias_PlayersHorse as DES_HorseEquipScript).Saddlebags = True
 	endif
 	string newName = ((self as Form) as UILIB_1).showTextInput("Name Your Horse", DefaultName)
 	if newName != ""

@@ -13,7 +13,7 @@ float horseAngle = 180.0 ; where the horse should appear relative to the player,
 float horseDistance = 512.0
 
 Event OnKeyDown(Int KeyCode)
-    IF (KeyCode == horseKey && !Utility.IsInMenuMode() && !UI.IsTextInputEnabled()) && !Game.GetCurrentCrosshairRef() == Game.GetPlayersLastRiddenHorse() ; this is a valid keypress
+    IF (KeyCode == horseKey && !Utility.IsInMenuMode() && !UI.IsTextInputEnabled()) && !Game.GetCurrentCrosshairRef() ; this is a valid keypress
     Actor LastRiddenHorse = Game.GetPlayersLastRiddenHorse()
         IF (!PlayerRef.IsInInterior() && DES_ValidWorldspaces.HasForm(PlayerRef.getWorldSpace())) ; this is a valid place to summon the horse
             Actor CauseHorse = Game.GetFormFromFile(0xB4B, "ccbgssse067-daedinv.esm") As Actor
