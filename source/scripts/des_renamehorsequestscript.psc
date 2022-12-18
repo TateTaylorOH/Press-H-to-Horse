@@ -1,5 +1,19 @@
 Scriptname DES_RenameHorseQuestScript extends Quest  
 
+;INVENTORY OBJECTS
+MiscObject Property DES_Saddle auto
+MiscObject Property DES_WhiteSaddle auto
+MiscObject Property DES_ImperialSaddle auto
+MiscObject Property DES_StormcloakSaddle auto
+MiscObject Property DES_DarkBrotherhoodSaddle auto
+
+;ARMOR TO EQUIP
+Armor Property HorseSaddle auto
+Armor Property ccBGSSSE034_HorseSaddleLight auto
+Armor Property HorseSaddleImperial auto
+Armor Property ccBGSSSE034_HorseSaddleStormcloak auto
+Armor Property HorseSaddleShadowmere auto
+
 ReferenceAlias Property Alias_PlayersHorse auto
 ReferenceAlias Property Alias_BYOHDawnstarHorse auto
 ReferenceAlias Property Alias_BYOHFalkreathHorse auto
@@ -8,24 +22,11 @@ ReferenceAlias Property PlayersHorseEquipAlias auto
 String[] Property HorseNamesList auto
 String[] Property HorseFemaleNamesList auto
 GlobalVariable Property DES_PlayerOwnsHorse auto
-Armor Property HorseSaddle auto
-MiscObject Property DES_Saddle auto
 GlobalVariable Property CCHorseArmorIsInstalled auto
 Outfit Property DES_EmptyHorseOutfit auto
 
 bool function renameHorse(Actor horse, string defaultName = "Honse")
-	Actor PlayersHorse = Alias_PlayersHorse.getActorReference()
-	DES_PlayerOwnsHorse.SetValue(1)
-	if CCHorseArmorIsInstalled.GetValue() == 1 && PlayersHorse.IsEquipped(HorseSaddle)
-		PlayersHorse.UnequipAll()
-		PlayersHorse.RemoveAllItems()
-		PlayersHorse.SetOutfit(DES_EmptyHorseOutfit)
-		PlayersHorse.EquipItem(HorseSaddle)
-		PlayersHorse.AddItem(DES_Saddle, 1)
-		PlayersHorse.SetAV("CarryWeight", 75.0)
-		(Alias_PlayersHorse as DES_HorseEquipScript).AddInventoryEventFilter(HorseSaddle)
-		(Alias_PlayersHorse as DES_HorseEquipScript).Saddlebags = True
-	endif
+	EquipHorse()
 	string newName = ((self as Form) as UILIB_1).showTextInput("Name Your Horse", DefaultName)
 	if newName != ""
 		horse.setDisplayName(newName, true)
@@ -83,3 +84,49 @@ function renameCyrodiilHorse()
 	String defaultName = getRandomName(HorseFemaleNamesList)
 	renameHorse(PlayersHorse, defaultName)
 endFunction
+
+Function EquipHorse()
+	Actor PlayersHorse = Alias_PlayersHorse.getActorReference()
+	DES_PlayerOwnsHorse.SetValue(1)
+	if CCHorseArmorIsInstalled.GetValue() == 1
+		IF PlayersHorse.IsEquipped(HorseSaddle)
+			EquipSaddle()
+			PlayersHorse.AddItem(DES_Saddle, 1)
+			PlayersHorse.EquipItem(HorseSaddle)
+		ELSEIF PlayersHorse.IsEquipped(ccBGSSSE034_HorseSaddleLight) 
+			EquipSaddle()
+			PlayersHorse.AddItem(DES_WhiteSaddle, 1)
+			PlayersHorse.EquipItem(ccBGSSSE034_HorseSaddleLight)
+		ELSEIF PlayersHorse.IsEquipped(HorseSaddleImperial)
+			EquipSaddle()
+			PlayersHorse.AddItem(DES_ImperialSaddle, 1)
+			PlayersHorse.EquipItem(HorseSaddleImperial)
+		ELSEIF PlayersHorse.IsEquipped(ccBGSSSE034_HorseSaddleStormcloak)
+			EquipSaddle()
+			PlayersHorse.AddItem(DES_StormcloakSaddle, 1)
+			PlayersHorse.EquipItem(ccBGSSSE034_HorseSaddleStormcloak)
+		ELSEIF PlayersHorse.IsEquipped(HorseSaddleShadowmere)
+			EquipSaddle()
+			PlayersHorse.AddItem(DES_DarkBrotherhoodSaddle, 1)
+			PlayersHorse.EquipItem(HorseSaddleShadowmere)
+		ENDIF
+	endif
+EndFunction
+
+Function EquipArmor()
+	Actor PlayersHorse = Alias_PlayersHorse.getActorReference()
+	PlayersHorse.UnequipAll()
+	PlayersHorse.RemoveAllItems()
+	PlayersHorse.SetOutfit(DES_EmptyHorseOutfit)
+	PlayersHorse.SetAV("CarryWeight", 0.0)
+	(PlayersHorseEquipAlias as DES_HorseEquipScript).SaddleBags = False
+EndFunction
+
+Function EquipSaddle()
+	Actor PlayersHorse = Alias_PlayersHorse.getActorReference()
+	PlayersHorse.UnequipAll()
+	PlayersHorse.RemoveAllItems()
+	PlayersHorse.SetOutfit(DES_EmptyHorseOutfit)
+	PlayersHorse.SetAV("CarryWeight", 75.0)
+	(PlayersHorseEquipAlias as DES_HorseEquipScript).SaddleBags = True
+EndFunction
