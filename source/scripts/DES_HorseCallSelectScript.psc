@@ -1,6 +1,6 @@
 Scriptname DES_HorseCallSelectScript extends Quest  
 
-Actor[] Property OwnedHorses auto
+String[] Property OwnedHorses auto
 float Property longPress auto
 
 Event OnInit()
@@ -20,12 +20,11 @@ Event OnKeyDown(Int KeyCode)
 				UIListMenu list = f as UIListMenu
 				list.resetMenu()
 				int i = 0
-				;while (i && OwnedHorses[i])
-					Debug.Notification("While OwnedHorses")
-					string text = OwnedHorses[i]
-					list.addEntryItem(text)
-					i += 1
-				;endWhile
+			;while (i < 9 && OwnedHorses[i])
+				string text = OwnedHorses[i]
+				list.addEntryItem(text)
+				i += 1
+			;endWhile
 				if(i > 0)
 				Debug.Notification("If 1 > 0")
 					int j = list.openMenu()
