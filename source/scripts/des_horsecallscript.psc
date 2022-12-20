@@ -9,6 +9,7 @@ Formlist Property DES_ValidWorldspaces auto
 Sound Property DES_HorseStayMarker auto
 Sound Property DES_HorseCallMarker auto
 Formlist Property DES_OwnedHorses auto
+Quest Property DES_RenameHorseQuestAuto auto
 
 float horseAngle = 180.0 ; where the horse should appear relative to the player, clockwise from north.
 float horseDistance = 512.0
@@ -33,9 +34,9 @@ Event OnKeyDown(Int KeyCode)
                     Alias_PlayersHorse.Clear()
                     Alias_PlayersHorse.ForceRefTo(LastRiddenHorse)
                     LastRiddenHorse.EvaluatePackage()
-			IF !DES_OwnedHorses.HasForm(LastRiddenHorse)
-				DES_OwnedHorses.AddForm(LastRiddenHorse)
-			ENDIF
+			;IF !DES_OwnedHorses.HasForm(DES_RenameHorseQuestAuto as DES_HorseCallSelectScript).OwnedHorses
+			;	DES_OwnedHorses.addEntryItem(DES_RenameHorseQuestAuto as DES_HorseCallSelectScript).OwnedHorses
+			;ENDIF
 			DES_HorseCallMarker.Play(PlayerRef)
                     IF !PlayerRef.HasLOS(LastRiddenHorse)
                         float az = addAngles(PlayerRef.getAngleZ(), horseAngle)
