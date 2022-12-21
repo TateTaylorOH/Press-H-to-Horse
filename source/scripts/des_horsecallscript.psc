@@ -1,5 +1,8 @@
 Scriptname DES_HorseCallScript extends Quest
 
+float property messageDuration = 3.0 auto
+float property messageInterval = 1.0 auto
+Message[] Property HelpMessages Auto
 ReferenceAlias Property Alias_PlayersHorse auto
 Actor Property PlayerRef Auto
 Faction Property PlayerHorseFaction Auto
@@ -15,7 +18,7 @@ float horseDistance = 512.0
 
 Event OnKeyUp(Int KeyCode, Float HoldTime)
 	Actor LastRiddenHorse = Game.GetPlayersLastRiddenHorse()
-	IF (KeyCode == horseKey && !Utility.IsInMenuMode() && !UI.IsTextInputEnabled()) && !Game.GetCurrentCrosshairRef(); this is a valid keypress
+	IF (KeyCode == horseKey && !Utility.IsInMenuMode() && !UI.IsTextInputEnabled()) && !Game.GetCurrentCrosshairRef() && !PlayerRef.IsOnMount(); this is a valid keypress
 		IF (!PlayerRef.IsInInterior() && DES_ValidWorldspaces.HasForm(PlayerRef.getWorldSpace())) ; this is a valid place to summon the horse
 			IF HoldTime < Game.getGameSettingFloat("fShoutTime2")
 				IF (LastRiddenHorse && LastRiddenHorse.IsInFaction(PlayerHorseFaction)); there is a last horse, and it's the players
@@ -75,13 +78,19 @@ Function CallLastHorse()
 		Alias_PlayersHorse.Clear()
 		Alias_PlayersHorse.ForceRefTo(LastRiddenHorse)
 		LastRiddenHorse.EvaluatePackage()
-		IF !DES_OwnedHorses.HasForm(LastRiddenHorse)
-			DES_OwnedHorses.addForm(LastRiddenHorse)
-		ENDIF
 		DES_HorseCallMarker.Play(PlayerRef)
 		IF !PlayerRef.HasLOS(LastRiddenHorse)
 			float az = addAngles(PlayerRef.getAngleZ(), horseAngle)
 			LastRiddenHorse.moveTo(PlayerRef, horseDistance * math.sin(az), horseDistance * Math.cos(az), 0.0, true)
+		ENDIF
+		IF !DES_OwnedHorses.HasForm(LastRiddenHorse)
+			DES_OwnedHorses.addForm(LastRiddenHorse)
+			IF DES_OwnedHorses.GetSize() == 2
+				IF HorseKey == 35
+					Utility.Wait(1.5)
+					HelpMessages[0].ShowAsHelpMessage("HorseSelectTutorial", messageDuration, 1.0, 1)
+				ENDIF
+			ENDIF
 		ENDIF
 	ENDIF
 endFunction

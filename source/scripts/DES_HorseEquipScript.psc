@@ -34,25 +34,25 @@ Event OnItemAdded(Form akBaseItem, int aiItemCount, ObjectReference akItemRefere
 		Debug.Notification(PlayersHorse.GetDisplayName() +  " is already equipped.")
 		return
 	elseif akBaseItem == CCHorseArmorMiscArmorElven
-		PlayersHorse.EquipItem(CCHorseArmorElven)
+		PlayersHorse.EquipItem(CCHorseArmorElven, true)
 		EquipHorseArmor()
 	elseif akBaseItem == CCHorseArmorMiscArmorSteel
-		PlayersHorse.EquipItem(CCHorseArmorSteel)
+		PlayersHorse.EquipItem(CCHorseArmorSteel, true)
 		EquipHorseArmor()
 	elseif akBaseItem == DES_Saddle
-		PlayersHorse.EquipItem(HorseSaddle)
+		PlayersHorse.EquipItem(HorseSaddle, true)
 		EquipHorseSaddle()
 	elseif akBaseItem == DES_WhiteSaddle
-		PlayersHorse.EquipItem(ccBGSSSE034_HorseSaddleLight)
+		PlayersHorse.EquipItem(ccBGSSSE034_HorseSaddleLight, true)
 		EquipHorseSaddle()
 	elseif akBaseItem == DES_ImperialSaddle
-		PlayersHorse.EquipItem(HorseSaddleImperial)
+		PlayersHorse.EquipItem(HorseSaddleImperial, true)
 		EquipHorseSaddle()		
 	elseif akBaseItem == DES_StormcloakSaddle
-		PlayersHorse.EquipItem(ccBGSSSE034_HorseSaddleStormcloak)
+		PlayersHorse.EquipItem(ccBGSSSE034_HorseSaddleStormcloak, true)
 		EquipHorseSaddle()
 	elseif akBaseItem == DES_DarkBrotherhoodSaddle
-		PlayersHorse.EquipItem(HorseSaddleShadowmere)
+		PlayersHorse.EquipItem(HorseSaddleShadowmere, true)
 		EquipHorseSaddle()
 	endif
 EndEvent
@@ -96,6 +96,7 @@ Function UnequipHorse()
 	Actor PlayersHorse = self.GetActorReference()
 	IF PlayersHorse.GetNumItems() > 0
 		Debug.Notification(PlayersHorse.GetDisplayName() + "'s saddle has been emptied to your inventory.")
+		UI.InvokeString("HUD Menu", "_global.skse.CloseMenu", "ContainerMenu")
 	ENDIF
 	PlayersHorse.RemoveAllItems(akTransferTo = PlayerRef)
 	PlayersHorse.SetAV("CarryWeight", 999.0)
