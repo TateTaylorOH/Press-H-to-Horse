@@ -20,7 +20,7 @@ Event OnKeyUp(Int KeyCode, Float HoldTime)
 	Actor LastRiddenHorse = Game.GetPlayersLastRiddenHorse()
 	IF (KeyCode == horseKey && !Utility.IsInMenuMode() && !UI.IsTextInputEnabled()) && !Game.GetCurrentCrosshairRef() && !PlayerRef.IsOnMount(); this is a valid keypress
 		IF (!PlayerRef.IsInInterior() && DES_ValidWorldspaces.HasForm(PlayerRef.getWorldSpace())) ; this is a valid place to summon the horse
-			IF HoldTime < papyrusinimanipulator.PullIntFromIni("Data/H2Horse.ini", "General", "HoldTime", 1) 
+			IF HoldTime < papyrusinimanipulator.PullFloatFromIni("Data/H2Horse.ini", "General", "HoldTime", 0.9000) 
 				IF (LastRiddenHorse && LastRiddenHorse.IsInFaction(PlayerHorseFaction)); there is a last horse, and it's the players
 					CallLastHorse()
 				ENDIF

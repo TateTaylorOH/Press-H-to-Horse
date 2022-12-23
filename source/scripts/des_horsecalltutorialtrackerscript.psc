@@ -11,7 +11,7 @@ Formlist Property DES_ValidWorldspaces auto
 GlobalVariable Property DES_PlayerOwnsHorse auto
 bool property HorseCallTutorial auto
 ReferenceAlias Property Alias_Player  auto
-GlobalVariable Property ShowTutorials Auto
+bool Property ShowTutorials auto
 
 Event OnInit()
 	DES_HorseCallTutorialTracker.RegisterForMenu("RaceSex Menu")
@@ -34,24 +34,27 @@ Event OnAnimationEvent(ObjectReference akSource, string asEventName)
 		IF !HorseCallTutorial
 			If game.getPlayersLastRiddenHorse().isinfaction(PlayerHorseFaction)
 				(DES_RenameHorseQuest as DES_HorseCallScript).horsekey = papyrusinimanipulator.PullIntFromIni("Data/H2Horse.ini", "General", "HorseKey", 35)
+				ShowTutorials = papyrusinimanipulator.PullboolFromIni("Data/H2Horse.ini", "General", "ShowTutorials", True)
 				DES_RenameHorseQuest.RegisterForKey((DES_RenameHorseQuest as DES_HorseCallScript).horsekey)
 				;Debug.MessageBox("HorseKey registered")
 				Form BSHeartland = Game.GetFormFromFile(0xA764B, "BSHeartland.esm") as Worldspace
 				IF !DES_ValidWorldspaces.HasForm(BSHeartland)
 					DES_ValidWorldspaces.AddForm(BSHeartland)
 				ENDIF
-				IF ShowTutorials.getValue() > 0.0 && (DES_RenameHorseQuest as DES_HorseCallScript).horsekey == 35
+				IF ShowTutorials && (DES_RenameHorseQuest as DES_HorseCallScript).horsekey == 35
 					HelpMessages[0].ShowAsHelpMessage("HorseCallTutorial", messageDuration, 1.0, 1)
 					Utility.wait(messageDuration + messageInterval + 0.1)
-					HelpMessages[1].ShowAsHelpMessage("HorseWaitlTutorial", messageDuration, 1.0, 1)
+					HelpMessages[1].ShowAsHelpMessage("HorseWaitTutorial", messageDuration, 1.0, 1)
 					Utility.wait(messageDuration + messageInterval + 0.1)
 					HelpMessages[2].ShowAsHelpMessage("HorseInventoryTutorial", messageDuration, 1.0, 1)
+					Utility.wait(messageDuration + messageInterval + 0.1)
+					HelpMessages[3].ShowAsHelpMessage("HorseFoodTutorial", messageDuration, 1.0, 1)
 				ENDIF
 				DES_PlayerOwnsHorse.SetValue(1)
 				DES_HorseCallTutorialTracker.UnregisterForAnimationEvent(PlayerRef, "tailHorseDismount")
-				DES_HorseCallTutorialTracker.Stop()
 				HorseCallTutorial = true
-				IF HorseCallTutorial && (Alias_Player as DES_SaddleHelpScript).SaddleTutorial &&  (Alias_Player as DES_SaddleHelpScript).ArmorTutorial && (Alias_Player as DES_SaddleHelpScript).BarebackTutorial || ShowTutorials.getValue() == 0.0
+				(Alias_Player as DES_SaddleHelpScript).BarebackTutorial = true
+				IF HorseCallTutorial && (Alias_Player as DES_SaddleHelpScript).SaddleTutorial && (Alias_Player as DES_SaddleHelpScript).ArmorTutorial && (Alias_Player as DES_SaddleHelpScript).BarebackTutorial || !ShowTutorials
 					DES_HorseCallTutorialTracker.stop()
 				ENDIF
 			ENDIF

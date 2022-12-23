@@ -24,6 +24,10 @@ Formlist Property DES_HorseAllForms auto
 Bool Property SaddleBags auto
 Actor Property PlayerRef auto
 Spell Property DES_TrampleCloak auto
+Quest Property CCHorseArmorDialogueQuest auto
+Quest Property ccBGSSSE034_HorseSaddleQuest auto
+Keyword Property DES_ArmorKeyword auto
+Keyword Property DES_SaddleKeyword auto
 
 Event OnItemAdded(Form akBaseItem, int aiItemCount, ObjectReference akItemReference, ObjectReference akSourceContainer)
 	Actor PlayersHorse = self.GetActorReference()
@@ -35,25 +39,25 @@ Event OnItemAdded(Form akBaseItem, int aiItemCount, ObjectReference akItemRefere
 		Debug.Notification(PlayersHorse.GetDisplayName() +  " is already equipped.")
 		return
 	elseif akBaseItem == CCHorseArmorMiscArmorElven
-		PlayersHorse.EquipItem(CCHorseArmorElven, true)
+		(CCHorseArmorDialogueQuest as CCHorseArmorChangeScript).ChangeHorseArmor(0)
 		EquipHorseArmor()
 	elseif akBaseItem == CCHorseArmorMiscArmorSteel
-		PlayersHorse.EquipItem(CCHorseArmorSteel, true)
+		(CCHorseArmorDialogueQuest as CCHorseArmorChangeScript).ChangeHorseArmor(1)
 		EquipHorseArmor()
 	elseif akBaseItem == DES_Saddle
-		PlayersHorse.EquipItem(HorseSaddle, true)
+		(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(HorseSaddle)
 		EquipHorseSaddle()
 	elseif akBaseItem == DES_WhiteSaddle
-		PlayersHorse.EquipItem(ccBGSSSE034_HorseSaddleLight, true)
+		(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(ccBGSSSE034_HorseSaddleLight)
 		EquipHorseSaddle()
 	elseif akBaseItem == DES_ImperialSaddle
-		PlayersHorse.EquipItem(HorseSaddleImperial, true)
+		(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(HorseSaddleImperial)
 		EquipHorseSaddle()		
 	elseif akBaseItem == DES_StormcloakSaddle
-		PlayersHorse.EquipItem(ccBGSSSE034_HorseSaddleStormcloak, true)
+		(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(ccBGSSSE034_HorseSaddleStormcloak)
 		EquipHorseSaddle()
 	elseif akBaseItem == DES_DarkBrotherhoodSaddle
-		PlayersHorse.EquipItem(HorseSaddleShadowmere, true)
+		(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(HorseSaddleShadowmere)
 		EquipHorseSaddle()
 	endif
 EndEvent
@@ -62,63 +66,35 @@ Event OnItemRemoved(Form akBaseItem, int aiItemCount, ObjectReference akItemRefe
 	Actor PlayersHorse = self.GetActorReference()
 	if DES_HorseMiscItems.HasForm(akBaseItem) && PlayersHorse.GetItemCount(DES_HorseMiscItems) >= 1
 		return
-	elseif akBaseItem == CCHorseArmorMiscArmorElven
-		PlayersHorse.UnequipItem(CCHorseArmorElven)
-		PlayersHorse.RemoveItem(CCHorseArmorElven)
+	elseif akBaseItem.HasKeyword(DES_ArmorKeyword)
+		(CCHorseArmorDialogueQuest as CCHorseArmorChangeScript).RemoveHorseArmor()
 		UnequipHorse()
-	elseif akBaseItem == CCHorseArmorMiscArmorSteel
-		PlayersHorse.UnequipItem(CCHorseArmorSteel)
-		PlayersHorse.RemoveItem(CCHorseArmorSteel)
-		UnequipHorse()
-	elseif akBaseItem == DES_Saddle
-		PlayersHorse.UnequipItem(HorseSaddle)
-		PlayersHorse.RemoveItem(HorseSaddle)
-		UnequipHorse()
-	elseif akBaseItem == DES_WhiteSaddle
-		PlayersHorse.UnequipItem(ccBGSSSE034_HorseSaddleLight)
-		PlayersHorse.RemoveItem(ccBGSSSE034_HorseSaddleLight)
-		UnequipHorse()
-	elseif akBaseItem == DES_ImperialSaddle
-		PlayersHorse.UnequipItem(HorseSaddleImperial)
-		PlayersHorse.RemoveItem(HorseSaddleImperial)
-		UnequipHorse()
-	elseif akBaseItem == DES_StormcloakSaddle
-		PlayersHorse.UnequipItem(ccBGSSSE034_HorseSaddleStormcloak)
-		PlayersHorse.RemoveItem(ccBGSSSE034_HorseSaddleStormcloak)
-		UnequipHorse()		
-	elseif akBaseItem == DES_DarkBrotherhoodSaddle
-		PlayersHorse.UnequipItem(HorseSaddleShadowmere)
-		PlayersHorse.RemoveItem(HorseSaddleShadowmere)
-		UnequipHorse()
+	elseif akBaseItem.HasKeyword(DES_SaddleKeyword)
+		(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(none)
+		IF PlayersHorse.GetNumItems() > 0
+			Debug.Notification(PlayersHorse.GetDisplayName() + "'s saddle has been emptied to your inventory.")
+			PlayersHorse.RemoveAllItems(akTransferTo = PlayerRef)
+			UI.InvokeString("HUD Menu", "_global.skse.CloseMenu", "ContainerMenu")
+		ENDIF
 	endif
 EndEvent
 
 Function UnequipHorse()
 	Actor PlayersHorse = self.GetActorReference()
-	IF PlayersHorse.GetNumItems() > 0
-		Debug.Notification(PlayersHorse.GetDisplayName() + "'s saddle has been emptied to your inventory.")
-		UI.InvokeString("HUD Menu", "_global.skse.CloseMenu", "ContainerMenu")
-	ENDIF
-	PlayersHorse.RemoveAllItems(akTransferTo = PlayerRef)
+	PlayersHorse.ForceActorValue("CarryWeight", (PlayersHorse.GetBaseActorValue("CarryWeight")))
 	PlayersHorse.RemoveSpell(DES_TrampleCloak)
-	PlayersHorse.SetAV("SpeedMult", 125.0)
-	PlayersHorse.SetAV("CarryWeight", 999.0)
 	SaddleBags = False
 EndFunction
 
 Function EquipHorseArmor()
 	Actor PlayersHorse = self.GetActorReference()
-	PlayersHorse.SetAV("Aggression", 2)
-	PlayersHorse.SetAV("Confidence", 3)
-	PlayersHorse.SetAV("CarryWeight", 0.0)
+	PlayersHorse.ForceActorValue("CarryWeight", 0.0)
 	PlayersHorse.AddSpell(DES_TrampleCloak)
 	SaddleBags = False
 EndFunction
 
 Function EquipHorseSaddle()
 	Actor PlayersHorse = self.GetActorReference()
-	PlayersHorse.SetAV("Aggression", 0)
-	PlayersHorse.SetAV("Confidence", 0)
-	PlayersHorse.SetAV("CarryWeight", 100.0)
+	PlayersHorse.ForceActorValue("CarryWeight", 100.0)
 	SaddleBags = True
 EndFunction
