@@ -10,10 +10,11 @@ Quest property DES_HorseCallTutorialTracker auto
 float property messageDuration = 3.0 auto
 float property messageInterval = 1.0 auto
 Message[] Property HelpMessages Auto
+GlobalVariable Property ShowTutorials auto
 
 Event OnItemAdded(Form akBaseItem, int aiItemCount, ObjectReference akItemReference, ObjectReference akSourceContainer)
 	IF akBaseItem.HasKeyword(DES_SaddleKeyword)
-		IF !SaddleTutorial
+		IF ShowTutorials.getValue() > 0.0 && !SaddleTutorial
 			while Utility.IsInMenuMode()
 				utility.wait(0.1)
 			endwhile
@@ -27,7 +28,7 @@ Event OnItemAdded(Form akBaseItem, int aiItemCount, ObjectReference akItemRefere
 			SaddleTutorial = true
 		ENDIF
 	ELSEIF akBaseItem.HasKeyword(DES_ArmorKeyword)
-		IF !ArmorTutorial
+		IF ShowTutorials.getValue() > 0.0 && !ArmorTutorial
 			while Utility.IsInMenuMode()
 				utility.wait(0.1)
 			endwhile
@@ -41,7 +42,7 @@ Event OnItemAdded(Form akBaseItem, int aiItemCount, ObjectReference akItemRefere
 			ArmorTutorial = true
 		ENDIF
 	ENDIF
-	IF (DES_HorseCallTutorialTracker as DES_HorseCallTutorialTrackerScript).HorseCallTutorial && SaddleTutorial && ArmorTutorial && BarebackTutorial 
+	IF (DES_HorseCallTutorialTracker as DES_HorseCallTutorialTrackerScript).HorseCallTutorial && SaddleTutorial && ArmorTutorial && BarebackTutorial || ShowTutorials.getValue() == 0.0
 		GetOwningQuest().Stop()
 	ENDIF
 ENDEVENT
