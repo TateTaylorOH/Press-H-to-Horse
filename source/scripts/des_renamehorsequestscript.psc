@@ -127,6 +127,6 @@ Function EquipSaddle()
 	PlayersHorse.UnequipAll()
 	PlayersHorse.RemoveAllItems()
 	PlayersHorse.SetOutfit(DES_EmptyHorseOutfit)
-	PlayersHorse.SetAV("CarryWeight", 75.0)
+	PlayersHorse.SetAV("CarryWeight", 100.0)
 	(PlayersHorseEquipAlias as DES_HorseEquipScript).SaddleBags = True
 EndFunction

@@ -23,6 +23,7 @@ Formlist Property DES_HorseArmors auto
 Formlist Property DES_HorseAllForms auto
 Bool Property SaddleBags auto
 Actor Property PlayerRef auto
+Spell Property DES_TrampleCloak auto
 
 Event OnItemAdded(Form akBaseItem, int aiItemCount, ObjectReference akItemReference, ObjectReference akSourceContainer)
 	Actor PlayersHorse = self.GetActorReference()
@@ -99,18 +100,25 @@ Function UnequipHorse()
 		UI.InvokeString("HUD Menu", "_global.skse.CloseMenu", "ContainerMenu")
 	ENDIF
 	PlayersHorse.RemoveAllItems(akTransferTo = PlayerRef)
+	PlayersHorse.RemoveSpell(DES_TrampleCloak)
+	PlayersHorse.SetAV("SpeedMult", 125.0)
 	PlayersHorse.SetAV("CarryWeight", 999.0)
 	SaddleBags = False
 EndFunction
 
 Function EquipHorseArmor()
 	Actor PlayersHorse = self.GetActorReference()
+	PlayersHorse.SetAV("Aggression", 2)
+	PlayersHorse.SetAV("Confidence", 3)
 	PlayersHorse.SetAV("CarryWeight", 0.0)
+	PlayersHorse.AddSpell(DES_TrampleCloak)
 	SaddleBags = False
 EndFunction
 
 Function EquipHorseSaddle()
 	Actor PlayersHorse = self.GetActorReference()
-	PlayersHorse.SetAV("CarryWeight", 75.0)
+	PlayersHorse.SetAV("Aggression", 0)
+	PlayersHorse.SetAV("Confidence", 0)
+	PlayersHorse.SetAV("CarryWeight", 100.0)
 	SaddleBags = True
 EndFunction

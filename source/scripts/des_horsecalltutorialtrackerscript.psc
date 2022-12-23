@@ -9,6 +9,8 @@ Actor Property PlayerRef Auto
 Faction Property PlayerHorseFaction Auto
 Formlist Property DES_ValidWorldspaces auto
 GlobalVariable Property DES_PlayerOwnsHorse auto
+bool property HorseCallTutorial auto
+ReferenceAlias Property Alias_Player  auto
 
 Event OnInit()
 	DES_HorseCallTutorialTracker.RegisterForMenu("RaceSex Menu")
@@ -20,6 +22,7 @@ Event OnMenuClose(String MenuName)
 		;Debug.MessageBox("tailHorseDismount registered")
 		DES_HorseCallTutorialTracker.UnregisterForMenu("RaceSex Menu")
 	EndIf
+	RegisterForAnimationEvent(PlayerRef, "tailHorseDismount")
 EndEvent
 
 Event OnAnimationEvent(ObjectReference akSource, string asEventName)
@@ -27,22 +30,30 @@ Event OnAnimationEvent(ObjectReference akSource, string asEventName)
 	if (akSource == PlayerRef) && (asEventName == "tailHorseDismount")
 	;Debug.MessageBox("PlayerRef dismounted")
 	Utility.Wait(3)
-		If game.getPlayersLastRiddenHorse().isinfaction(PlayerHorseFaction)
-			(DES_RenameHorseQuest as DES_HorseCallScript).horsekey = papyrusinimanipulator.PullIntFromIni("Data/HorsesPlus.ini", "Hotkeys", "HorseCall", 35)
-			DES_RenameHorseQuest.RegisterForKey((DES_RenameHorseQuest as DES_HorseCallScript).horsekey)
-			;Debug.MessageBox("HorseKey registered")
-			Form BSHeartland = Game.GetFormFromFile(0xA764B, "BSHeartland.esm") as Worldspace
-			IF !DES_ValidWorldspaces.HasForm(BSHeartland)
-				DES_ValidWorldspaces.AddForm(BSHeartland)
+		IF !HorseCallTutorial
+			If game.getPlayersLastRiddenHorse().isinfaction(PlayerHorseFaction)
+				(DES_RenameHorseQuest as DES_HorseCallScript).horsekey = papyrusinimanipulator.PullIntFromIni("Data/HorsesPlus.ini", "Hotkeys", "HorseCall", 35)
+				DES_RenameHorseQuest.RegisterForKey((DES_RenameHorseQuest as DES_HorseCallScript).horsekey)
+				;Debug.MessageBox("HorseKey registered")
+				Form BSHeartland = Game.GetFormFromFile(0xA764B, "BSHeartland.esm") as Worldspace
+				IF !DES_ValidWorldspaces.HasForm(BSHeartland)
+					DES_ValidWorldspaces.AddForm(BSHeartland)
+				ENDIF
+				IF (DES_RenameHorseQuest as DES_HorseCallScript).horsekey == 35
+					HelpMessages[0].ShowAsHelpMessage("HorseCallTutorial", messageDuration, 1.0, 1)
+					Utility.wait(messageDuration + messageInterval + 0.1)
+					HelpMessages[1].ShowAsHelpMessage("HorseWaitlTutorial", messageDuration, 1.0, 1)
+					Utility.wait(messageDuration + messageInterval + 0.1)
+					HelpMessages[2].ShowAsHelpMessage("HorseInventoryTutorial", messageDuration, 1.0, 1)
+				ENDIF
+				DES_PlayerOwnsHorse.SetValue(1)
+				DES_HorseCallTutorialTracker.UnregisterForAnimationEvent(PlayerRef, "tailHorseDismount")
+				DES_HorseCallTutorialTracker.Stop()
+				HorseCallTutorial = true
+				IF HorseCallTutorial && (Alias_Player as DES_SaddleHelpScript).SaddleTutorial &&  (Alias_Player as DES_SaddleHelpScript).ArmorTutorial && (Alias_Player as DES_SaddleHelpScript).BarebackTutorial 
+					DES_HorseCallTutorialTracker.stop()
+				ENDIF
 			ENDIF
-			IF (DES_RenameHorseQuest as DES_HorseCallScript).horsekey == 35
-				HelpMessages[0].ShowAsHelpMessage("HorseCallTutorial", messageDuration, 1.0, 1)
-				Utility.wait(messageDuration + messageInterval + 0.1)
-				HelpMessages[1].ShowAsHelpMessage("HorseWaitlTutorial", messageDuration, 1.0, 1)
-			ENDIF
-			DES_PlayerOwnsHorse.SetValue(1)
-			DES_HorseCallTutorialTracker.UnregisterForAnimationEvent(PlayerRef, "tailHorseDismount")
-			DES_HorseCallTutorialTracker.Stop()
 		endif
 	endif
 ENDEVENT
