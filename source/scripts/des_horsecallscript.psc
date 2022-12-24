@@ -7,6 +7,7 @@ ReferenceAlias Property Alias_PlayersHorse auto
 Actor Property PlayerRef Auto
 Faction Property PlayerHorseFaction Auto
 bool property CalledHorse auto
+bool Property HorseSelectTutorial  auto
 int property horseKey auto
 Formlist Property DES_ValidWorldspaces auto
 Sound Property DES_HorseStayMarker auto
@@ -86,11 +87,12 @@ Function CallLastHorse()
 		ENDIF
 		IF !DES_OwnedHorses.HasForm(LastRiddenHorse)
 			DES_OwnedHorses.addForm(LastRiddenHorse)
-			IF DES_OwnedHorses.GetSize() == 2
-				IF HorseKey == 35
-					Utility.Wait(1.5)
-					HelpMessages[0].ShowAsHelpMessage("HorseSelectTutorial", messageDuration, 1.0, 1)
-				ENDIF
+		ENDIF
+		IF DES_OwnedHorses.GetSize() > 1 && !HorseSelectTutorial
+			IF HorseKey == 35
+				Utility.Wait(1)
+				HelpMessages[0].ShowAsHelpMessage("HorseSelectTutorial", messageDuration, 1.0, 1)
+				HorseSelectTutorial = True
 			ENDIF
 		ENDIF
 	ENDIF

@@ -7,7 +7,7 @@ Actor Property DES_HorseStomachRef auto
 Formlist Property DES_HorseFood auto
 
 Event OnKeyUp(Int KeyCode, Float HoldTime)
-	If KeyCode == (DES_RenameHorseQuest as DES_HorseCallScript).horsekey && !Utility.IsInMenuMode() && !UI.IsTextInputEnabled()
+	If KeyCode == (DES_RenameHorseQuest as DES_HorseCallScript).horsekey && !Utility.IsInMenuMode() && !UI.IsTextInputEnabled() && Game.GetCurrentCrosshairRef() 
 		IF HoldTime < papyrusinimanipulator.PullFloatFromIni("Data/H2Horse.ini", "General", "HoldTime", 0.9000) 
 			Alias_PlayersHorse.ForceRefTo(Game.GetCurrentCrosshairRef())
 			Actor PlayersHorse = Alias_PlayersHorse.getActorReference()
@@ -33,6 +33,9 @@ EndEvent
 Event OnMenuClose(String MenuName)
 	If MenuName == "ContainerMenu"
 		UnregisterForMenu("InventoryMenu")
+		while (Alias_PlayersHorse as DES_HorseEquipScript).UnequipRunning == true
+			utility.wait(0.1)
+		endwhile
 		Alias_PlayersHorse.Clear()
 	ELSEIF MenuName == "GiftMenu"
 		UnregisterForMenu("GiftMenu")
