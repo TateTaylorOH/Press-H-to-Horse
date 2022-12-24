@@ -30,14 +30,21 @@ GlobalVariable Property CCHorseArmorIsInstalled auto
 Outfit Property DES_EmptyHorseOutfit auto
 Quest Property ccBGSSSE034_HorseSaddleQuest auto
 Quest Property CCHorseArmorDialogueQuest auto
+Quest Property DES_RenameHorseQuest auto
+Formlist Property DES_OwnedHorses auto
+Spell Property DES_TrampleCloak auto
+
+float property messageDuration = 3.0 auto
+float property messageInterval = 1.0 auto
+Message[] Property HelpMessages Auto
 
 bool function renameHorse(Actor horse, string defaultName = "Honse")
-	EquipHorse()
 	string newName = ((self as Form) as UILIB_1).showTextInput("Name Your Horse", DefaultName)
 	if newName != ""
 		horse.setDisplayName(newName, true)
 		return true
 	endIf
+	EquipHorse()
 	return false
 endFunction
 
@@ -132,7 +139,9 @@ Function EquipArmor()
 	PlayersHorse.UnequipAll()
 	PlayersHorse.RemoveAllItems()
 	PlayersHorse.SetOutfit(DES_EmptyHorseOutfit)
-	(PlayersHorseEquipAlias as DES_HorseEquipScript).EquipHorseArmor()
+	PlayersHorse.ForceActorValue("CarryWeight", 0.0)
+	PlayersHorse.AddSpell(DES_TrampleCloak)
+	(PlayersHorseEquipAlias as DES_HorseEquipScript).SaddleBags = False
 EndFunction
 
 Function EquipSaddle()
@@ -140,5 +149,6 @@ Function EquipSaddle()
 	PlayersHorse.UnequipAll()
 	PlayersHorse.RemoveAllItems()
 	PlayersHorse.SetOutfit(DES_EmptyHorseOutfit)
-	(PlayersHorseEquipAlias as DES_HorseEquipScript).EquipHorseSaddle()
+	PlayersHorse.ForceActorValue("CarryWeight", 100.0)
+	(PlayersHorseEquipAlias as DES_HorseEquipScript).SaddleBags = True
 EndFunction

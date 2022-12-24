@@ -40,6 +40,7 @@ Event OnKeyUp(Int KeyCode, Float HoldTime)
 							float az = addAngles(PlayerRef.getAngleZ(), horseAngle)
 							SelectedHorse.moveTo(PlayerRef, horseDistance * math.sin(az), horseDistance * Math.cos(az), 0.0, true)
 						ENDIF
+						CalledHorse = False
 					ENDIF
 				ELSE
 					CallLastHorse()

@@ -47,10 +47,10 @@ endFunction
 
 function ChangeHorseSaddle(armor SaddleToEquip)
 
-	HorseToReSaddle = game.GetPlayersLastRiddenHorse()
-	if !HorseToReSaddle && StablesPlayersHorse.GetActorReference() as Bool
+	;HorseToReSaddle = game.GetPlayersLastRiddenHorse()
+	;if !HorseToReSaddle && StablesPlayersHorse.GetActorReference() as Bool
 		HorseToReSaddle = StablesPlayersHorse.GetActorReference()
-	endIf
+	;endIf
 	if HorseToReSaddle
 		debug.trace("ccBGSSSE034: Current horse is " + HorseToReSaddle as String, 0)
 		if DisallowedHorses.find(HorseToReSaddle.GetActorBase(), 0) != -1 || HorseToReSaddle.HasKeyword(ccDisallowSaddleSwap)

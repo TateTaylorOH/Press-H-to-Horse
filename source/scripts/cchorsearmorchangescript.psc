@@ -145,9 +145,9 @@ endFunction
 
 actor function GetPlayerHorse()
 
-	if game.GetPlayersLastRiddenHorse()
-		return game.GetPlayersLastRiddenHorse()
-	elseIf StablesPlayersHorse.GetActorReference()
+	;if game.GetPlayersLastRiddenHorse()
+	;	return game.GetPlayersLastRiddenHorse()
+	If StablesPlayersHorse.GetActorReference()
 		return StablesPlayersHorse.GetActorReference()
 	else
 		return none

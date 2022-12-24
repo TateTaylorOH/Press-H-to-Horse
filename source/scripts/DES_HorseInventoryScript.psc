@@ -18,15 +18,24 @@ Event OnKeyUp(Int KeyCode, Float HoldTime)
 				Alias_PlayersHorse.Clear()
 			EndIf
 		Else
-			DES_HorseStomachRef.ShowGiftMenu(true, DES_HorseFood)
-		endif
+			Alias_PlayersHorse.ForceRefTo(Game.GetCurrentCrosshairRef())
+			Actor PlayersHorse = Alias_PlayersHorse.getActorReference()
+			If Game.GetCurrentCrosshairRef() == PlayersHorse.IsInFaction(PlayerHorseFaction)
+				RegisterForMenu("GiftMenu")
+				DES_HorseStomachRef.ShowGiftMenu(true, DES_HorseFood)
+			Else
+				Alias_PlayersHorse.Clear()
+			EndIf
+		ENDIF
 	EndIf
 EndEvent
 
 Event OnMenuClose(String MenuName)
 	If MenuName == "ContainerMenu"
-		Actor PlayersHorse = Alias_PlayersHorse.getActorReference()
 		UnregisterForMenu("InventoryMenu")
+		Alias_PlayersHorse.Clear()
+	ELSEIF MenuName == "GiftMenu"
+		UnregisterForMenu("GiftMenu")
 		Alias_PlayersHorse.Clear()
 	EndIf
 EndEvent
