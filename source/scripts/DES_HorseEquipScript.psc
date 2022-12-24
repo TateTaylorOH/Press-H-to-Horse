@@ -25,6 +25,8 @@ Bool Property SaddleBags auto
 Bool Property UnequipRunning auto
 Actor Property PlayerRef auto
 Spell Property DES_TrampleCloak auto
+Spell Property DES_HorseFear auto
+Spell Property DES_HorseRally auto
 Quest Property CCHorseArmorDialogueQuest auto
 Quest Property ccBGSSSE034_HorseSaddleQuest auto
 Keyword Property DES_ArmorKeyword auto
@@ -92,6 +94,8 @@ Function UnequipHorse()
 	(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(none)
 	PlayersHorse.SetAV("CarryWeight", 999.0)
 	PlayersHorse.RemoveSpell(DES_TrampleCloak)
+	PlayersHorse.RemoveSpell(DES_HorseRally)
+	PlayersHorse.RemoveSpell(DES_HorseFear)
 	SaddleBags = False
 	UnequipRunning = False
 EndFunction
@@ -100,11 +104,13 @@ Function EquipHorseArmor()
 	Actor PlayersHorse = self.GetActorReference()
 	PlayersHorse.SetAV("CarryWeight", 0.0)
 	PlayersHorse.AddSpell(DES_TrampleCloak)
+	PlayersHorse.AddSpell(DES_HorseRally)
 	SaddleBags = False
 EndFunction
 
 Function EquipHorseSaddle()
 	Actor PlayersHorse = self.GetActorReference()
 	PlayersHorse.SetAV("CarryWeight", 100.0)
+	PlayersHorse.AddSpell(DES_HorseFear)
 	SaddleBags = True
 EndFunction
