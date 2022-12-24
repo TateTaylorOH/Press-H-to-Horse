@@ -6,6 +6,7 @@ If(game.getPlayer()==AkActivator)
 	if pDB07.GetStage() >= (20)
 		Actor Shadowmere = ShadowmereAlias.getactorreference()
 		Shadowmere.SetAV("CarryWeight", 100.0)
+		Shadowmere.AddSpell(DES_HorseFear)
 		(PlayersHorseEquipAlias as DES_HorseEquipScript).SaddleBags = True
 		Shadowmere.AddItem(DES_DarkBrotherhoodSaddle, 1)
 		ShadowmereEffect.Activate(Self) 
@@ -33,3 +34,5 @@ ReferenceAlias Property ShadowmereAlias  Auto
 MiscObject Property DES_DarkBrotherhoodSaddle auto
 
 ReferenceAlias Property PlayersHorseEquipAlias auto
+
+Spell Property DES_HorseFear auto

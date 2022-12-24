@@ -33,6 +33,8 @@ Quest Property CCHorseArmorDialogueQuest auto
 Quest Property DES_RenameHorseQuest auto
 Formlist Property DES_OwnedHorses auto
 Spell Property DES_TrampleCloak auto
+Spell Property DES_HorseFear auto
+Spell Property DES_HorseRally auto
 
 float property messageDuration = 3.0 auto
 float property messageInterval = 1.0 auto
@@ -140,6 +142,7 @@ Function EquipArmor()
 	(CCHorseArmorDialogueQuest as CCHorseArmorChangeScript).RemoveHorseArmor()
 	(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(none)
 	PlayersHorse.SetAV("CarryWeight", 0.0)
+	PlayersHorse.AddSpell(DES_HorseRally)
 	PlayersHorse.AddSpell(DES_TrampleCloak)
 	(PlayersHorseEquipAlias as DES_HorseEquipScript).SaddleBags = False
 EndFunction
@@ -147,5 +150,6 @@ EndFunction
 Function EquipSaddle()
 	Actor PlayersHorse = Alias_PlayersHorse.getActorReference()
 	PlayersHorse.SetAV("CarryWeight", 100.0)
+	PlayersHorse.AddSpell(DES_HorseFear)
 	(PlayersHorseEquipAlias as DES_HorseEquipScript).SaddleBags = True
 EndFunction
