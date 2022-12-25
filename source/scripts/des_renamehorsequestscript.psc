@@ -26,37 +26,17 @@ ReferenceAlias Property PlayersHorseEquipAlias auto
 String[] Property HorseNamesList auto
 String[] Property HorseFemaleNamesList auto
 GlobalVariable Property DES_PlayerOwnsHorse auto
-GlobalVariable Property CCHorseArmorIsInstalled auto
-Outfit Property DES_EmptyHorseOutfit auto
 Quest Property ccBGSSSE034_HorseSaddleQuest auto
 Quest Property CCHorseArmorDialogueQuest auto
-Quest Property DES_RenameHorseQuest auto
 Formlist Property DES_OwnedHorses auto
 Spell Property DES_TrampleCloak auto
 Spell Property DES_HorseFear auto
 Spell Property DES_HorseRally auto
+Faction Property PlayerHorseFaction auto
 
 float property messageDuration = 3.0 auto
 float property messageInterval = 1.0 auto
 Message[] Property HelpMessages Auto
-
-bool function renameHorse(Actor horse, string defaultName = "Honse")
-	EquipHorse()
-	string newName = ((self as Form) as UILIB_1).showTextInput("Name Your Horse", DefaultName)
-	if newName != ""
-		horse.setDisplayName(newName, true)
-		return true
-	endIf
-	return false
-endFunction
-
-string function getRandomName(string[] names = None)
-	if(names == None)
-		names = HorseNamesList
-	endIf
-	int i = Utility.randomInt(0, names.length - 1)
-	return names[i]
-endFunction
 
 function renameFemaleHorse()
 	Actor PlayersHorse = Alias_PlayersHorse.getActorReference()
@@ -100,56 +80,84 @@ function renameCyrodiilHorse()
 	renameHorse(PlayersHorse, defaultName)
 endFunction
 
-Function EquipHorse()
-	Actor PlayersHorse = Alias_PlayersHorse.getActorReference()
+function renameReindeer()
+	Actor PlayersHorse = Game.GetFormFromFile(0xD65, "ccvsvsse001-winter.esl") as Actor
+	String defaultName = getRandomName(HorseNamesList)
+	renameHorse(PlayersHorse, defaultName)
+endFunction
+
+string function getRandomName(string[] names = None)
+	if(names == None)
+		names = HorseNamesList
+	endIf
+	int i = Utility.randomInt(0, names.length - 1)
+	return names[i]
+endFunction
+
+bool function renameHorse(Actor PlayersHorse, string defaultName = "Honse")
+	while Utility.IsInMenuMode()
+		utility.wait(0.5)
+	endwhile
+	EquipHorse(PlayersHorse)
+	string newName = ((self as Form) as UILIB_1).showTextInput("Name Your Horse", DefaultName)
+	if newName != ""
+		PlayersHorse.setDisplayName(newName, true)
+		return true
+	endIf
+	return false
+endFunction
+
+Function EquipHorse(Actor PlayersHorse)
+	Armor ReindeerSaddle = game.GetFormFromFile(0x804, "ccvsvsse001-winter.esl") as Armor
+	IF !PlayersHorse.IsInFaction(PlayerHorseFaction)
+		PlayersHorse.SetFactionRank(PlayerHorseFaction, 1)
+	ENDIF
 	IF !DES_OwnedHorses.HasForm(PlayersHorse)
 		DES_OwnedHorses.AddForm(PlayersHorse)
 	ENDIF
 	DES_PlayerOwnsHorse.SetValue(1)
-	IF PlayersHorse.IsEquipped(CCHorseArmorElven)
-		EquipArmor()
+	IF PlayersHorse.IsEquipped(CCHorseArmorElven) && PlayersHorse.GetItemCount(CCHorseArmorMiscArmorElven) == 0
+		EquipArmor(PlayersHorse)
 		PlayersHorse.AddItem(CCHorseArmorMiscArmorElven, 1)
 		(CCHorseArmorDialogueQuest as CCHorseArmorChangeScript).ChangeHorseArmor(0)
-	ELSEIF PlayersHorse.IsEquipped(CCHorseArmorSteel)
-		EquipArmor()
+	ELSEIF PlayersHorse.IsEquipped(CCHorseArmorSteel) && PlayersHorse.GetItemCount(CCHorseArmorMiscArmorSteel) == 0
+		EquipArmor(PlayersHorse)
 		PlayersHorse.AddItem(CCHorseArmorMiscArmorSteel, 1)
 		(CCHorseArmorDialogueQuest as CCHorseArmorChangeScript).ChangeHorseArmor(1)	
-	ELSEIF PlayersHorse.IsEquipped(HorseSaddle)
-		EquipSaddle()
+	ELSEIF PlayersHorse.IsEquipped(HorseSaddle) && PlayersHorse.GetItemCount(DES_Saddle) == 0
+		EquipSaddle(PlayersHorse)
 		PlayersHorse.AddItem(DES_Saddle, 1)
 		(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(HorseSaddle)
-	ELSEIF PlayersHorse.IsEquipped(ccBGSSSE034_HorseSaddleLight) 
-		EquipSaddle()
+	ELSEIF PlayersHorse.IsEquipped(ccBGSSSE034_HorseSaddleLight) && PlayersHorse.GetItemCount(DES_WhiteSaddle) == 0
+		EquipSaddle(PlayersHorse)
 		PlayersHorse.AddItem(DES_WhiteSaddle, 1)
 		(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(ccBGSSSE034_HorseSaddleLight)
-	ELSEIF PlayersHorse.IsEquipped(HorseSaddleImperial)
-		EquipSaddle()
+	ELSEIF PlayersHorse.IsEquipped(HorseSaddleImperial) && PlayersHorse.GetItemCount(DES_ImperialSaddle) == 0
+		EquipSaddle(PlayersHorse)
 		PlayersHorse.AddItem(DES_ImperialSaddle, 1)
 		(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(HorseSaddleImperial)
-	ELSEIF PlayersHorse.IsEquipped(ccBGSSSE034_HorseSaddleStormcloak)
-		EquipSaddle()
-		PlayersHorse.AddItem(DES_StormcloakSaddle, 1)
+	ELSEIF PlayersHorse.IsEquipped(ccBGSSSE034_HorseSaddleStormcloak) && PlayersHorse.GetItemCount(DES_StormcloakSaddle) == 0
+		EquipSaddle(PlayersHorse)
+		PlayersHorse.AddItem(DES_StormcloakSaddle, 1) 
 		(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(ccBGSSSE034_HorseSaddleStormcloak)
-	ELSEIF PlayersHorse.IsEquipped(HorseSaddleShadowmere)
-		EquipSaddle()
-		PlayersHorse.AddItem(DES_DarkBrotherhoodSaddle, 1)
+	ELSEIF PlayersHorse.IsEquipped(HorseSaddleShadowmere) && PlayersHorse.GetItemCount(DES_DarkBrotherhoodSaddle) == 0
+		EquipSaddle(PlayersHorse)
+		PlayersHorse.AddItem(DES_DarkBrotherhoodSaddle, 1) 
 		(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(HorseSaddleShadowmere)
+	ELSEIF PlayersHorse.IsEquipped(ReindeerSaddle)
+		EquipSaddle(PlayersHorse)
 	ENDIF
 EndFunction
 
-Function EquipArmor()
-	Actor PlayersHorse = Alias_PlayersHorse.getActorReference()
+Function EquipArmor(Actor PlayersHorse)
 	(CCHorseArmorDialogueQuest as CCHorseArmorChangeScript).RemoveHorseArmor()
 	(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(none)
 	PlayersHorse.SetAV("CarryWeight", 0.0)
 	PlayersHorse.AddSpell(DES_HorseRally)
 	PlayersHorse.AddSpell(DES_TrampleCloak)
-	(PlayersHorseEquipAlias as DES_HorseEquipScript).SaddleBags = False
 EndFunction
 
-Function EquipSaddle()
-	Actor PlayersHorse = Alias_PlayersHorse.getActorReference()
+Function EquipSaddle(Actor PlayersHorse)
 	PlayersHorse.SetAV("CarryWeight", 100.0)
 	PlayersHorse.AddSpell(DES_HorseFear)
-	(PlayersHorseEquipAlias as DES_HorseEquipScript).SaddleBags = True
 EndFunction

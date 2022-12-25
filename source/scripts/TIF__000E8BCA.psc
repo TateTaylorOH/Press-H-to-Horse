@@ -15,11 +15,8 @@ EndFunction
 Function Fragment_0(ObjectReference akSpeakerRef)
 Actor akSpeaker = akSpeakerRef as Actor
 ;BEGIN CODE
-Actor Frost = MS03Grane.getactorreference()
-Frost.SetAV("CarryWeight", 100.0)
-Frost.AddSpell(DES_HorseFear)
-(PlayersHorseEquipAlias as DES_HorseEquipScript).SaddleBags = True
-Frost.AddItem(DES_Saddle, 1)
+Actor Frost = Game.GetFormFromFile(0x97E1E, "Skyrim.esm") as Actor
+(Quest.GetQuest("DES_RenameHorseQuest") as DES_RenameHorseQuestScript).EquipHorse(Frost)
 GetOwningQuest().setStage(225)
 ;END CODE
 EndFunction
@@ -30,11 +27,3 @@ EndFunction
 FavorDialogueScript Property DialogueFavorGeneric  Auto
 
 FavorDialogueScript Property pFDS  Auto  
-
-ReferenceAlias Property MS03Grane auto
-
-Spell Property DES_HorseFear Auto
-
-ReferenceAlias Property PlayersHorseEquipAlias auto
-
-MiscObject Property DES_Saddle auto

@@ -21,7 +21,6 @@ Armor Property HorseSaddleShadowmere auto
 Formlist Property DES_HorseMiscItems auto
 Formlist Property DES_HorseArmors auto
 Formlist Property DES_HorseAllForms auto
-Bool Property SaddleBags auto
 Bool Property UnequipRunning auto
 Actor Property PlayerRef auto
 Spell Property DES_TrampleCloak auto
@@ -31,10 +30,11 @@ Quest Property CCHorseArmorDialogueQuest auto
 Quest Property ccBGSSSE034_HorseSaddleQuest auto
 Keyword Property DES_ArmorKeyword auto
 Keyword Property DES_SaddleKeyword auto
+Quest Property DES_RenameHorseQuest auto
 
 Event OnItemAdded(Form akBaseItem, int aiItemCount, ObjectReference akItemReference, ObjectReference akSourceContainer)
 	Actor PlayersHorse = self.GetActorReference()
-	if !DES_HorseAllForms.HasForm(akBaseItem) && (SaddleBags == False)
+	if !DES_HorseAllForms.HasForm(akBaseItem) && (DES_RenameHorseQuest as DES_HorseInventoryScript).SaddleBags == False
 		PlayersHorse.RemoveItem(akBaseItem, aiItemCount, True, akSourceContainer)
 		Debug.Notification(PlayersHorse.GetDisplayName() +  " isn't wearing a saddle.")
 	elseif DES_HorseMiscItems.HasForm(akBaseItem) && PlayersHorse.IsEquipped(DES_HorseArmors)
@@ -82,7 +82,7 @@ Event OnItemRemoved(Form akBaseItem, int aiItemCount, ObjectReference akItemRefe
 		PlayersHorse.RemoveItem(DES_HorseAllForms)
 		(CCHorseArmorDialogueQuest as CCHorseArmorChangeScript).RemoveHorseArmor()
 		IF PlayersHorse.GetNumItems() > 0 && akBaseItem.HasKeyword(DES_SaddleKeyword)
-			Debug.Notification(PlayersHorse.GetDisplayName() + "'s saddle has been emptied to your inventory.")
+			Debug.Notification(PlayersHorse.GetDisplayName() + "'s saddle has been emptied into your inventory.")
 			PlayersHorse.RemoveAllItems(akTransferTo = PlayerRef)
 		ENDIF
 		UnequipHorse()
@@ -96,7 +96,6 @@ Function UnequipHorse()
 	PlayersHorse.RemoveSpell(DES_TrampleCloak)
 	PlayersHorse.RemoveSpell(DES_HorseRally)
 	PlayersHorse.RemoveSpell(DES_HorseFear)
-	SaddleBags = False
 	UnequipRunning = False
 EndFunction
 
@@ -105,12 +104,12 @@ Function EquipHorseArmor()
 	PlayersHorse.SetAV("CarryWeight", 0.0)
 	PlayersHorse.AddSpell(DES_TrampleCloak)
 	PlayersHorse.AddSpell(DES_HorseRally)
-	SaddleBags = False
+	(DES_RenameHorseQuest as DES_HorseInventoryScript).SaddleBags = false
 EndFunction
 
 Function EquipHorseSaddle()
 	Actor PlayersHorse = self.GetActorReference()
 	PlayersHorse.SetAV("CarryWeight", 100.0)
 	PlayersHorse.AddSpell(DES_HorseFear)
-	SaddleBags = True
+	(DES_RenameHorseQuest as DES_HorseInventoryScript).SaddleBags = true
 EndFunction
