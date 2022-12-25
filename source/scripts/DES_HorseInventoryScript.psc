@@ -5,17 +5,19 @@ Faction Property PlayerHorseFaction auto
 ReferenceAlias Property Alias_PlayersHorse auto
 Actor Property DES_HorseStomachRef auto
 Formlist Property DES_HorseFood auto
+Formlist Property DES_CarFood auto
 bool Property Saddlebags auto
 Keyword Property DES_SaddleKeyword auto
 
 Event OnKeyUp(Int KeyCode, Float HoldTime)
-	If KeyCode == (DES_RenameHorseQuest as DES_HorseCallScript).horsekey && !Utility.IsInMenuMode() && !UI.IsTextInputEnabled() && Game.GetCurrentCrosshairRef() 
+	If KeyCode == (DES_RenameHorseQuest as DES_HorseCallScript).horsekey && !Utility.IsInMenuMode() && !UI.IsTextInputEnabled() && Game.GetCurrentCrosshairRef()
+	Actor DwarvenHorse = Game.GetFormFromFile(0x38D5, "cctwbsse001-puzzledungeon.esm") As Actor
+	Actor Reindeer = Game.GetFormFromFile(0x80E, "ccvsvsse001-winter.esl") as Actor
 		IF HoldTime < papyrusinimanipulator.PullFloatFromIni("Data/H2Horse.ini", "General", "HoldTime", 0.9000)
 			Alias_PlayersHorse.ForceRefTo(Game.GetCurrentCrosshairRef())
 			Actor PlayersHorse = Alias_PlayersHorse.getActorReference()
-			Actor DwarvenHorse = Game.GetFormFromFile(0x8FA, "cctwbsse001-puzzledungeon.esm") As Actor
 			If Game.GetCurrentCrosshairRef() == PlayersHorse.IsInFaction(PlayerHorseFaction) && Game.GetCurrentCrosshairRef() != DwarvenHorse
-				IF PlayersHorse.GetItemCount(DES_SaddleKeyword) > 0
+				IF PlayersHorse.GetItemCount(DES_SaddleKeyword) > 0 || PlayersHorse == Reindeer
 					SaddleBags = true
 				Else
 					SaddleBags = false
@@ -30,7 +32,11 @@ Event OnKeyUp(Int KeyCode, Float HoldTime)
 			Actor PlayersHorse = Alias_PlayersHorse.getActorReference()
 			If Game.GetCurrentCrosshairRef() == PlayersHorse.IsInFaction(PlayerHorseFaction)
 				RegisterForMenu("GiftMenu")
-				DES_HorseStomachRef.ShowGiftMenu(true, DES_HorseFood)
+				IF PlayersHorse != DwarvenHorse
+					DES_HorseStomachRef.ShowGiftMenu(true, DES_HorseFood)
+				ELSE
+					DES_HorseStomachRef.ShowGiftMenu(true, DES_CarFood)
+				ENDIF
 			Else
 				Alias_PlayersHorse.Clear()
 			EndIf

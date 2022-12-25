@@ -5,6 +5,7 @@ float property messageInterval = 1.0 auto
 Message[] Property HelpMessages Auto
 Quest Property DES_HorseCallTutorialTracker auto
 Quest Property DES_RenameHorseQuest auto
+Quest Property ccBGSSSE034_WildHorsesQuest auto
 Actor Property PlayerRef Auto
 Faction Property PlayerHorseFaction Auto
 Formlist Property DES_ValidWorldspaces auto
@@ -15,6 +16,7 @@ bool Property ShowTutorials auto
 
 Event OnInit()
 	DES_HorseCallTutorialTracker.RegisterForMenu("RaceSex Menu")
+	ccBGSSSE034_WildHorsesQuest.SetStage(10)
 EndEvent
 
 Event OnMenuClose(String MenuName)
@@ -29,6 +31,7 @@ EndEvent
 Event OnAnimationEvent(ObjectReference akSource, string asEventName)
 	;Debug.MessageBox("OnAnimationEvent fired")
 	if (akSource == PlayerRef) && (asEventName == "tailHorseDismount")
+	Actor DwarvenHorse = Game.GetFormFromFile(0x38D5, "cctwbsse001-puzzledungeon.esm") As Actor
 	;Debug.MessageBox("PlayerRef dismounted")
 	Utility.Wait(3)
 		IF !HorseCallTutorial
@@ -51,6 +54,7 @@ Event OnAnimationEvent(ObjectReference akSource, string asEventName)
 					HelpMessages[3].ShowAsHelpMessage("HorseFoodTutorial", messageDuration, 1.0, 1)
 				ENDIF
 				DES_PlayerOwnsHorse.SetValue(1)
+				(Quest.GetQuest("DES_RenameHorseQuest") as DES_RenameHorseQuestScript).EquipArmor(DwarvenHorse)
 				DES_HorseCallTutorialTracker.UnregisterForAnimationEvent(PlayerRef, "tailHorseDismount")
 				HorseCallTutorial = true
 				(Alias_Player as DES_SaddleHelpScript).BarebackTutorial = true

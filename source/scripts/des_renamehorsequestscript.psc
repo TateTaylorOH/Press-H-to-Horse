@@ -33,6 +33,7 @@ Spell Property DES_TrampleCloak auto
 Spell Property DES_HorseFear auto
 Spell Property DES_HorseRally auto
 Faction Property PlayerHorseFaction auto
+Outfit Property DES_NakedHorseOutfit auto
 
 float property messageDuration = 3.0 auto
 float property messageInterval = 1.0 auto
@@ -81,7 +82,7 @@ function renameCyrodiilHorse()
 endFunction
 
 function renameReindeer()
-	Actor PlayersHorse = Game.GetFormFromFile(0xD65, "ccvsvsse001-winter.esl") as Actor
+	Actor PlayersHorse = Game.GetFormFromFile(0x80E, "ccvsvsse001-winter.esl") as Actor
 	String defaultName = getRandomName(HorseNamesList)
 	renameHorse(PlayersHorse, defaultName)
 endFunction
@@ -95,16 +96,23 @@ string function getRandomName(string[] names = None)
 endFunction
 
 bool function renameHorse(Actor PlayersHorse, string defaultName = "Honse")
-	while Utility.IsInMenuMode()
-		utility.wait(0.5)
-	endwhile
+	Actor Reindeer = Game.GetFormFromFile(0x80E, "ccvsvsse001-winter.esl") as Actor
 	EquipHorse(PlayersHorse)
-	string newName = ((self as Form) as UILIB_1).showTextInput("Name Your Horse", DefaultName)
-	if newName != ""
-		PlayersHorse.setDisplayName(newName, true)
-		return true
-	endIf
-	return false
+	IF PlayersHorse == Reindeer
+		string newName = ((self as Form) as UILIB_1).showTextInput("Name Your Reindeer", DefaultName)
+		if newName != ""
+			PlayersHorse.setDisplayName(newName, true)
+			return true
+		endIf
+		return false
+	ELSE
+		string newName = ((self as Form) as UILIB_1).showTextInput("Name Your Horse", DefaultName)
+		if newName != ""
+			PlayersHorse.setDisplayName(newName, true)
+			return true
+		endIf
+		return false	
+	ENDIF
 endFunction
 
 Function EquipHorse(Actor PlayersHorse)
@@ -152,12 +160,15 @@ EndFunction
 Function EquipArmor(Actor PlayersHorse)
 	(CCHorseArmorDialogueQuest as CCHorseArmorChangeScript).RemoveHorseArmor()
 	(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(none)
+	PlayersHorse.SetOutfit(DES_NakedHorseOutfit)
 	PlayersHorse.SetAV("CarryWeight", 0.0)
 	PlayersHorse.AddSpell(DES_HorseRally)
 	PlayersHorse.AddSpell(DES_TrampleCloak)
 EndFunction
 
 Function EquipSaddle(Actor PlayersHorse)
+	(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(none)
+	PlayersHorse.SetOutfit(DES_NakedHorseOutfit)
 	PlayersHorse.SetAV("CarryWeight", 100.0)
 	PlayersHorse.AddSpell(DES_HorseFear)
 EndFunction

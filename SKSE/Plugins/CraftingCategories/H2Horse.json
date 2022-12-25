@@ -1,0 +1,8 @@
+{
+  "categories": {
+    "$Horse": {
+      "section": "$MISC",
+      "keywords": [ "DES_ArmorKeyword", "DES_SaddleKeyword" ]
+    }
+  }
+}
