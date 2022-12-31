@@ -83,7 +83,7 @@ endFunction
 
 function renameReindeer()
 	Actor PlayersHorse = Game.GetFormFromFile(0x80E, "ccvsvsse001-winter.esl") as Actor
-	String defaultName = getRandomName(HorseNamesList)
+	String defaultName = "Cloudberry"
 	renameHorse(PlayersHorse, defaultName)
 endFunction
 
