@@ -13,6 +13,8 @@ GlobalVariable Property DES_PlayerOwnsHorse auto
 bool property HorseCallTutorial auto
 ReferenceAlias Property Alias_Player  auto
 bool Property ShowTutorials auto
+LeveledItem Property DES_LItemMiscHostlerItems75 auto
+LeveledItem Property DES_MinimumHostler auto
 
 Event OnInit()
 	DES_HorseCallTutorialTracker.RegisterForMenu("RaceSex Menu")
@@ -20,12 +22,14 @@ Event OnInit()
 EndEvent
 
 Event OnMenuClose(String MenuName)
+	MiscObject BSHorseshoe = Game.GetFormFromFile(0x723B8, "BSHeartland.esm") As MiscObject
 	If MenuName == "RaceSex Menu"
 		RegisterForAnimationEvent(PlayerRef, "tailHorseDismount")
 		;Debug.MessageBox("tailHorseDismount registered")
 		DES_HorseCallTutorialTracker.UnregisterForMenu("RaceSex Menu")
+		DES_MinimumHostler.AddForm(BSHorseshoe, 1, 4)
+		DES_LItemMiscHostlerItems75.AddForm(BSHorseshoe, 1, 4)
 	EndIf
-	RegisterForAnimationEvent(PlayerRef, "tailHorseDismount")
 EndEvent
 
 Event OnAnimationEvent(ObjectReference akSource, string asEventName)

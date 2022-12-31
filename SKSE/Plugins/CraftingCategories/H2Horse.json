@@ -1,8 +1,8 @@
 {
+  "$schema": "https://raw.githubusercontent.com/Exit-9B/CraftingCategories/main/docs/CraftingCategories.schema.json",
   "categories": {
-    "$Horse": {
-      "section": "$MISC",
-      "keywords": [ "DES_ArmorKeyword", "DES_SaddleKeyword" ]
+    "$Horse Tack": {
+      "keywords": [ "DES_HorseTack" ]
     }
   }
 }

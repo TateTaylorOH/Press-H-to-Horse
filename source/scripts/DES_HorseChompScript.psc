@@ -13,9 +13,10 @@ Actor property PlayerRef auto
 
 Event OnItemAdded(Form akBaseItem, int aiItemCount, ObjectReference akItemReference, ObjectReference akSourceContainer)
 	DES_HorseChompMarker.play(PlayerRef)
-	PlayerRef.DispelSpell(DES_HorseBlessing)
-	DES_HorseBlessing.Cast(PlayerRef)
 	DES_HorseBlessingMessage.Show()
+	PlayerRef.DispelSpell(DES_HorseBlessing)
+	utility.wait(0.5)
+	DES_HorseBlessing.Cast(PlayerRef)
 EndEvent
 
 
