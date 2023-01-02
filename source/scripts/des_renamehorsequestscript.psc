@@ -75,6 +75,13 @@ function renameWildHorse()
 	renameHorse(PlayersHorse, defaultName)
 endFunction
 
+function renameFarmHorse()
+	ReferenceAlias FarmHorse = (Quest.GetQuest("ccVSVSSE004_ModManagerQuest")).getAliasByName("Horse") as ReferenceAlias
+	Actor PlayersHorse = FarmHorse.getActorReference()
+	String defaultName = getRandomName(HorseNamesList)
+	renameHorse(PlayersHorse, defaultName)
+endFunction
+
 function renameCyrodiilHorse()
 	Actor PlayersHorse = Game.GetFormFromFile(0x65108, "BSHeartland.esm") as Actor
 	String defaultName = getRandomName(HorseFemaleNamesList)
