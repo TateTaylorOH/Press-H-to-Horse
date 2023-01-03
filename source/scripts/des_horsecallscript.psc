@@ -27,7 +27,17 @@ Event OnKeyUp(Int KeyCode, Float HoldTime)
 				ENDIF
 			ELSE
 				IF Game.GetFormFromFile(0xE05, "UIExtensions.esp")
-					IF DES_OwnedHorses.GetSize() > 1
+					int n = DES_OwnedHorses.getSize()
+					while n > 0
+						Debug.Notification("while n > 0")
+						n -= 1
+						Actor OwnedHorse = DES_OwnedHorses.GetAt(n) as Actor
+						IF OwnedHorse && OwnedHorse.IsDead()
+							DES_OwnedHorses.RemoveAddedForm(OwnedHorse)
+						ENDIF
+						Debug.Notification("ENDIF")
+					endwhile
+					IF n > 1
 						UISelectionMenu menu = UIExtensions.GetMenu("UISelectionMenu") as UISelectionMenu	
 						menu.OpenMenu(aForm=DES_OwnedHorses)
 						Actor SelectedHorse = menu.GetResultForm() as Actor
