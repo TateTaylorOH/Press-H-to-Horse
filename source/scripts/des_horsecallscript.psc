@@ -22,22 +22,21 @@ Event OnKeyUp(Int KeyCode, Float HoldTime)
 	IF (KeyCode == horseKey && !Utility.IsInMenuMode() && !UI.IsTextInputEnabled()) && !Game.GetCurrentCrosshairRef() && !PlayerRef.IsOnMount(); this is a valid keypress
 		IF (!PlayerRef.IsInInterior() && DES_ValidWorldspaces.HasForm(PlayerRef.getWorldSpace())) ; this is a valid place to summon the horse
 			IF HoldTime < papyrusinimanipulator.PullFloatFromIni("Data/H2Horse.ini", "General", "HoldTime", 0.9000) 
-				IF (LastRiddenHorse && LastRiddenHorse.IsInFaction(PlayerHorseFaction)); there is a last horse, and it's the players
+				IF (LastRiddenHorse && LastRiddenHorse.IsInFaction(PlayerHorseFaction)) && !LastRiddenHorse.IsDead(); there is a last horse, it's the players, and it's not dead
 					CallLastHorse()
 				ENDIF
 			ELSE
 				IF Game.GetFormFromFile(0xE05, "UIExtensions.esp")
 					int n = DES_OwnedHorses.getSize()
 					while n > 0
-						Debug.Notification("while n > 0")
-						n -= 1
-						Actor OwnedHorse = DES_OwnedHorses.GetAt(n) as Actor
+						Actor OwnedHorse = DES_OwnedHorses.GetAt(n) as actor
 						IF OwnedHorse && OwnedHorse.IsDead()
 							DES_OwnedHorses.RemoveAddedForm(OwnedHorse)
 						ENDIF
-						Debug.Notification("ENDIF")
+						n -= 1
 					endwhile
-					IF n > 1
+					int nHorses = DES_OwnedHorses.getSize()
+					IF nHorses > 1
 						UISelectionMenu menu = UIExtensions.GetMenu("UISelectionMenu") as UISelectionMenu	
 						menu.OpenMenu(aForm=DES_OwnedHorses)
 						Actor SelectedHorse = menu.GetResultForm() as Actor
