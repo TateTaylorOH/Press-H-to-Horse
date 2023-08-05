@@ -16,7 +16,17 @@ Event OnKeyUp(Int KeyCode, Float HoldTime)
 		IF HoldTime < papyrusinimanipulator.PullFloatFromIni("Data/H2Horse.ini", "General", "HoldTime", 0.9000)
 			Alias_PlayersHorse.ForceRefTo(Game.GetCurrentCrosshairRef())
 			Actor PlayersHorse = Alias_PlayersHorse.getActorReference()
-			If Game.GetCurrentCrosshairRef() == PlayersHorse.IsInFaction(PlayerHorseFaction) && !PlayersHorse.IsDead() && Game.GetCurrentCrosshairRef()!= DwarvenHorse
+			If Game.GetCurrentCrosshairRef() == PlayersHorse && PlayersHorse && PlayersHorse.IsInFaction(PlayerHorseFaction) && !PlayersHorse.IsDead() && Game.GetCurrentCrosshairRef()!= DwarvenHorse
+				IF 	(Alias_PlayersHorse.GetState() == "Saddled")
+					;Debug.Notification("Saddled")
+					PlayersHorse.SetAV("CarryWeight", 100.0)
+				ELSEIF 	(Alias_PlayersHorse.GetState() == "Armored")
+					;Debug.Notification("Armored")
+					PlayersHorse.SetAV("CarryWeight", 0.0)
+				ELSEIF 	(Alias_PlayersHorse.GetState() == "Unequipped")
+					;Debug.Notification("Unequipped")
+					PlayersHorse.SetAV("CarryWeight", 999.0)
+				ENDIF
 				IF PlayersHorse.GetItemCount(DES_SaddleKeyword) > 0 || PlayersHorse == Reindeer
 					SaddleBags = true
 				Else
@@ -24,13 +34,14 @@ Event OnKeyUp(Int KeyCode, Float HoldTime)
 				ENDIF
 				RegisterForMenu("ContainerMenu")
 				PlayersHorse.OpenInventory(true)
+					Debug.Notification("Opened Inventory")
 			Else
 				Alias_PlayersHorse.Clear()
 			EndIf
 		Else
 			Alias_PlayersHorse.ForceRefTo(Game.GetCurrentCrosshairRef())
 			Actor PlayersHorse = Alias_PlayersHorse.getActorReference()
-			If Game.GetCurrentCrosshairRef() == PlayersHorse.IsInFaction(PlayerHorseFaction) && !PlayersHorse.IsDead()
+			If Game.GetCurrentCrosshairRef() == PlayersHorse && PlayersHorse.IsInFaction(PlayerHorseFaction) && !PlayersHorse.IsDead()
 				RegisterForMenu("GiftMenu")
 				IF PlayersHorse != DwarvenHorse
 					DES_HorseStomachRef.ShowGiftMenu(true, DES_HorseFood)

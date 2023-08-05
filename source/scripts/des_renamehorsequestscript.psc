@@ -34,6 +34,7 @@ Spell Property DES_HorseFear auto
 Spell Property DES_HorseRally auto
 Faction Property PlayerHorseFaction auto
 Outfit Property DES_NakedHorseOutfit auto
+Formlist Property DES_HorseArmors auto
 
 float property messageDuration = 3.0 auto
 float property messageInterval = 1.0 auto
@@ -132,50 +133,49 @@ Function EquipHorse(Actor PlayersHorse)
 	ENDIF
 	DES_PlayerOwnsHorse.SetValue(1)
 	IF PlayersHorse.IsEquipped(CCHorseArmorElven) && PlayersHorse.GetItemCount(CCHorseArmorMiscArmorElven) == 0
-		EquipArmor(PlayersHorse)
+		PlayersHorse.RemoveItem(DES_HorseArmors)
+		(CCHorseArmorDialogueQuest as CCHorseArmorChangeScript).ChangeHorseArmor(0)	
 		PlayersHorse.AddItem(CCHorseArmorMiscArmorElven, 1)
-		(CCHorseArmorDialogueQuest as CCHorseArmorChangeScript).ChangeHorseArmor(0)
-	ELSEIF PlayersHorse.IsEquipped(CCHorseArmorSteel) && PlayersHorse.GetItemCount(CCHorseArmorMiscArmorSteel) == 0
 		EquipArmor(PlayersHorse)
+	ELSEIF PlayersHorse.IsEquipped(CCHorseArmorSteel) && PlayersHorse.GetItemCount(CCHorseArmorMiscArmorSteel) == 0
+		PlayersHorse.RemoveItem(DES_HorseArmors)
+		(CCHorseArmorDialogueQuest as CCHorseArmorChangeScript).ChangeHorseArmor(1)
 		PlayersHorse.AddItem(CCHorseArmorMiscArmorSteel, 1)
-		(CCHorseArmorDialogueQuest as CCHorseArmorChangeScript).ChangeHorseArmor(1)	
+		EquipArmor(PlayersHorse)
 	ELSEIF PlayersHorse.IsEquipped(HorseSaddle) && PlayersHorse.GetItemCount(DES_Saddle) == 0
-		EquipSaddle(PlayersHorse)
-		PlayersHorse.AddItem(DES_Saddle, 1)
+		PlayersHorse.RemoveItem(DES_HorseArmors)
 		(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(HorseSaddle)
+		PlayersHorse.AddItem(DES_Saddle, 1)
+		EquipSaddle(PlayersHorse)
 	ELSEIF PlayersHorse.IsEquipped(ccBGSSSE034_HorseSaddleLight) && PlayersHorse.GetItemCount(DES_WhiteSaddle) == 0
-		EquipSaddle(PlayersHorse)
-		PlayersHorse.AddItem(DES_WhiteSaddle, 1)
+		PlayersHorse.RemoveItem(DES_HorseArmors)
 		(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(ccBGSSSE034_HorseSaddleLight)
+		PlayersHorse.AddItem(DES_WhiteSaddle, 1)
+		EquipSaddle(PlayersHorse)
 	ELSEIF PlayersHorse.IsEquipped(HorseSaddleImperial) && PlayersHorse.GetItemCount(DES_ImperialSaddle) == 0
-		EquipSaddle(PlayersHorse)
-		PlayersHorse.AddItem(DES_ImperialSaddle, 1)
+		PlayersHorse.RemoveItem(DES_HorseArmors)
 		(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(HorseSaddleImperial)
+		PlayersHorse.AddItem(DES_ImperialSaddle, 1)
+		EquipSaddle(PlayersHorse)
 	ELSEIF PlayersHorse.IsEquipped(ccBGSSSE034_HorseSaddleStormcloak) && PlayersHorse.GetItemCount(DES_StormcloakSaddle) == 0
-		EquipSaddle(PlayersHorse)
-		PlayersHorse.AddItem(DES_StormcloakSaddle, 1) 
+		PlayersHorse.RemoveItem(DES_HorseArmors)
 		(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(ccBGSSSE034_HorseSaddleStormcloak)
-	ELSEIF PlayersHorse.IsEquipped(HorseSaddleShadowmere) && PlayersHorse.GetItemCount(DES_DarkBrotherhoodSaddle) == 0
+		PlayersHorse.AddItem(DES_StormcloakSaddle, 1) 
 		EquipSaddle(PlayersHorse)
-		PlayersHorse.AddItem(DES_DarkBrotherhoodSaddle, 1) 
+	ELSEIF PlayersHorse.IsEquipped(HorseSaddleShadowmere) && PlayersHorse.GetItemCount(DES_DarkBrotherhoodSaddle) == 0
+		PlayersHorse.RemoveItem(DES_HorseArmors)
 		(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(HorseSaddleShadowmere)
+		PlayersHorse.AddItem(DES_DarkBrotherhoodSaddle, 1) 
+		EquipSaddle(PlayersHorse)
 	ELSEIF PlayersHorse.IsEquipped(ReindeerSaddle)
 		EquipSaddle(PlayersHorse)
 	ENDIF
 EndFunction
 
 Function EquipArmor(Actor PlayersHorse)
-	(CCHorseArmorDialogueQuest as CCHorseArmorChangeScript).RemoveHorseArmor()
-	(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(none)
-	PlayersHorse.SetOutfit(DES_NakedHorseOutfit)
-	PlayersHorse.SetAV("CarryWeight", 0.0)
-	PlayersHorse.AddSpell(DES_HorseRally)
-	PlayersHorse.AddSpell(DES_TrampleCloak)
+	Alias_PlayersHorse.GoToState("Armored")
 EndFunction
 
 Function EquipSaddle(Actor PlayersHorse)
-	(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(none)
-	PlayersHorse.SetOutfit(DES_NakedHorseOutfit)
-	PlayersHorse.SetAV("CarryWeight", 100.0)
-	PlayersHorse.AddSpell(DES_HorseFear)
+	Alias_PlayersHorse.GoToState("Saddled")
 EndFunction

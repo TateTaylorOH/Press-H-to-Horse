@@ -90,26 +90,60 @@ Event OnItemRemoved(Form akBaseItem, int aiItemCount, ObjectReference akItemRefe
 EndEvent
 
 Function UnequipHorse()
-	Actor PlayersHorse = self.GetActorReference()
-	(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(none)
-	PlayersHorse.SetAV("CarryWeight", 999.0)
-	PlayersHorse.RemoveSpell(DES_TrampleCloak)
-	PlayersHorse.RemoveSpell(DES_HorseRally)
-	PlayersHorse.RemoveSpell(DES_HorseFear)
-	UnequipRunning = False
+	GoToState("Unequipped")
 EndFunction
 
 Function EquipHorseArmor()
-	Actor PlayersHorse = self.GetActorReference()
-	PlayersHorse.SetAV("CarryWeight", 0.0)
-	PlayersHorse.AddSpell(DES_TrampleCloak)
-	PlayersHorse.AddSpell(DES_HorseRally)
-	(DES_RenameHorseQuest as DES_HorseInventoryScript).SaddleBags = false
+	GoToState("Armored")
 EndFunction
 
 Function EquipHorseSaddle()
-	Actor PlayersHorse = self.GetActorReference()
-	PlayersHorse.SetAV("CarryWeight", 100.0)
-	PlayersHorse.AddSpell(DES_HorseFear)
-	(DES_RenameHorseQuest as DES_HorseInventoryScript).SaddleBags = true
+	GoToState("Saddled")
 EndFunction
+
+State Unequipped
+	Event OnBeginState()
+		;Debug.Notification("Unequipped Begin")
+		Actor PlayersHorse = self.GetActorReference()
+		(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(none)
+		PlayersHorse.SetAV("CarryWeight", 999.0)
+		(DES_RenameHorseQuest as DES_HorseInventoryScript).SaddleBags = false			
+		UnequipRunning = False
+	EndEvent
+EndState
+
+State Armored
+	Event OnBeginState()
+		;Debug.Notification("Armored Begin")
+		Actor PlayersHorse = self.GetActorReference()
+		PlayersHorse.SetAV("CarryWeight", 0.0)
+		PlayersHorse.AddSpell(DES_TrampleCloak)
+		PlayersHorse.AddSpell(DES_HorseRally)
+		(DES_RenameHorseQuest as DES_HorseInventoryScript).SaddleBags = false
+	EndEvent
+
+	Event OnEndState()
+		;Debug.Notification("Armored End")
+		Actor PlayersHorse = self.GetActorReference()
+		PlayersHorse.SetAV("CarryWeight", 999.0)
+		PlayersHorse.RemoveSpell(DES_TrampleCloak)
+		PlayersHorse.RemoveSpell(DES_HorseRally)
+	EndEvent
+EndState
+
+State Saddled
+	Event OnBeginState()
+		;Debug.Notification("Saddled Begin")
+		Actor PlayersHorse = self.GetActorReference()
+		PlayersHorse.SetAV("CarryWeight", 100.0)
+		PlayersHorse.AddSpell(DES_HorseFear)
+		(DES_RenameHorseQuest as DES_HorseInventoryScript).SaddleBags = true
+	EndEvent
+
+	Event OnEndState()
+		;Debug.Notification("Saddled End")
+		Actor PlayersHorse = self.GetActorReference()
+		PlayersHorse.SetAV("CarryWeight", 999.0)
+		PlayersHorse.RemoveSpell(DES_HorseFear)
+	EndEvent
+EndState
