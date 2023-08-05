@@ -35,6 +35,7 @@ Spell Property DES_HorseRally auto
 Faction Property PlayerHorseFaction auto
 Outfit Property DES_NakedHorseOutfit auto
 Formlist Property DES_HorseArmors auto
+ReferenceAlias Property DES_RenameHorseQuestAlias auto
 
 float property messageDuration = 3.0 auto
 float property messageInterval = 1.0 auto
@@ -173,9 +174,14 @@ Function EquipHorse(Actor PlayersHorse)
 EndFunction
 
 Function EquipArmor(Actor PlayersHorse)
-	Alias_PlayersHorse.GoToState("Armored")
+	PlayersHorse.SetAV("CarryWeight", 0.0)
+	PlayersHorse.AddSpell(DES_TrampleCloak)
+	PlayersHorse.AddSpell(DES_HorseRally)
+	DES_RenameHorseQuestAlias.GoToState("Armored")
 EndFunction
 
 Function EquipSaddle(Actor PlayersHorse)
-	Alias_PlayersHorse.GoToState("Saddled")
+	PlayersHorse.SetAV("CarryWeight", 100.0)
+	PlayersHorse.AddSpell(DES_HorseFear)
+	DES_RenameHorseQuestAlias.GoToState("Saddled")
 EndFunction
