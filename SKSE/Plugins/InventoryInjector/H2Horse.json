@@ -1,0 +1,25 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Exit-9B/InventoryInjector/main/docs/InventoryInjector.schema.json",
+  "rules": [
+    {
+      "match": {
+        "formType": "MiscItem",
+        "formId": {
+          "anyOf": [
+            "H2Horse.esp|DE6",
+            "H2Horse.esp|DE7",
+            "H2Horse.esp|DE8",
+            "H2Horse.esp|DE9",
+            "H2Horse.esp|DEA",
+			"BSHeartland.esm|723B8"
+          ]
+        }
+      },
+      "assign": {
+        "subTypeDisplay": "$HorseTack",
+        "iconSource": "I4IconAddon/icons.swf",
+        "iconLabel": "misc_horsetack"
+      }
+    }
+  ]
+}
