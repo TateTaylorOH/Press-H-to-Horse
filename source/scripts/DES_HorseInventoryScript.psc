@@ -34,7 +34,7 @@ Event OnKeyUp(Int KeyCode, Float HoldTime)
 				ENDIF
 				RegisterForMenu("ContainerMenu")
 				PlayersHorse.OpenInventory(true)
-					Debug.Notification("Opened Inventory")
+				;Debug.Notification("Opened Inventory")
 			Else
 				Alias_PlayersHorse.Clear()
 			EndIf
