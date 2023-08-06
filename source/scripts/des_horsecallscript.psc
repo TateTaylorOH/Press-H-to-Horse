@@ -42,10 +42,19 @@ Event OnKeyUp(Int KeyCode, Float HoldTime)
 						Actor SelectedHorse = menu.GetResultForm() as Actor
 						RegisterForAnimationEvent(PlayerRef, "tailHorseMount")
 						Debug.Notification("You call for " + SelectedHorse.GetDisplayName() + ".")
+						IF !PlayerRef.IsWeaponDrawn() && PlayerRef.GetSitState() == 0
+							Debug.SendAnimationEvent(PlayerRef, "Whistling")
+							MfgConsoleFunc.SetPhoneMe(PlayerRef, 6, 30)
+							DES_HorseCallMarker.Play(PlayerRef)
+							Utility.Wait(1.0)
+							MfgConsoleFunc.ResetPhonemeModifier(PlayerRef)
+							Debug.SendAnimationEvent(PlayerRef, "OffsetStop")
+						ELSE
+							DES_HorseCallMarker.Play(PlayerRef)
+						ENDIF
 						Alias_PlayersHorse.Clear()
 						Alias_PlayersHorse.ForceRefTo(SelectedHorse)
 						SelectedHorse.EvaluatePackage()
-						DES_HorseCallMarker.Play(PlayerRef)
 						IF !PlayerRef.HasLOS(SelectedHorse)
 							float az = addAngles(PlayerRef.getAngleZ(), horseAngle)
 							SelectedHorse.moveTo(PlayerRef, horseDistance * math.sin(az), horseDistance * Math.cos(az), 0.0, true)
@@ -60,7 +69,6 @@ Event OnKeyUp(Int KeyCode, Float HoldTime)
 			IF (LastRiddenHorse && LastRiddenHorse.IsInFaction(PlayerHorseFaction)) ; there is a last horse, and it's the players
 				Debug.Notification(LastRiddenHorse.GetDisplayName() + " cannot be called here.")
 			ENDIF
-			Debug.Notification("Your horse cannot be called here.")
 		ENDIF
 	ENDIF
 endEvent
@@ -79,17 +87,35 @@ Function CallLastHorse()
 		CalledHorse = false
 		UnregisterForAnimationEvent(PlayerRef, "tailHorseMount")
 		Debug.Notification("You tell "+ LastRiddenHorse.GetDisplayName() + " to wait.")
+		IF !PlayerRef.IsWeaponDrawn() && PlayerRef.GetSitState() == 0
+			Debug.SendAnimationEvent(PlayerRef, "Whistling")
+			MfgConsoleFunc.SetPhoneMe(PlayerRef, 6, 30)
+			DES_HorseStayMarker.Play(PlayerRef)
+			Utility.Wait(1.0)
+			MfgConsoleFunc.ResetPhonemeModifier(PlayerRef)
+			Debug.SendAnimationEvent(PlayerRef, "OffsetStop")
+		ELSE
+			DES_HorseStayMarker.Play(PlayerRef)
+		ENDIF
 		Alias_PlayersHorse.Clear()
-		DES_HorseStayMarker.Play(PlayerRef)
 		LastRiddenHorse.EvaluatePackage()
 	ELSE
 		CalledHorse = true
 		RegisterForAnimationEvent(PlayerRef, "tailHorseMount")
 		Debug.Notification("You call for " + LastRiddenHorse.GetDisplayName() + ".")
+		IF !PlayerRef.IsWeaponDrawn() && PlayerRef.GetSitState() == 0
+			Debug.SendAnimationEvent(PlayerRef, "Whistling")
+			MfgConsoleFunc.SetPhoneMe(PlayerRef, 6, 30)
+			DES_HorseCallMarker.Play(PlayerRef)
+			Utility.Wait(1.0)
+			MfgConsoleFunc.ResetPhonemeModifier(PlayerRef)
+			Debug.SendAnimationEvent(PlayerRef, "OffsetStop")
+		ELSE
+			DES_HorseCallMarker.Play(PlayerRef)
+		ENDIF
 		Alias_PlayersHorse.Clear()
 		Alias_PlayersHorse.ForceRefTo(LastRiddenHorse)
 		LastRiddenHorse.EvaluatePackage()
-		DES_HorseCallMarker.Play(PlayerRef)
 		IF !PlayerRef.HasLOS(LastRiddenHorse)
 			float az = addAngles(PlayerRef.getAngleZ(), horseAngle)
 			LastRiddenHorse.moveTo(PlayerRef, horseDistance * math.sin(az), horseDistance * Math.cos(az), 0.0, true)
