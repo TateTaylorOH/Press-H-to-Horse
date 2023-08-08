@@ -106,7 +106,7 @@ State Unequipped
 		;Debug.Notification("Unequipped Begin")
 		Actor PlayersHorse = self.GetActorReference()
 		(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(none)
-		PlayersHorse.SetAV("CarryWeight", 999.0)
+		PlayersHorse.SetAV("CarryWeight", (PlayersHorse.GetBaseAV("CarryWeight")))
 		(DES_RenameHorseQuest as DES_HorseInventoryScript).SaddleBags = false			
 		UnequipRunning = False
 	EndEvent
