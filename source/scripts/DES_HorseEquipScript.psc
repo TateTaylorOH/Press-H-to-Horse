@@ -135,7 +135,7 @@ State Saddled
 	Event OnBeginState()
 		;Debug.Notification("Saddled Begin")
 		Actor PlayersHorse = self.GetActorReference()
-		PlayersHorse.SetAV("CarryWeight", 100.0)
+		PlayersHorse.SetAV("CarryWeight", (papyrusinimanipulator.PullFloatFromIni("Data/H2Horse.ini", "General", "CarryWeight", 100.0)))
 		PlayersHorse.AddSpell(DES_HorseFear)
 		(DES_RenameHorseQuest as DES_HorseInventoryScript).SaddleBags = true
 	EndEvent
