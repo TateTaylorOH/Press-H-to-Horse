@@ -125,7 +125,7 @@ State Armored
 	Event OnEndState()
 		;Debug.Notification("Armored End")
 		Actor PlayersHorse = self.GetActorReference()
-		PlayersHorse.SetAV("CarryWeight", 999.0)
+		PlayersHorse.SetAV("CarryWeight", (PlayersHorse.GetBaseAV("CarryWeight")))
 		PlayersHorse.RemoveSpell(DES_TrampleCloak)
 		PlayersHorse.RemoveSpell(DES_HorseRally)
 	EndEvent
@@ -143,7 +143,7 @@ State Saddled
 	Event OnEndState()
 		;Debug.Notification("Saddled End")
 		Actor PlayersHorse = self.GetActorReference()
-		PlayersHorse.SetAV("CarryWeight", 999.0)
+		PlayersHorse.SetAV("CarryWeight", (PlayersHorse.GetBaseAV("CarryWeight")))
 		PlayersHorse.RemoveSpell(DES_HorseFear)
 	EndEvent
 EndState
