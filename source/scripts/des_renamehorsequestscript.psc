@@ -33,7 +33,6 @@ Spell Property DES_TrampleCloak auto
 Spell Property DES_HorseFear auto
 Spell Property DES_HorseRally auto
 Faction Property PlayerHorseFaction auto
-Outfit Property DES_NakedHorseOutfit auto
 Formlist Property DES_HorseArmors auto
 ReferenceAlias Property DES_RenameHorseQuestAlias auto
 
@@ -174,14 +173,12 @@ Function EquipHorse(Actor PlayersHorse)
 EndFunction
 
 Function EquipArmor(Actor PlayersHorse)
-	PlayersHorse.SetAV("CarryWeight", 0.0)
 	PlayersHorse.AddSpell(DES_TrampleCloak)
 	PlayersHorse.AddSpell(DES_HorseRally)
 	DES_RenameHorseQuestAlias.GoToState("Armored")
 EndFunction
 
 Function EquipSaddle(Actor PlayersHorse)
-	PlayersHorse.SetAV("CarryWeight", (papyrusinimanipulator.PullFloatFromIni("Data/H2Horse.ini", "General", "CarryWeight", 105.0)))
 	PlayersHorse.AddSpell(DES_HorseFear)
 	DES_RenameHorseQuestAlias.GoToState("Saddled")
 EndFunction
