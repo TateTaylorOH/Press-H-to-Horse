@@ -31,6 +31,8 @@ Quest Property ccBGSSSE034_HorseSaddleQuest auto
 Keyword Property DES_ArmorKeyword auto
 Keyword Property DES_SaddleKeyword auto
 Quest Property DES_RenameHorseQuest auto
+int Property BaseCarryWeight auto
+Outfit Property DES_NakedHorseOutfit auto
 
 Event OnItemAdded(Form akBaseItem, int aiItemCount, ObjectReference akItemReference, ObjectReference akSourceContainer)
 	Actor PlayersHorse = self.GetActorReference()
@@ -106,7 +108,7 @@ State Unequipped
 		;Debug.Notification("Unequipped Begin")
 		Actor PlayersHorse = self.GetActorReference()
 		(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(none)
-		PlayersHorse.SetAV("CarryWeight", 999.0)
+		PlayersHorse.SetAV("CarryWeight", BaseCarryWeight)
 		(DES_RenameHorseQuest as DES_HorseInventoryScript).SaddleBags = false			
 		UnequipRunning = False
 	EndEvent
@@ -116,6 +118,7 @@ State Armored
 	Event OnBeginState()
 		;Debug.Notification("Armored Begin")
 		Actor PlayersHorse = self.GetActorReference()
+		BaseCarryWeight = PlayersHorse.GetBaseAV("CarryWeight") as int
 		PlayersHorse.AddSpell(DES_TrampleCloak)
 		PlayersHorse.AddSpell(DES_HorseRally)
 		(DES_RenameHorseQuest as DES_HorseInventoryScript).SaddleBags = false
@@ -133,6 +136,7 @@ State Saddled
 	Event OnBeginState()
 		;Debug.Notification("Saddled Begin")
 		Actor PlayersHorse = self.GetActorReference()
+		BaseCarryWeight = PlayersHorse.GetBaseAV("CarryWeight") as int
 		PlayersHorse.AddSpell(DES_HorseFear)
 		(DES_RenameHorseQuest as DES_HorseInventoryScript).SaddleBags = true
 	EndEvent

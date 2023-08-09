@@ -3,8 +3,11 @@ Scriptname DES_RegisterKeyOnLoad extends ReferenceAlias
 GlobalVariable Property DES_PlayerOwnsHorse auto
 Quest Property DES_RenameHorseQuest Auto
 Formlist Property DES_ValidWorldspaces auto
+ReferenceAlias Property Alias_PlayersHorse auto
 
 EVENT OnPlayerLoadGame()
+	Actor PlayersHorse = Alias_PlayersHorse.GetActorReference()
+	(Alias_PlayersHorse as DES_HorseEquipScript).BaseCarryWeight = PlayersHorse.GetBaseAV("CarryWeight") as int
 	RegisterKey()
 	InjectModdedWorldspaces()
 ENDEVENT
