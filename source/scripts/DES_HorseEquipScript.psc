@@ -106,7 +106,7 @@ State Unequipped
 		;Debug.Notification("Unequipped Begin")
 		Actor PlayersHorse = self.GetActorReference()
 		(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(none)
-		PlayersHorse.SetAV("CarryWeight", (PlayersHorse.GetBaseAV("CarryWeight")))
+		PlayersHorse.SetAV("CarryWeight", 999.0)
 		(DES_RenameHorseQuest as DES_HorseInventoryScript).SaddleBags = false			
 		UnequipRunning = False
 	EndEvent
@@ -125,7 +125,7 @@ State Armored
 	Event OnEndState()
 		;Debug.Notification("Armored End")
 		Actor PlayersHorse = self.GetActorReference()
-		PlayersHorse.SetAV("CarryWeight", (PlayersHorse.GetBaseAV("CarryWeight")))
+		PlayersHorse.SetAV("CarryWeight", 999.0)
 		PlayersHorse.RemoveSpell(DES_TrampleCloak)
 		PlayersHorse.RemoveSpell(DES_HorseRally)
 	EndEvent
@@ -135,7 +135,7 @@ State Saddled
 	Event OnBeginState()
 		;Debug.Notification("Saddled Begin")
 		Actor PlayersHorse = self.GetActorReference()
-		PlayersHorse.SetAV("CarryWeight", (papyrusinimanipulator.PullFloatFromIni("Data/H2Horse.ini", "General", "CarryWeight", 105.0)))
+		PlayersHorse.SetAV("CarryWeight", 100.0)
 		PlayersHorse.AddSpell(DES_HorseFear)
 		(DES_RenameHorseQuest as DES_HorseInventoryScript).SaddleBags = true
 	EndEvent
@@ -143,7 +143,7 @@ State Saddled
 	Event OnEndState()
 		;Debug.Notification("Saddled End")
 		Actor PlayersHorse = self.GetActorReference()
-		PlayersHorse.SetAV("CarryWeight", (PlayersHorse.GetBaseAV("CarryWeight")))
+		PlayersHorse.SetAV("CarryWeight", 999.0)
 		PlayersHorse.RemoveSpell(DES_HorseFear)
 	EndEvent
 EndState
