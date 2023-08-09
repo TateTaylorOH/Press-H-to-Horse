@@ -8,8 +8,8 @@ ReferenceAlias Property Alias_PlayersHore auto
 EVENT OnPlayerLoadGame()
 	Actor PlayersHorse = Alias_PlayersHore.GetActorReference()
 	(DES_RenameHorseQuest as DES_HorseInventoryScript).BaseCarryWeight = PlayersHorse.GetBaseAV("CarryWeight") as int
-	Debug.Notification("PlayersHorse CarryWeight = " + PlayersHorse.GetBaseAV("CarryWeight") as int)
-	Debug.Notification("BaseCarryWeight = " + (DES_RenameHorseQuest as DES_HorseInventoryScript).BaseCarryWeight)
+	;Debug.Notification("PlayersHorse CarryWeight = " + PlayersHorse.GetBaseAV("CarryWeight") as int)
+	;Debug.Notification("BaseCarryWeight = " + (DES_RenameHorseQuest as DES_HorseInventoryScript).BaseCarryWeight)
 	RegisterKey()
 	InjectModdedWorldspaces()
 ENDEVENT

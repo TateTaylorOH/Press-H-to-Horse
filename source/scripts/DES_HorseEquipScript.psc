@@ -82,7 +82,7 @@ Event OnItemRemoved(Form akBaseItem, int aiItemCount, ObjectReference akItemRefe
 		UI.InvokeString("HUD Menu", "_global.skse.CloseMenu", "ContainerMenu")
 		PlayersHorse.RemoveItem(DES_HorseAllForms)
 		(CCHorseArmorDialogueQuest as CCHorseArmorChangeScript).RemoveHorseArmor()
-		IF PlayersHorse.GetNumItems() > 0 && akBaseItem.HasKeyword(DES_SaddleKeyword)
+		IF PlayersHorse.GetNumItems() > 1 && akBaseItem.HasKeyword(DES_SaddleKeyword)
 			Debug.Notification(PlayersHorse.GetDisplayName() + "'s saddle has been emptied into your inventory.")
 			PlayersHorse.RemoveAllItems(akTransferTo = PlayerRef)
 		ENDIF
@@ -107,6 +107,7 @@ State Unequipped
 		;Debug.Notification("Unequipped Begin")
 		Actor PlayersHorse = self.GetActorReference()
 		(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(none)
+		PlayersHorse.SetOutfit(DES_NakedHorseOutfit)
 		PlayersHorse.SetAV("CarryWeight", ((DES_RenameHorseQuest as DES_HorseInventoryScript).BaseCarryWeight))
 		(DES_RenameHorseQuest as DES_HorseInventoryScript).SaddleBags = false			
 		UnequipRunning = False
@@ -117,6 +118,7 @@ State Armored
 	Event OnBeginState()
 		;Debug.Notification("Armored Begin")
 		Actor PlayersHorse = self.GetActorReference()
+		PlayersHorse.SetAV("CarryWeight", 0.0)
 		PlayersHorse.AddSpell(DES_TrampleCloak)
 		PlayersHorse.AddSpell(DES_HorseRally)
 		(DES_RenameHorseQuest as DES_HorseInventoryScript).SaddleBags = false
@@ -134,6 +136,7 @@ State Saddled
 	Event OnBeginState()
 		;Debug.Notification("Saddled Begin")
 		Actor PlayersHorse = self.GetActorReference()
+		PlayersHorse.SetAV("CarryWeight", (papyrusinimanipulator.PullFloatFromIni("Data/H2Horse.ini", "General", "CarryWeight", 105.0)))
 		PlayersHorse.AddSpell(DES_HorseFear)
 		(DES_RenameHorseQuest as DES_HorseInventoryScript).SaddleBags = true
 	EndEvent
