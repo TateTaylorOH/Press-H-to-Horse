@@ -25,7 +25,7 @@ Event OnKeyUp(Int KeyCode, Float HoldTime)
 					PlayersHorse.SetAV("CarryWeight", 0.0)
 				ELSEIF 	(Alias_PlayersHorse.GetState() == "Unequipped")
 					;Debug.Notification("Unequipped")
-					PlayersHorse.SetAV("CarryWeight", ((Alias_PlayersHorse as DES_HorseEquipScript).BaseCarryWeight))
+					PlayersHorse.SetAV("CarryWeight", (PlayersHorse.GetBaseAV("CarryWeight")))
 				ENDIF
 				IF PlayersHorse.GetItemCount(DES_SaddleKeyword) > 0 || PlayersHorse == Reindeer
 					SaddleBags = true
