@@ -19,7 +19,7 @@ Event OnKeyUp(Int KeyCode, Float HoldTime)
 			If Game.GetCurrentCrosshairRef() == PlayersHorse && PlayersHorse && PlayersHorse.IsInFaction(PlayerHorseFaction) && !PlayersHorse.IsDead() && Game.GetCurrentCrosshairRef()!= DwarvenHorse
 				IF 	(Alias_PlayersHorse.GetState() == "Saddled")
 					;Debug.Notification("Saddled")
-					PlayersHorse.SetAV("CarryWeight", 100.0)
+					PlayersHorse.SetAV("CarryWeight", (papyrusinimanipulator.PullFloatFromIni("Data/H2Horse.ini", "General", "CarryWeight", 105.0)))
 				ELSEIF 	(Alias_PlayersHorse.GetState() == "Armored")
 					;Debug.Notification("Armored")
 					PlayersHorse.SetAV("CarryWeight", 0.0)

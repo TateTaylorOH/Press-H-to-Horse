@@ -174,14 +174,12 @@ Function EquipHorse(Actor PlayersHorse)
 EndFunction
 
 Function EquipArmor(Actor PlayersHorse)
-	PlayersHorse.SetAV("CarryWeight", 0.0)
 	PlayersHorse.AddSpell(DES_TrampleCloak)
 	PlayersHorse.AddSpell(DES_HorseRally)
 	DES_RenameHorseQuestAlias.GoToState("Armored")
 EndFunction
 
 Function EquipSaddle(Actor PlayersHorse)
-	PlayersHorse.SetAV("CarryWeight", 100.0)
 	PlayersHorse.AddSpell(DES_HorseFear)
 	DES_RenameHorseQuestAlias.GoToState("Saddled")
 EndFunction
