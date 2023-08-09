@@ -181,7 +181,7 @@ Function EquipArmor(Actor PlayersHorse)
 EndFunction
 
 Function EquipSaddle(Actor PlayersHorse)
-	PlayersHorse.SetAV("CarryWeight", (papyrusinimanipulator.PullFloatFromIni("Data/H2Horse.ini", "General", "CarryWeight", 100.0)))
+	PlayersHorse.SetAV("CarryWeight", (papyrusinimanipulator.PullFloatFromIni("Data/H2Horse.ini", "General", "CarryWeight", 105.0)))
 	PlayersHorse.AddSpell(DES_HorseFear)
 	DES_RenameHorseQuestAlias.GoToState("Saddled")
 EndFunction
