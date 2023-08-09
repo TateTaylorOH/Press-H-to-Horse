@@ -45,31 +45,31 @@ Event OnItemAdded(Form akBaseItem, int aiItemCount, ObjectReference akItemRefere
 	elseif akBaseItem == CCHorseArmorMiscArmorElven
 		PlayersHorse.RemoveItem(DES_HorseArmors)
 		(CCHorseArmorDialogueQuest as CCHorseArmorChangeScript).ChangeHorseArmor(0)
-		EquipHorseArmor()
+		EquipHorseArmor(PlayersHorse)
 	elseif akBaseItem == CCHorseArmorMiscArmorSteel
 		PlayersHorse.RemoveItem(DES_HorseArmors)
 		(CCHorseArmorDialogueQuest as CCHorseArmorChangeScript).ChangeHorseArmor(1)
-		EquipHorseArmor()
+		EquipHorseArmor(PlayersHorse)
 	elseif akBaseItem == DES_Saddle
 		PlayersHorse.RemoveItem(DES_HorseArmors)
 		(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(HorseSaddle)
-		EquipHorseSaddle()
+		EquipHorseSaddle(PlayersHorse)
 	elseif akBaseItem == DES_WhiteSaddle
 		PlayersHorse.RemoveItem(DES_HorseArmors)
 		(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(ccBGSSSE034_HorseSaddleLight)
-		EquipHorseSaddle()
+		EquipHorseSaddle(PlayersHorse)
 	elseif akBaseItem == DES_ImperialSaddle
 		PlayersHorse.RemoveItem(DES_HorseArmors)
 		(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(HorseSaddleImperial)
-		EquipHorseSaddle()		
+		EquipHorseSaddle(PlayersHorse)		
 	elseif akBaseItem == DES_StormcloakSaddle
 		PlayersHorse.RemoveItem(DES_HorseArmors)
 		(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(ccBGSSSE034_HorseSaddleStormcloak)
-		EquipHorseSaddle()
+		EquipHorseSaddle(PlayersHorse)
 	elseif akBaseItem == DES_DarkBrotherhoodSaddle
 		PlayersHorse.RemoveItem(DES_HorseArmors)
 		(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(HorseSaddleShadowmere)
-		EquipHorseSaddle()
+		EquipHorseSaddle(PlayersHorse)
 	endif
 EndEvent
 
@@ -86,26 +86,26 @@ Event OnItemRemoved(Form akBaseItem, int aiItemCount, ObjectReference akItemRefe
 			Debug.Notification(PlayersHorse.GetDisplayName() + "'s saddle has been emptied into your inventory.")
 			PlayersHorse.RemoveAllItems(akTransferTo = PlayerRef)
 		ENDIF
-		UnequipHorse()
+		UnequipHorse(PlayersHorse)
 	endif
 EndEvent
 
-Function UnequipHorse()
+Function UnequipHorse(Actor PlayersHorse)
 	GoToState("Unequipped")
 EndFunction
 
-Function EquipHorseArmor()
+Function EquipHorseArmor(Actor PlayersHorse)
 	GoToState("Armored")
 EndFunction
 
-Function EquipHorseSaddle()
+Function EquipHorseSaddle(Actor PlayersHorse)
 	GoToState("Saddled")
 EndFunction
 
 State Unequipped
 	Event OnBeginState()
 		;Debug.Notification("Unequipped Begin")
-		Actor PlayersHorse = self.GetActorReference()
+		Actor PlayersHorse = GetActorReference()
 		(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(none)
 		PlayersHorse.SetOutfit(DES_NakedHorseOutfit)
 		PlayersHorse.SetAV("CarryWeight", ((DES_RenameHorseQuest as DES_HorseInventoryScript).BaseCarryWeight))
@@ -117,7 +117,7 @@ EndState
 State Armored
 	Event OnBeginState()
 		;Debug.Notification("Armored Begin")
-		Actor PlayersHorse = self.GetActorReference()
+		Actor PlayersHorse = GetActorReference()
 		PlayersHorse.SetAV("CarryWeight", 0.0)
 		PlayersHorse.AddSpell(DES_TrampleCloak)
 		PlayersHorse.AddSpell(DES_HorseRally)
@@ -126,7 +126,7 @@ State Armored
 
 	Event OnEndState()
 		;Debug.Notification("Armored End")
-		Actor PlayersHorse = self.GetActorReference()
+		Actor PlayersHorse = GetActorReference()
 		PlayersHorse.RemoveSpell(DES_TrampleCloak)
 		PlayersHorse.RemoveSpell(DES_HorseRally)
 	EndEvent
@@ -135,7 +135,7 @@ EndState
 State Saddled
 	Event OnBeginState()
 		;Debug.Notification("Saddled Begin")
-		Actor PlayersHorse = self.GetActorReference()
+		Actor PlayersHorse = GetActorReference()
 		PlayersHorse.SetAV("CarryWeight", (papyrusinimanipulator.PullFloatFromIni("Data/H2Horse.ini", "General", "CarryWeight", 105.0)))
 		PlayersHorse.AddSpell(DES_HorseFear)
 		(DES_RenameHorseQuest as DES_HorseInventoryScript).SaddleBags = true
@@ -143,7 +143,7 @@ State Saddled
 
 	Event OnEndState()
 		;Debug.Notification("Saddled End")
-		Actor PlayersHorse = self.GetActorReference()
+		Actor PlayersHorse = GetActorReference()
 		PlayersHorse.RemoveSpell(DES_HorseFear)
 	EndEvent
 EndState

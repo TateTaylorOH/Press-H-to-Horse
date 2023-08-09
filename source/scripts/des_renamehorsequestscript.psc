@@ -176,17 +176,10 @@ EndFunction
 
 Function EquipArmor(Actor PlayersHorse)
 	(DES_RenameHorseQuest as DES_HorseInventoryScript).BaseCarryWeight = PlayersHorse.GetBaseAV("CarryWeight") as int
-	;Debug.Notification("PlayersHorse CarryWeight = " + PlayersHorse.GetBaseAV("CarryWeight") as int)
-	;Debug.Notification("BaseCarryWeight = " + (DES_RenameHorseQuest as DES_HorseInventoryScript).BaseCarryWeight)
-	PlayersHorse.AddSpell(DES_TrampleCloak)
-	PlayersHorse.AddSpell(DES_HorseRally)
-	DES_RenameHorseQuestAlias.GoToState("Armored")
+	(DES_RenameHorseQuestAlias as DES_HorseEquipScript).EquipHorseArmor(PlayersHorse)
 EndFunction
 
 Function EquipSaddle(Actor PlayersHorse)
 	(DES_RenameHorseQuest as DES_HorseInventoryScript).BaseCarryWeight = PlayersHorse.GetBaseAV("CarryWeight") as int
-	;Debug.Notification("PlayersHorse CarryWeight = " + PlayersHorse.GetBaseAV("CarryWeight") as int)
-	;Debug.Notification("BaseCarryWeight = " + (DES_RenameHorseQuest as DES_HorseInventoryScript).BaseCarryWeight)
-	PlayersHorse.AddSpell(DES_HorseFear)
-	DES_RenameHorseQuestAlias.GoToState("Saddled")
+	(DES_RenameHorseQuestAlias as DES_HorseEquipScript).EquipHorseSaddle(PlayersHorse)
 EndFunction
