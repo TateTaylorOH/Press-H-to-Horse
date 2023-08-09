@@ -33,7 +33,6 @@ Spell Property DES_TrampleCloak auto
 Spell Property DES_HorseFear auto
 Spell Property DES_HorseRally auto
 Faction Property PlayerHorseFaction auto
-Outfit Property DES_NakedHorseOutfit auto
 Formlist Property DES_HorseArmors auto
 ReferenceAlias Property DES_RenameHorseQuestAlias auto
 
