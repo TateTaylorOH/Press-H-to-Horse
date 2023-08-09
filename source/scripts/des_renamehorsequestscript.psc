@@ -36,6 +36,7 @@ Faction Property PlayerHorseFaction auto
 Outfit Property DES_NakedHorseOutfit auto
 Formlist Property DES_HorseArmors auto
 ReferenceAlias Property DES_RenameHorseQuestAlias auto
+Quest Property DES_RenameHorseQuest auto
 
 float property messageDuration = 3.0 auto
 float property messageInterval = 1.0 auto
@@ -174,14 +175,18 @@ Function EquipHorse(Actor PlayersHorse)
 EndFunction
 
 Function EquipArmor(Actor PlayersHorse)
-	PlayersHorse.SetAV("CarryWeight", 0.0)
+	(DES_RenameHorseQuest as DES_HorseInventoryScript).BaseCarryWeight = PlayersHorse.GetBaseAV("CarryWeight") as int
+	Debug.Notification("PlayersHorse CarryWeight = " + PlayersHorse.GetBaseAV("CarryWeight") as int)
+	Debug.Notification("BaseCarryWeight = " + (DES_RenameHorseQuest as DES_HorseInventoryScript).BaseCarryWeight)
 	PlayersHorse.AddSpell(DES_TrampleCloak)
 	PlayersHorse.AddSpell(DES_HorseRally)
 	DES_RenameHorseQuestAlias.GoToState("Armored")
 EndFunction
 
 Function EquipSaddle(Actor PlayersHorse)
-	PlayersHorse.SetAV("CarryWeight", (papyrusinimanipulator.PullFloatFromIni("Data/H2Horse.ini", "General", "CarryWeight", 105.0)))
+	(DES_RenameHorseQuest as DES_HorseInventoryScript).BaseCarryWeight = PlayersHorse.GetBaseAV("CarryWeight") as int
+	Debug.Notification("PlayersHorse CarryWeight = " + PlayersHorse.GetBaseAV("CarryWeight") as int)
+	Debug.Notification("BaseCarryWeight = " + (DES_RenameHorseQuest as DES_HorseInventoryScript).BaseCarryWeight)
 	PlayersHorse.AddSpell(DES_HorseFear)
 	DES_RenameHorseQuestAlias.GoToState("Saddled")
 EndFunction

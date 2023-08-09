@@ -8,6 +8,7 @@ Formlist Property DES_HorseFood auto
 Formlist Property DES_CarFood auto
 bool Property Saddlebags auto
 Keyword Property DES_SaddleKeyword auto
+int Property BaseCarryWeight auto
 
 Event OnKeyUp(Int KeyCode, Float HoldTime)
 	If KeyCode == (DES_RenameHorseQuest as DES_HorseCallScript).horsekey && !Utility.IsInMenuMode() && !UI.IsTextInputEnabled() && Game.GetCurrentCrosshairRef()
@@ -25,7 +26,7 @@ Event OnKeyUp(Int KeyCode, Float HoldTime)
 					PlayersHorse.SetAV("CarryWeight", 0.0)
 				ELSEIF 	(Alias_PlayersHorse.GetState() == "Unequipped")
 					;Debug.Notification("Unequipped")
-					PlayersHorse.SetAV("CarryWeight", 999.0)
+					PlayersHorse.SetAV("CarryWeight", BaseCarryWeight)
 				ENDIF
 				IF PlayersHorse.GetItemCount(DES_SaddleKeyword) > 0 || PlayersHorse == Reindeer
 					SaddleBags = true
