@@ -118,7 +118,7 @@ State Armored
 	Event OnBeginState()
 		;Debug.Notification("Armored Begin")
 		Actor PlayersHorse = self.GetActorReference()
-		BaseCarryWeight = PlayersHorse.GetBaseAV("CarryWeight") as int
+		BaseCarryWeight = (PlayersHorse.GetBaseAV("CarryWeight") as int)
 		PlayersHorse.AddSpell(DES_TrampleCloak)
 		PlayersHorse.AddSpell(DES_HorseRally)
 		(DES_RenameHorseQuest as DES_HorseInventoryScript).SaddleBags = false
@@ -136,7 +136,7 @@ State Saddled
 	Event OnBeginState()
 		;Debug.Notification("Saddled Begin")
 		Actor PlayersHorse = self.GetActorReference()
-		BaseCarryWeight = PlayersHorse.GetBaseAV("CarryWeight") as int
+		BaseCarryWeight = (PlayersHorse.GetBaseAV("CarryWeight") as int)
 		PlayersHorse.AddSpell(DES_HorseFear)
 		(DES_RenameHorseQuest as DES_HorseInventoryScript).SaddleBags = true
 	EndEvent
