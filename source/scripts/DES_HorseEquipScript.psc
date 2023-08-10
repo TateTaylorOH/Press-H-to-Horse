@@ -84,7 +84,7 @@ Event OnItemRemoved(Form akBaseItem, int aiItemCount, ObjectReference akItemRefe
 		UI.InvokeString("HUD Menu", "_global.skse.CloseMenu", "ContainerMenu")
 		PlayersHorse.RemoveItem(DES_HorseAllForms)
 		(CCHorseArmorDialogueQuest as CCHorseArmorChangeScript).RemoveHorseArmor()
-		IF PlayersHorse.GetNumItems() > 1 && akBaseItem.HasKeyword(DES_SaddleKeyword)
+		IF PlayersHorse.GetNumItems() > 0 && akBaseItem.HasKeyword(DES_SaddleKeyword)
 			Debug.Notification(PlayersHorse.GetDisplayName() + "'s saddle has been emptied into your inventory.")
 			PlayersHorse.RemoveAllItems(akTransferTo = PlayerRef)
 		ENDIF
