@@ -15,17 +15,24 @@ ReferenceAlias Property Alias_Player  auto
 bool Property ShowTutorials auto
 LeveledItem Property DES_LItemMiscHostlerItems75 auto
 LeveledItem Property DES_MinimumHostler auto
+bool Property DwarvenHorseEquipped auto
+ReferenceAlias Property DES_RenameHorseQuestAlias auto
 
 Event OnInit()
 	DES_HorseCallTutorialTracker.RegisterForMenu("RaceSex Menu")
 	ccBGSSSE034_WildHorsesQuest.SetStage(10)
+	IF !DwarvenHorseEquipped == true
+		Actor DwarvenHorse = Game.GetFormFromFile(0x38D5, "cctwbsse001-puzzledungeon.esm") As Actor
+		(DES_RenameHorseQuest as DES_RenameHorseQuestScript).EquipArmor(DwarvenHorse)
+		DwarvenHorseEquipped = true
+		DES_RenameHorseQuestAlias.Clear()
+	ENDIF
 EndEvent
 
 Event OnMenuClose(String MenuName)
 	MiscObject BSHorseshoe = Game.GetFormFromFile(0x723B8, "BSHeartland.esm") As MiscObject
 	If MenuName == "RaceSex Menu"
 		RegisterForAnimationEvent(PlayerRef, "tailHorseDismount")
-		;Debug.MessageBox("tailHorseDismount registered")
 		DES_HorseCallTutorialTracker.UnregisterForMenu("RaceSex Menu")
 		DES_MinimumHostler.AddForm(BSHorseshoe, 1, 4)
 		DES_LItemMiscHostlerItems75.AddForm(BSHorseshoe, 1, 4)
@@ -35,15 +42,12 @@ EndEvent
 Event OnAnimationEvent(ObjectReference akSource, string asEventName)
 	;Debug.MessageBox("OnAnimationEvent fired")
 	if (akSource == PlayerRef) && (asEventName == "tailHorseDismount")
-	Actor DwarvenHorse = Game.GetFormFromFile(0x38D5, "cctwbsse001-puzzledungeon.esm") As Actor
-	;Debug.MessageBox("PlayerRef dismounted")
 	Utility.Wait(3)
 		IF !HorseCallTutorial
 			If game.getPlayersLastRiddenHorse().isinfaction(PlayerHorseFaction)
 				(DES_RenameHorseQuest as DES_HorseCallScript).horsekey = papyrusinimanipulator.PullIntFromIni("Data/H2Horse.ini", "General", "HorseKey", 35)
 				ShowTutorials = papyrusinimanipulator.PullboolFromIni("Data/H2Horse.ini", "General", "ShowTutorials", True)
 				DES_RenameHorseQuest.RegisterForKey((DES_RenameHorseQuest as DES_HorseCallScript).horsekey)
-				;Debug.MessageBox("HorseKey registered")
 				Form BSHeartland = Game.GetFormFromFile(0xA764B, "BSHeartland.esm") as Worldspace
 				IF !DES_ValidWorldspaces.HasForm(BSHeartland)
 					DES_ValidWorldspaces.AddForm(BSHeartland)
@@ -58,7 +62,6 @@ Event OnAnimationEvent(ObjectReference akSource, string asEventName)
 					HelpMessages[3].ShowAsHelpMessage("HorseFoodTutorial", messageDuration, 1.0, 1)
 				ENDIF
 				DES_PlayerOwnsHorse.SetValue(1)
-				(Quest.GetQuest("DES_RenameHorseQuest") as DES_RenameHorseQuestScript).EquipArmor(DwarvenHorse)
 				DES_HorseCallTutorialTracker.UnregisterForAnimationEvent(PlayerRef, "tailHorseDismount")
 				HorseCallTutorial = true
 				(Alias_Player as DES_SaddleHelpScript).BarebackTutorial = true

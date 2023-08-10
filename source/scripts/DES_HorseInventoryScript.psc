@@ -9,23 +9,32 @@ Formlist Property DES_CarFood auto
 bool Property Saddlebags auto
 Keyword Property DES_SaddleKeyword auto
 int Property BaseCarryWeight auto
+Bool Property Debugging auto
 
 Event OnKeyUp(Int KeyCode, Float HoldTime)
 	If KeyCode == (DES_RenameHorseQuest as DES_HorseCallScript).horsekey && !Utility.IsInMenuMode() && !UI.IsTextInputEnabled() && Game.GetCurrentCrosshairRef()
 	Actor DwarvenHorse = Game.GetFormFromFile(0x38D5, "cctwbsse001-puzzledungeon.esm") As Actor
 	Actor Reindeer = Game.GetFormFromFile(0x80E, "ccvsvsse001-winter.esl") as Actor
+	Debugging = papyrusinimanipulator.PullboolFromIni("Data/H2Horse.ini", "General", "Debugging", False)
 		IF HoldTime < papyrusinimanipulator.PullFloatFromIni("Data/H2Horse.ini", "General", "HoldTime", 0.9000)
 			Alias_PlayersHorse.ForceRefTo(Game.GetCurrentCrosshairRef())
 			Actor PlayersHorse = Alias_PlayersHorse.getActorReference()
 			If Game.GetCurrentCrosshairRef() == PlayersHorse && PlayersHorse && PlayersHorse.IsInFaction(PlayerHorseFaction) && !PlayersHorse.IsDead() && Game.GetCurrentCrosshairRef()!= DwarvenHorse
+				RegisterForMenu("ContainerMenu")
 				IF 	(Alias_PlayersHorse.GetState() == "Saddled")
-					;Debug.Notification("Saddled")
+					IF Debugging
+						Debug.Notification(PlayersHorse.GetDisplayName() + "'s current state: Saddled")
+					ENDIF
 					PlayersHorse.SetAV("CarryWeight", (papyrusinimanipulator.PullFloatFromIni("Data/H2Horse.ini", "General", "CarryWeight", 105.0)))
 				ELSEIF 	(Alias_PlayersHorse.GetState() == "Armored")
-					;Debug.Notification("Armored")
+					IF Debugging
+						Debug.Notification(PlayersHorse.GetDisplayName() + "'s current state: Armored")
+					ENDIF
 					PlayersHorse.SetAV("CarryWeight", 0.0)
 				ELSEIF 	(Alias_PlayersHorse.GetState() == "Unequipped")
-					Debug.Notification("Unequipped")
+					IF Debugging
+						Debug.Notification(PlayersHorse.GetDisplayName() + "'s current state: Unequipped")
+					ENDIF
 					PlayersHorse.SetAV("CarryWeight", BaseCarryWeight)
 				ENDIF
 				IF PlayersHorse.GetItemCount(DES_SaddleKeyword) > 0 || PlayersHorse == Reindeer
@@ -33,9 +42,7 @@ Event OnKeyUp(Int KeyCode, Float HoldTime)
 				Else
 					SaddleBags = false
 				ENDIF
-				RegisterForMenu("ContainerMenu")
 				PlayersHorse.OpenInventory(true)
-				;Debug.Notification("Opened Inventory")
 			Else
 				Alias_PlayersHorse.Clear()
 			EndIf

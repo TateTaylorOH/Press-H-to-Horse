@@ -22,6 +22,7 @@ Formlist Property DES_HorseMiscItems auto
 Formlist Property DES_HorseArmors auto
 Formlist Property DES_HorseAllForms auto
 Bool Property UnequipRunning auto
+Bool Property EquipRunning auto
 Actor Property PlayerRef auto
 Spell Property DES_TrampleCloak auto
 Spell Property DES_HorseFear auto
@@ -32,6 +33,7 @@ Keyword Property DES_ArmorKeyword auto
 Keyword Property DES_SaddleKeyword auto
 Quest Property DES_RenameHorseQuest auto
 Outfit Property DES_NakedHorseOutfit auto
+Bool Property Debugging auto
 
 Event OnItemAdded(Form akBaseItem, int aiItemCount, ObjectReference akItemReference, ObjectReference akSourceContainer)
 	Actor PlayersHorse = self.GetActorReference()
@@ -91,21 +93,37 @@ Event OnItemRemoved(Form akBaseItem, int aiItemCount, ObjectReference akItemRefe
 EndEvent
 
 Function UnequipHorse(Actor PlayersHorse)
+	GoToState("ChangingHorse")
+	self.ForceRefTo(PlayersHorse)
 	GoToState("Unequipped")
 EndFunction
 
 Function EquipHorseArmor(Actor PlayersHorse)
+	GoToState("ChangingHorse")
+	self.ForceRefTo(PlayersHorse)
 	GoToState("Armored")
 EndFunction
 
 Function EquipHorseSaddle(Actor PlayersHorse)
+	GoToState("ChangingHorse")
+	self.ForceRefTo(PlayersHorse)
 	GoToState("Saddled")
+EndFunction
+
+Function RemoveHorseAbilities(Actor PlayersHorse)
+	PlayersHorse.RemoveSpell(DES_TrampleCloak)
+	PlayersHorse.RemoveSpell(DES_HorseRally)
+	PlayersHorse.RemoveSpell(DES_HorseFear)
 EndFunction
 
 State Unequipped
 	Event OnBeginState()
-		;Debug.Notification("Unequipped Begin")
 		Actor PlayersHorse = GetActorReference()
+		Debugging = papyrusinimanipulator.PullboolFromIni("Data/H2Horse.ini", "General", "Debugging", False)
+		IF Debugging
+			Debug.Notification(PlayersHorse.GetDisplayName() + "'s state changed: Unequipped")
+		ENDIF
+		RemoveHorseAbilities(PlayersHorse)
 		(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(none)
 		PlayersHorse.SetOutfit(DES_NakedHorseOutfit)
 		PlayersHorse.SetAV("CarryWeight", ((DES_RenameHorseQuest as DES_HorseInventoryScript).BaseCarryWeight))
@@ -116,16 +134,18 @@ EndState
 
 State Armored
 	Event OnBeginState()
-		;Debug.Notification("Armored Begin")
 		Actor PlayersHorse = GetActorReference()
+		Debugging = papyrusinimanipulator.PullboolFromIni("Data/H2Horse.ini", "General", "Debugging", False)
+		IF Debugging
+			Debug.Notification(PlayersHorse.GetDisplayName() + "'s state changed: Armored")
+		ENDIF
 		PlayersHorse.SetAV("CarryWeight", 0.0)
 		PlayersHorse.AddSpell(DES_TrampleCloak)
 		PlayersHorse.AddSpell(DES_HorseRally)
 		(DES_RenameHorseQuest as DES_HorseInventoryScript).SaddleBags = false
 	EndEvent
-
+	
 	Event OnEndState()
-		;Debug.Notification("Armored End")
 		Actor PlayersHorse = GetActorReference()
 		PlayersHorse.RemoveSpell(DES_TrampleCloak)
 		PlayersHorse.RemoveSpell(DES_HorseRally)
@@ -134,16 +154,22 @@ EndState
 
 State Saddled
 	Event OnBeginState()
-		;Debug.Notification("Saddled Begin")
 		Actor PlayersHorse = GetActorReference()
+		Debugging = papyrusinimanipulator.PullboolFromIni("Data/H2Horse.ini", "General", "Debugging", False)
+		IF Debugging
+			Debug.Notification(PlayersHorse.GetDisplayName() + "'s state changed: Saddled")
+		ENDIF
 		PlayersHorse.SetAV("CarryWeight", (papyrusinimanipulator.PullFloatFromIni("Data/H2Horse.ini", "General", "CarryWeight", 105.0)))
 		PlayersHorse.AddSpell(DES_HorseFear)
 		(DES_RenameHorseQuest as DES_HorseInventoryScript).SaddleBags = true
 	EndEvent
-
+	
 	Event OnEndState()
-		;Debug.Notification("Saddled End")
 		Actor PlayersHorse = GetActorReference()
 		PlayersHorse.RemoveSpell(DES_HorseFear)
 	EndEvent
+EndState
+
+State ChangingHorse
+
 EndState
