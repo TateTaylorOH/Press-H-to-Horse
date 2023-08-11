@@ -6,7 +6,8 @@ Scriptname ccBGSSSE034_TIF__02000DEE Extends TopicInfo Hidden
 Function Fragment_0(ObjectReference akSpeakerRef)
 Actor akSpeaker = akSpeakerRef as Actor
 ;BEGIN CODE
-(Quest.GetQuest("DES_RenameHorseQuest") as DES_RenameHorseQuestScript).renameWildHorse()
+Actor MountToRename = Game.GetPlayersLastRiddenHorse()
+(Quest.GetQuest("DES_RenameHorseQuest") as DES_RenameHorseQuestScript).renameAnyHorse(MountToRename )
 ;END CODE
 EndFunction
 ;END FRAGMENT
