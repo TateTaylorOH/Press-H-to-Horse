@@ -89,6 +89,7 @@ endFunction
 Function EquipHorse(Actor PlayersHorse)
 {This will prepare the horse for use within the H2Horse framework. It will set the horse's outfit to be blank, then check what armor the horse was wearing, give that horse the matching miscitem and reequip their inital gear. It is then handed of to the equip script to set carry weight and AI.}
 	Armor ReindeerSaddle = game.GetFormFromFile(0x804, "ccvsvsse001-winter.esl") as Armor
+	Debugging = papyrusinimanipulator.PullboolFromIni("Data/H2Horse.ini", "General", "Debugging", False)
 	IF !PlayersHorse.IsInFaction(PlayerHorseFaction)
 		PlayersHorse.SetFactionRank(PlayerHorseFaction, 1)
 	ENDIF
@@ -101,6 +102,9 @@ Function EquipHorse(Actor PlayersHorse)
 		(DES_RenameHorseQuest as DES_HorseInventoryScript).BaseCarryWeight = 999
 	ENDIF
 	Int i = HorseArmorList.Find(PlayersHorse.GetEquippedArmorInSlot(45))
+	IF Debugging
+		Debug.Notification(i + HorseArmorList[i].GetName())
+	ENDIF
 	IF PlayersHorse.IsEquipped(HorseArmorList) && PlayersHorse.GetItemCount(MiscItemList) == 0
 		PlayersHorse.RemoveItem(DES_HorseArmors)
 		PlayersHorse.AddItem(MiscItemList[i], 1)
