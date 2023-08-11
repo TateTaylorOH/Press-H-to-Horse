@@ -12,7 +12,9 @@ Alias_Horse.GetActorReference().SetFactionRank(PlayerHorseFaction, 1)
 Alias_Horse.GetActorRef().SetFactionOwner(PlayerFaction)
 PlayersHorse.ForceRefTo(Alias_Horse.GetActorRef())
 game.IncrementStat( "Horses Owned" )
-(Quest.GetQuest("DES_RenameHorseQuest") as DES_RenameHorseQuestScript).RenameFemaleHorse()
+Actor MountToRename = Alias_Horse.GetActorRef()
+(Quest.GetQuest("DES_RenameHorseQuest") as DES_RenameHorseQuestScript).RenameFemaleHorse(MountToRename)
+(Quest.GetQuest("DES_RenameHorseQuest") as DES_RenameHorseQuestScript).equipHorse(MountToRename)
 ;END CODE
 EndFunction
 ;END FRAGMENT

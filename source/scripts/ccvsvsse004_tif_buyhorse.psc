@@ -19,7 +19,9 @@ function Fragment_0(ObjectReference akSpeakerRef)
 
 	actor akSpeaker = akSpeakerRef as actor
 	(self.GetOwningQuest() as ccvsvsse004_farmmodmanagerscript).BuyHorse()
-	(Quest.GetQuest("DES_RenameHorseQuest") as DES_RenameHorseQuestScript).renameFarmHorse()
+	Actor MountToRename = (GetOwningQuest().getAliasByName("Horse") as ReferenceAlias).GetActorRef()
+	(Quest.GetQuest("DES_RenameHorseQuest") as DES_RenameHorseQuestScript).renameAnyHorse(MountToRename)
+	(Quest.GetQuest("DES_RenameHorseQuest") as DES_RenameHorseQuestScript).equipHorse(MountToRename)
 endFunction
 
 ; Skipped compiler generated GotoState

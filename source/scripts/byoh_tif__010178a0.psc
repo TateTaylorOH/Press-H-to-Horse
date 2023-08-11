@@ -7,7 +7,9 @@ Function Fragment_0(ObjectReference akSpeakerRef)
 Actor akSpeaker = akSpeakerRef as Actor
 ;BEGIN CODE
 (GetOwningQuest() as BYOHHouseBuildingScript).BuyHorse(akSpeaker)
-(Quest.GetQuest("DES_RenameHorseQuest") as DES_RenameHorseQuestScript).RenameBYOHMorthalHorse()
+Actor MountToRename = (GetOwningQuest().getAliasByName("HouseHorse") as ReferenceAlias).GetActorRef()
+(Quest.GetQuest("DES_RenameHorseQuest") as DES_RenameHorseQuestScript).renameAnyHorse(MountToRename)
+(Quest.GetQuest("DES_RenameHorseQuest") as DES_RenameHorseQuestScript).equipHorse(MountToRename)
 ;END CODE
 EndFunction
 ;END FRAGMENT

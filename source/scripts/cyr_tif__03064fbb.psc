@@ -28,5 +28,7 @@ function Fragment_0(ObjectReference akSpeakerRef)
 	Alias_Horse.GetActorRef().SetFactionOwner(PlayerFaction)
 	PlayerHorse.ForceRefTo(Alias_Horse.GetActorRef())
 	game.IncrementStat("Horses Owned", 1)
-	(Quest.GetQuest("DES_RenameHorseQuest") as DES_RenameHorseQuestScript).renameCyrodiilHorse()
+	Actor MountToRename = Alias_Horse.GetActorRef()
+	(Quest.GetQuest("DES_RenameHorseQuest") as DES_RenameHorseQuestScript).renameCyrodiilHorse(MountToRename)
+	(Quest.GetQuest("DES_RenameHorseQuest") as DES_RenameHorseQuestScript).equipHorse(MountToRename)
 endFunction

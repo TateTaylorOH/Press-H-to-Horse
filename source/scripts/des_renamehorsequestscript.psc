@@ -42,58 +42,22 @@ float property messageDuration = 3.0 auto
 float property messageInterval = 1.0 auto
 Message[] Property HelpMessages Auto
 
-function renameFemaleHorse()
-	Actor PlayersHorse = Alias_PlayersHorse.getActorReference()
+function renameAnyHorse(Actor PlayersHorse)
+	String defaultName = getRandomName(HorseNamesList)
+	renameHorse(PlayersHorse, defaultName)
+endFunction
+
+function renameFemaleHorse(Actor PlayersHorse)
 	String defaultName = getRandomName(HorseFemaleNamesList)
 	renameHorse(PlayersHorse, defaultName)
 endFunction
 
-Function RenameWhiterunHorse()
-	Actor PlayersHorse = Alias_PlayersHorse.getActorReference()
-	String defaultName = "Queen Alfsigr"
-	renameHorse(PlayersHorse, defaultName)
-EndFunction
-
-function renameBYOHDawnstarHorse()
-	Actor PlayersHorse = Alias_BYOHDawnstarHorse.getActorReference()
-	String defaultName = getRandomName(HorseNamesList)
-	renameHorse(PlayersHorse, defaultName)
-endFunction
-
-function renameBYOHFalkreathHorse()
-	Actor PlayersHorse = Alias_BYOHFalkreathHorse.getActorReference()
-	String defaultName = getRandomName(HorseNamesList)
-	renameHorse(PlayersHorse, defaultName)
-endFunction
-
-function renameBYOHMorthalHorse()
-	Actor PlayersHorse = Alias_BYOHMorthalHorse.getActorReference()
-	String defaultName = getRandomName(HorseNamesList)
-	renameHorse(PlayersHorse, defaultName)
-endFunction
-
-function renameWildHorse()
-	Actor PlayersHorse = game.GetPlayersLastRiddenHorse()
-	String defaultName = getRandomName(HorseNamesList)
-	renameHorse(PlayersHorse, defaultName)
-endFunction
-
-function renameFarmHorse()
-	ReferenceAlias FarmHorse = (Quest.GetQuest("ccVSVSSE004_ModManagerQuest")).getAliasByName("Horse") as ReferenceAlias
-	Actor PlayersHorse = FarmHorse.getActorReference()
-	String defaultName = getRandomName(HorseNamesList)
-	renameHorse(PlayersHorse, defaultName)
-endFunction
-
-function renameCyrodiilHorse()
-	Actor PlayersHorse = Game.GetFormFromFile(0x65108, "BSHeartland.esm") as Actor
+function renameCyrodiilHorse(Actor PlayersHorse)
 	String defaultName = getRandomName(HorseFemaleNamesList)
 	renameHorse(PlayersHorse, defaultName)
 endFunction
 
-function renameReindeer()
-	Actor PlayersHorse = Game.GetFormFromFile(0x80E, "ccvsvsse001-winter.esl") as Actor
-	String defaultName = "Cloudberry"
+function renameUniqueHorse(Actor PlayersHorse, string defaultName)
 	renameHorse(PlayersHorse, defaultName)
 endFunction
 
@@ -107,7 +71,6 @@ endFunction
 
 bool function renameHorse(Actor PlayersHorse, string defaultName = "Honse")
 	Actor Reindeer = Game.GetFormFromFile(0x80E, "ccvsvsse001-winter.esl") as Actor
-	EquipHorse(PlayersHorse)
 	IF PlayersHorse == Reindeer
 		string newName = ((self as Form) as UILIB_1).showTextInput("Name Your Reindeer", DefaultName)
 		if newName != ""
