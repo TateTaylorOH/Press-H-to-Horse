@@ -1,19 +1,19 @@
 Scriptname DES_HorseCallScript extends Quest
 
+Actor Property PlayerRef Auto
+bool Property HorseSelectTutorial  auto
+Faction Property PlayerHorseFaction Auto
+Formlist Property DES_OwnedHorses auto
+Formlist Property DES_ValidWorldspaces auto
+int property horseKey auto
+ReferenceAlias Property Alias_PlayersHorse auto
+ReferenceAlias Property StablesHorse auto
+Sound Property DES_HorseCallMarker auto
+Sound Property DES_HorseStayMarker auto
+
+Message[] Property HelpMessages Auto
 float property messageDuration = 3.0 auto
 float property messageInterval = 1.0 auto
-Message[] Property HelpMessages Auto
-ReferenceAlias Property Alias_PlayersHorse auto
-Actor Property PlayerRef Auto
-Faction Property PlayerHorseFaction Auto
-bool Property HorseSelectTutorial  auto
-int property horseKey auto
-Formlist Property DES_ValidWorldspaces auto
-Sound Property DES_HorseStayMarker auto
-Sound Property DES_HorseCallMarker auto
-Formlist Property DES_OwnedHorses auto
-ReferenceAlias Property StablesHorse auto
-
 float horseAngle = 180.0 ; where the horse should appear relative to the player, clockwise from north.
 float horseDistance = 512.0
 
@@ -43,16 +43,7 @@ Event OnKeyUp(Int KeyCode, Float HoldTime)
 						StablesHorse.ForceRefTo(SelectedHorse)
 						RegisterForAnimationEvent(PlayerRef, "tailHorseMount")
 						Debug.Notification("You call for " + SelectedHorse.GetDisplayName() + ".")
-						IF !PlayerRef.IsWeaponDrawn() && PlayerRef.GetSitState() == 0
-							Debug.SendAnimationEvent(PlayerRef, "Whistling")
-							MfgConsoleFunc.SetPhoneMe(PlayerRef, 6, 30)
-							DES_HorseCallMarker.Play(PlayerRef)
-							Utility.Wait(1.0)
-							MfgConsoleFunc.ResetPhonemeModifier(PlayerRef)
-							Debug.SendAnimationEvent(PlayerRef, "OffsetStop")
-						ELSE
-							DES_HorseCallMarker.Play(PlayerRef)
-						ENDIF
+						HorseWhistle()
 						Alias_PlayersHorse.Clear()
 						Alias_PlayersHorse.ForceRefTo(SelectedHorse)
 						SelectedHorse.EvaluatePackage()
@@ -82,6 +73,22 @@ Event OnAnimationEvent(ObjectReference akSource, string asEventName)
     endif
 EndEvent
 
+Function HorseWhistle()
+
+	IF !PlayerRef.IsWeaponDrawn() && PlayerRef.GetSitState() == 0
+		Debug.SendAnimationEvent(PlayerRef, "Whistling")
+		MfgConsoleFunc.SetPhoneMe(PlayerRef, 6, 30)
+		DES_HorseCallMarker.Play(PlayerRef)
+		Utility.Wait(1.0)
+		MfgConsoleFunc.ResetPhonemeModifier(PlayerRef)
+		Debug.SendAnimationEvent(PlayerRef, "OffsetStop")
+	ELSE
+		DES_HorseCallMarker.Play(PlayerRef)
+	ENDIF
+
+endFunction
+
+
 Function CallLastHorse()
 
 	IF (GetState() == "UncalledHorse")
@@ -92,6 +99,19 @@ Function CallLastHorse()
 
 endFunction
 
+EndState
+
+float function addAngles(float angle, float turn)
+    angle += turn
+    while(angle >= 360.0)
+        angle -= 360.0
+    endWhile
+    while(angle < 0.0)
+        angle += 360.0
+    endWhile
+    return angle
+endFunction
+
 State CalledHorse
 
 	EVENT OnStateBegin()
@@ -99,16 +119,7 @@ State CalledHorse
 		Actor LastRiddenHorse = StablesHorse
 		RegisterForAnimationEvent(PlayerRef, "tailHorseMount")
 		Debug.Notification("You call for " + LastRiddenHorse.GetDisplayName() + ".")
-		IF !PlayerRef.IsWeaponDrawn() && PlayerRef.GetSitState() == 0
-			Debug.SendAnimationEvent(PlayerRef, "Whistling")
-			MfgConsoleFunc.SetPhoneMe(PlayerRef, 6, 30)
-			DES_HorseCallMarker.Play(PlayerRef)
-			Utility.Wait(1.0)
-			MfgConsoleFunc.ResetPhonemeModifier(PlayerRef)
-			Debug.SendAnimationEvent(PlayerRef, "OffsetStop")
-		ELSE
-			DES_HorseCallMarker.Play(PlayerRef)
-		ENDIF
+		HorseWhistle()
 		Alias_PlayersHorse.Clear()
 		Alias_PlayersHorse.ForceRefTo(LastRiddenHorse)
 		LastRiddenHorse.EvaluatePackage()
@@ -151,16 +162,3 @@ State CalledHorse
 EndState
 
 State UncalledHorse
-
-EndState
-
-float function addAngles(float angle, float turn)
-    angle += turn
-    while(angle >= 360.0)
-        angle -= 360.0
-    endWhile
-    while(angle < 0.0)
-        angle += 360.0
-    endWhile
-    return angle
-endFunction
