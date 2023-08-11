@@ -17,6 +17,9 @@ ENDEVENT
 Function GetBaseCarryWeight()
 	Actor PlayersHorse = Alias_PlayersHore.GetActorReference()
 	(DES_RenameHorseQuest as DES_HorseInventoryScript).BaseCarryWeight = PlayersHorse.GetBaseAV("CarryWeight") as int
+	IF (DES_RenameHorseQuest as DES_HorseInventoryScript).BaseCarryWeight == 0
+		(DES_RenameHorseQuest as DES_HorseInventoryScript).BaseCarryWeight = 999
+	ENDIF
 EndFunction
 
 Function RegisterKey()
