@@ -20,6 +20,7 @@ Armor Property HorseSaddleImperial auto
 Armor Property HorseSaddleShadowmere auto
 
 ;Bellow are all the miscellaneous properties.
+Bool Property Debugging auto
 Faction Property PlayerHorseFaction auto
 Formlist Property DES_HorseArmors auto ;A formlist of all the armor records related to horses (i.e. HorseSaddle)
 Formlist Property DES_OwnedHorses auto ;A list of horses the Player owns.
@@ -89,6 +90,8 @@ endFunction
 Function EquipHorse(Actor PlayersHorse)
 {This will prepare the horse for use within the H2Horse framework. It will set the horse's outfit to be blank, then check what armor the horse was wearing, give that horse the matching miscitem and reequip their inital gear. It is then handed of to the equip script to set carry weight and AI.}
 	Armor ReindeerSaddle = game.GetFormFromFile(0x804, "ccvsvsse001-winter.esl") as Armor
+	DES_HorseInventoryScript Inventory = (DES_RenameHorseQuest as DES_HorseInventoryScript)
+	DES_HorseEquipScript Equip = (Alias_PlayersHorse as DES_HorseEquipScript)
 	Debugging = papyrusinimanipulator.PullboolFromIni("Data/H2Horse.ini", "General", "Debugging", False)
 	IF !PlayersHorse.IsInFaction(PlayerHorseFaction)
 		PlayersHorse.SetFactionRank(PlayerHorseFaction, 1)
@@ -97,31 +100,31 @@ Function EquipHorse(Actor PlayersHorse)
 		DES_OwnedHorses.AddForm(PlayersHorse)
 	ENDIF
 	DES_PlayerOwnsHorse.SetValue(1)
-	(DES_RenameHorseQuest as DES_HorseInventoryScript).BaseCarryWeight = PlayersHorse.GetBaseAV("CarryWeight") as int
-	IF (DES_RenameHorseQuest as DES_HorseInventoryScript).BaseCarryWeight == 0
-		(DES_RenameHorseQuest as DES_HorseInventoryScript).BaseCarryWeight = 999
+	Inventory.BaseCarryWeight = PlayersHorse.GetBaseAV("CarryWeight") as int
+	IF Inventory.BaseCarryWeight == 0
+		Inventory.BaseCarryWeight = 999
 	ENDIF
 	Int i = HorseArmorList.Find(PlayersHorse.GetEquippedArmorInSlot(45))
 	IF Debugging
-		Debug.Notification(i + HorseArmorList[i].GetName() + MiscItemList[i].GetName())
+		Debug.Notification(i + " " + HorseArmorList[i].GetName() + " " + MiscItemList[i].GetName())
 	ENDIF
-	IF PlayersHorse.IsEquipped(HorseArmorList) && PlayersHorse.GetItemCount(MiscItemList) == 0
+	IF PlayersHorse.IsEquipped(DES_HorseArmors) && PlayersHorse.GetItemCount(MiscItemList) == 0
 		IF Debugging
-			Debug.Notification(PlayersHorse.GetName() + " is being equipped for the first time.")
+			Debug.Notification(PlayersHorse.GetDisplayName() + " is being equipped for the first time.")
 		ENDIF
 		PlayersHorse.RemoveItem(DES_HorseArmors)
 		PlayersHorse.AddItem(MiscItemList[i], 1)
 		IF (PlayersHorse.GetEquippedArmorInSlot(45)).HasKeyword(CCHorseArmorKeyword)
 			IF Debugging
-				Debug.Notification(PlayersHorse.GetName() + " is wearing armor.")
+				Debug.Notification(PlayersHorse.GetDisplayName() + " is wearing armor.")
 			ENDIF
 			(CCHorseArmorDialogueQuest as CCHorseArmorChangeScript).ChangeHorseArmor(i)
-			(Alias_PlayersHorse as DES_HorseEquipScript).EquipHorseArmor(PlayersHorse)
-		ELSEIF PlayersHorse.IsEquipped(HorseArmorList)
+			Equip.EquipHorseArmor(PlayersHorse)
+		ELSEIF PlayersHorse.IsEquipped(DES_HorseArmors)
 			IF Debugging
-				Debug.Notification(PlayersHorse.GetName() + " is wearing a saddle.")
+				Debug.Notification(PlayersHorse.GetDisplayName() + " is wearing a saddle.")
 			ENDIF
-			(Alias_PlayersHorse as DES_HorseEquipScript).EquipHorseSaddle(PlayersHorse)
+			Equip.EquipHorseSaddle(PlayersHorse)
 			(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(HorseArmorList[i])
 		ENDIF
 	ENDIF

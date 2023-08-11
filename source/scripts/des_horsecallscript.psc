@@ -20,7 +20,7 @@ float horseDistance = 512.0
 
 Event OnKeyUp(Int KeyCode, Float HoldTime)
 {Sends an event when HorseKey is raised up. The actor called will be whatever horse is currently filled in the "stables" quest PlayersHorse alias. There are checks to  prevent the horse getting called into interiors as well as a mechanics to select a specific horse from a SkyUILib list menu.}
-	Actor LastRiddenHorse = StablesHorse
+	Actor LastRiddenHorse = StablesHorse.getActorRef()
 	IF (KeyCode == horseKey && !Utility.IsInMenuMode() && !UI.IsTextInputEnabled()) && !Game.GetCurrentCrosshairRef() && !PlayerRef.IsOnMount(); this is a valid keypress
 		IF (!PlayerRef.IsInInterior() && DES_ValidWorldspaces.HasForm(PlayerRef.getWorldSpace())) ; this is a valid place to summon the horse
 			IF HoldTime < papyrusinimanipulator.PullFloatFromIni("Data/H2Horse.ini", "General", "HoldTime", 0.9000) 
@@ -127,11 +127,11 @@ float function addAngles(float angle, float turn)
     return angle
 endFunction
 
+;The CalledHorse state controls both calling the horse and telling it to stay. The "stables" quest PlayersHorse alias is called and the associated actor reference is temporarily forced to an alias in H2Horse. The alias has a follow package tied to the Player. Uncalling the horse will clear the H2Horse alias and revert control of the horse's AI to the "stables" quest.
 State CalledHorse
-{The CalledHorse state controls both calling the horse and telling it to stay. The "stables" quest PlayersHorse alias is called and the associated actor reference is temporarily forced to an alias in H2Horse. The alias has a follow package tied to the Player. Uncalling the horse will clear the H2Horse alias and revert control of the horse's AI to the "stables" quest.}
 	
-	EVENT OnStateBegin()
-		Actor LastRiddenHorse = StablesHorse
+	EVENT OnBeginState()
+		Actor LastRiddenHorse = StablesHorse.getActorRef()
 		RegisterForAnimationEvent(PlayerRef, "tailHorseMount") ;Registered to track dismount, which will remove the Horse from the H2Horse alias.
 		Debug.Notification("You call for " + LastRiddenHorse.GetDisplayName() + ".")
 		HorseWhistle(LastRiddenHorse)
@@ -151,8 +151,8 @@ State CalledHorse
 		ENDIF
 	ENDEVENT
 
-	EVENT OnStateEnd()
-		Actor LastRiddenHorse = StablesHorse
+	EVENT OnEndState()
+		Actor LastRiddenHorse = StablesHorse.getActorRef()
 		UnregisterForAnimationEvent(PlayerRef, "tailHorseMount")
 		Debug.Notification("You tell "+ LastRiddenHorse.GetDisplayName() + " to wait.")
 		HorseWhistle(LastRiddenHorse)
@@ -160,6 +160,6 @@ State CalledHorse
 
 EndState
 
-State UncalledHorse
+Auto State UncalledHorse
 
 EndState
