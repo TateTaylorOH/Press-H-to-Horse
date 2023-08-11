@@ -59,7 +59,7 @@ Event OnKeyUp(Int KeyCode, Float HoldTime)
 							float az = addAngles(PlayerRef.getAngleZ(), horseAngle)
 							SelectedHorse.moveTo(PlayerRef, horseDistance * math.sin(az), horseDistance * Math.cos(az), 0.0, true)
 						ENDIF
-						CalledHorse = False
+						GoToState("UncalledHorse")
 					ENDIF
 				ELSE
 					CallLastHorse()
@@ -75,32 +75,27 @@ endEvent
 
 Event OnAnimationEvent(ObjectReference akSource, string asEventName)
     if (akSource == PlayerRef) && (asEventName == "tailHorseMount")
-        CalledHorse = false
+        GoToState("UncalledHorse")
         UnregisterForAnimationEvent(PlayerRef, "tailHorseMount")
         Alias_PlayersHorse.Clear()
     endif
 EndEvent
 
 Function CallLastHorse()
-	Actor LastRiddenHorse = Game.GetPlayersLastRiddenHorse()
-	IF CalledHorse
-		CalledHorse = false
-		UnregisterForAnimationEvent(PlayerRef, "tailHorseMount")
-		Debug.Notification("You tell "+ LastRiddenHorse.GetDisplayName() + " to wait.")
-		IF !PlayerRef.IsWeaponDrawn() && PlayerRef.GetSitState() == 0
-			Debug.SendAnimationEvent(PlayerRef, "Whistling")
-			MfgConsoleFunc.SetPhoneMe(PlayerRef, 6, 30)
-			DES_HorseStayMarker.Play(PlayerRef)
-			Utility.Wait(1.0)
-			MfgConsoleFunc.ResetPhonemeModifier(PlayerRef)
-			Debug.SendAnimationEvent(PlayerRef, "OffsetStop")
-		ELSE
-			DES_HorseStayMarker.Play(PlayerRef)
-		ENDIF
-		Alias_PlayersHorse.Clear()
-		LastRiddenHorse.EvaluatePackage()
+
+	IF (GetState() == "UncalledHorse")
+		GoToState("CalledHorse")
 	ELSE
-		CalledHorse = true
+		GoToState("UncalledHorse")
+	ENDIF
+
+endFunction
+
+State CalledHorse
+
+	EVENT OnStateBegin()
+
+		Actor LastRiddenHorse = Game.GetPlayersLastRiddenHorse()
 		RegisterForAnimationEvent(PlayerRef, "tailHorseMount")
 		Debug.Notification("You call for " + LastRiddenHorse.GetDisplayName() + ".")
 		IF !PlayerRef.IsWeaponDrawn() && PlayerRef.GetSitState() == 0
@@ -130,8 +125,33 @@ Function CallLastHorse()
 				HorseSelectTutorial = True
 			ENDIF
 		ENDIF
-	ENDIF
-endFunction
+
+	ENDEVENT
+
+	EVENT OnStateEnd()
+
+		Actor LastRiddenHorse = Game.GetPlayersLastRiddenHorse()
+		UnregisterForAnimationEvent(PlayerRef, "tailHorseMount")
+		Debug.Notification("You tell "+ LastRiddenHorse.GetDisplayName() + " to wait.")
+		IF !PlayerRef.IsWeaponDrawn() && PlayerRef.GetSitState() == 0
+			Debug.SendAnimationEvent(PlayerRef, "Whistling")
+			MfgConsoleFunc.SetPhoneMe(PlayerRef, 6, 30)
+			DES_HorseStayMarker.Play(PlayerRef)
+			Utility.Wait(1.0)
+			MfgConsoleFunc.ResetPhonemeModifier(PlayerRef)
+			Debug.SendAnimationEvent(PlayerRef, "OffsetStop")
+		ELSE
+			DES_HorseStayMarker.Play(PlayerRef)
+		ENDIF
+		Alias_PlayersHorse.Clear()
+		LastRiddenHorse.EvaluatePackage()
+	ENDEVENT
+
+EndState
+
+State UncalledHorse
+
+EndState
 
 float function addAngles(float angle, float turn)
     angle += turn
