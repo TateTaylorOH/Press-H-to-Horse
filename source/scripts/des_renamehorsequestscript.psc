@@ -32,6 +32,10 @@ String[] Property HorseFemaleImperialNamesList auto ;A list of female horse name
 String[] Property HorseFemaleNamesList auto ;A list of just female horse names taken from Wild Horses to prefill into the name box.
 String[] Property HorseNamesList auto ;A list of male and female horse names taken from Wild Horses to prefill into the name box.
 
+Armor[] Property HorseArmorList auto
+MiscObject[] Property MiscItemList auto
+Keyword Property CCHorseArmorKeyword auto
+
 ;These functions define what the default prefilled horse name will be. They inheirt Actor from the script that calls them (usually a TIF).
 function renameAnyHorse(Actor PlayersHorse) 
 	String defaultName = getRandomName(HorseNamesList)
@@ -96,43 +100,17 @@ Function EquipHorse(Actor PlayersHorse)
 	IF (DES_RenameHorseQuest as DES_HorseInventoryScript).BaseCarryWeight == 0
 		(DES_RenameHorseQuest as DES_HorseInventoryScript).BaseCarryWeight = 999
 	ENDIF
-	IF PlayersHorse.IsEquipped(CCHorseArmorElven) && PlayersHorse.GetItemCount(CCHorseArmorMiscArmorElven) == 0
+	Int i = HorseArmorList.Find(PlayersHorse.GetEquippedArmorInSlot(45))
+	IF PlayersHorse.IsEquipped(HorseArmorList) && PlayersHorse.GetItemCount(MiscItemList) == 0
 		PlayersHorse.RemoveItem(DES_HorseArmors)
-		(CCHorseArmorDialogueQuest as CCHorseArmorChangeScript).ChangeHorseArmor(0)	
-		PlayersHorse.AddItem(CCHorseArmorMiscArmorElven, 1)
-		(Alias_PlayersHorse as DES_HorseEquipScript).EquipHorseArmor(PlayersHorse)
-	ELSEIF PlayersHorse.IsEquipped(CCHorseArmorSteel) && PlayersHorse.GetItemCount(CCHorseArmorMiscArmorSteel) == 0
-		PlayersHorse.RemoveItem(DES_HorseArmors)
-		(CCHorseArmorDialogueQuest as CCHorseArmorChangeScript).ChangeHorseArmor(1)
-		PlayersHorse.AddItem(CCHorseArmorMiscArmorSteel, 1)
-		(Alias_PlayersHorse as DES_HorseEquipScript).EquipHorseArmor(PlayersHorse)
-	ELSEIF PlayersHorse.IsEquipped(HorseSaddle) && PlayersHorse.GetItemCount(DES_Saddle) == 0
-		PlayersHorse.RemoveItem(DES_HorseArmors)
-		(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(HorseSaddle)
-		PlayersHorse.AddItem(DES_Saddle, 1)
-		(Alias_PlayersHorse as DES_HorseEquipScript).EquipHorseSaddle(PlayersHorse)
-	ELSEIF PlayersHorse.IsEquipped(ccBGSSSE034_HorseSaddleLight) && PlayersHorse.GetItemCount(DES_WhiteSaddle) == 0
-		PlayersHorse.RemoveItem(DES_HorseArmors)
-		(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(ccBGSSSE034_HorseSaddleLight)
-		PlayersHorse.AddItem(DES_WhiteSaddle, 1)
-		(Alias_PlayersHorse as DES_HorseEquipScript).EquipHorseSaddle(PlayersHorse)
-	ELSEIF PlayersHorse.IsEquipped(HorseSaddleImperial) && PlayersHorse.GetItemCount(DES_ImperialSaddle) == 0
-		PlayersHorse.RemoveItem(DES_HorseArmors)
-		(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(HorseSaddleImperial)
-		PlayersHorse.AddItem(DES_ImperialSaddle, 1)
-		(Alias_PlayersHorse as DES_HorseEquipScript).EquipHorseSaddle(PlayersHorse)
-	ELSEIF PlayersHorse.IsEquipped(ccBGSSSE034_HorseSaddleStormcloak) && PlayersHorse.GetItemCount(DES_StormcloakSaddle) == 0
-		PlayersHorse.RemoveItem(DES_HorseArmors)
-		(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(ccBGSSSE034_HorseSaddleStormcloak)
-		PlayersHorse.AddItem(DES_StormcloakSaddle, 1) 
-		(Alias_PlayersHorse as DES_HorseEquipScript).EquipHorseSaddle(PlayersHorse)
-	ELSEIF PlayersHorse.IsEquipped(HorseSaddleShadowmere) && PlayersHorse.GetItemCount(DES_DarkBrotherhoodSaddle) == 0
-		PlayersHorse.RemoveItem(DES_HorseArmors)
-		(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(HorseSaddleShadowmere)
-		PlayersHorse.AddItem(DES_DarkBrotherhoodSaddle, 1) 
-		(Alias_PlayersHorse as DES_HorseEquipScript).EquipHorseSaddle(PlayersHorse)
-	ELSEIF PlayersHorse.IsEquipped(ReindeerSaddle)
-		(Alias_PlayersHorse as DES_HorseEquipScript).EquipHorseSaddle(PlayersHorse)
+		PlayersHorse.AddItem(MiscItemList[i], 1)
+		IF (PlayersHorse.GetEquippedArmorInSlot(45)).HasKeyword(CCHorseArmorKeyword)
+			(CCHorseArmorDialogueQuest as CCHorseArmorChangeScript).ChangeHorseArmor(i)
+			(Alias_PlayersHorse as DES_HorseEquipScript).EquipHorseArmor(PlayersHorse)
+		ELSE
+			(Alias_PlayersHorse as DES_HorseEquipScript).EquipHorseSaddle(PlayersHorse)
+			(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(HorseArmorList[i])
+		ENDIF
 	ENDIF
 	Alias_PlayersHorse.Clear()
 EndFunction
