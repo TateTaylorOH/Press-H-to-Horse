@@ -6,7 +6,6 @@ Message[] Property HelpMessages Auto
 ReferenceAlias Property Alias_PlayersHorse auto
 Actor Property PlayerRef Auto
 Faction Property PlayerHorseFaction Auto
-bool property CalledHorse auto
 bool Property HorseSelectTutorial  auto
 int property horseKey auto
 Formlist Property DES_ValidWorldspaces auto
