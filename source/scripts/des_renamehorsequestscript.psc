@@ -106,12 +106,21 @@ Function EquipHorse(Actor PlayersHorse)
 		Debug.Notification(i + HorseArmorList[i].GetName() + MiscItemList[i].GetName())
 	ENDIF
 	IF PlayersHorse.IsEquipped(HorseArmorList) && PlayersHorse.GetItemCount(MiscItemList) == 0
+		IF Debugging
+			Debug.Notification(PlayersHorse.GetName() + " is being equipped for the first time.")
+		ENDIF
 		PlayersHorse.RemoveItem(DES_HorseArmors)
 		PlayersHorse.AddItem(MiscItemList[i], 1)
 		IF (PlayersHorse.GetEquippedArmorInSlot(45)).HasKeyword(CCHorseArmorKeyword)
+			IF Debugging
+				Debug.Notification(PlayersHorse.GetName() + " is wearing armor.")
+			ENDIF
 			(CCHorseArmorDialogueQuest as CCHorseArmorChangeScript).ChangeHorseArmor(i)
 			(Alias_PlayersHorse as DES_HorseEquipScript).EquipHorseArmor(PlayersHorse)
-		ELSE
+		ELSEIF PlayersHorse.IsEquipped(HorseArmorList)
+			IF Debugging
+				Debug.Notification(PlayersHorse.GetName() + " is wearing a saddle.")
+			ENDIF
 			(Alias_PlayersHorse as DES_HorseEquipScript).EquipHorseSaddle(PlayersHorse)
 			(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(HorseArmorList[i])
 		ENDIF
