@@ -12,12 +12,13 @@ Formlist Property DES_ValidWorldspaces auto
 Sound Property DES_HorseStayMarker auto
 Sound Property DES_HorseCallMarker auto
 Formlist Property DES_OwnedHorses auto
+ReferenceAlias Property StablesHorse auto
 
 float horseAngle = 180.0 ; where the horse should appear relative to the player, clockwise from north.
 float horseDistance = 512.0
 
 Event OnKeyUp(Int KeyCode, Float HoldTime)
-	Actor LastRiddenHorse = Game.GetPlayersLastRiddenHorse()
+	Actor LastRiddenHorse = StablesHorse
 	IF (KeyCode == horseKey && !Utility.IsInMenuMode() && !UI.IsTextInputEnabled()) && !Game.GetCurrentCrosshairRef() && !PlayerRef.IsOnMount(); this is a valid keypress
 		IF (!PlayerRef.IsInInterior() && DES_ValidWorldspaces.HasForm(PlayerRef.getWorldSpace())) ; this is a valid place to summon the horse
 			IF HoldTime < papyrusinimanipulator.PullFloatFromIni("Data/H2Horse.ini", "General", "HoldTime", 0.9000) 
