@@ -99,8 +99,6 @@ Function CallLastHorse()
 
 endFunction
 
-EndState
-
 float function addAngles(float angle, float turn)
     angle += turn
     while(angle >= 360.0)
@@ -162,3 +160,5 @@ State CalledHorse
 EndState
 
 State UncalledHorse
+
+EndState
