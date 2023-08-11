@@ -103,7 +103,7 @@ Function EquipHorse(Actor PlayersHorse)
 	ENDIF
 	Int i = HorseArmorList.Find(PlayersHorse.GetEquippedArmorInSlot(45))
 	IF Debugging
-		Debug.Notification(i + HorseArmorList[i].GetName() + MiscItemList[i])
+		Debug.Notification(i + HorseArmorList[i].GetName() + MiscItemList[i].GetName())
 	ENDIF
 	IF PlayersHorse.IsEquipped(HorseArmorList) && PlayersHorse.GetItemCount(MiscItemList) == 0
 		PlayersHorse.RemoveItem(DES_HorseArmors)
