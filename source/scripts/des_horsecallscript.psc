@@ -1,4 +1,5 @@
 Scriptname DES_HorseCallScript extends Quest
+{Controls the horse call mechanic.}
 
 Actor Property PlayerRef Auto
 bool Property HorseSelectTutorial  auto
@@ -18,6 +19,7 @@ float horseAngle = 180.0 ; where the horse should appear relative to the player,
 float horseDistance = 512.0
 
 Event OnKeyUp(Int KeyCode, Float HoldTime)
+{Sends an event when HorseKey is raised up. The actor called will be whatever horse is currently filled in the "stables" quest PlayersHorse alias. There are checks to  prevent the horse getting called into interiors as well as a mechanics to select a specific horse from a SkyUILib list menu.}
 	Actor LastRiddenHorse = StablesHorse
 	IF (KeyCode == horseKey && !Utility.IsInMenuMode() && !UI.IsTextInputEnabled()) && !Game.GetCurrentCrosshairRef() && !PlayerRef.IsOnMount(); this is a valid keypress
 		IF (!PlayerRef.IsInInterior() && DES_ValidWorldspaces.HasForm(PlayerRef.getWorldSpace())) ; this is a valid place to summon the horse
@@ -26,36 +28,7 @@ Event OnKeyUp(Int KeyCode, Float HoldTime)
 					CallLastHorse()
 				ENDIF
 			ELSE
-				IF Game.GetFormFromFile(0xE05, "UIExtensions.esp")
-					int n = DES_OwnedHorses.getSize()
-					while n > 0
-						Actor OwnedHorse = DES_OwnedHorses.GetAt(n) as actor
-						IF OwnedHorse && OwnedHorse.IsDead()
-							DES_OwnedHorses.RemoveAddedForm(OwnedHorse)
-						ENDIF
-						n -= 1
-					endwhile
-					int nHorses = DES_OwnedHorses.getSize()
-					IF nHorses > 1
-						UISelectionMenu menu = UIExtensions.GetMenu("UISelectionMenu") as UISelectionMenu	
-						menu.OpenMenu(aForm=DES_OwnedHorses)
-						Actor SelectedHorse = menu.GetResultForm() as Actor
-						StablesHorse.ForceRefTo(SelectedHorse)
-						RegisterForAnimationEvent(PlayerRef, "tailHorseMount")
-						Debug.Notification("You call for " + SelectedHorse.GetDisplayName() + ".")
-						HorseWhistle()
-						Alias_PlayersHorse.Clear()
-						Alias_PlayersHorse.ForceRefTo(SelectedHorse)
-						SelectedHorse.EvaluatePackage()
-						IF !PlayerRef.HasLOS(SelectedHorse)
-							float az = addAngles(PlayerRef.getAngleZ(), horseAngle)
-							SelectedHorse.moveTo(PlayerRef, horseDistance * math.sin(az), horseDistance * Math.cos(az), 0.0, true)
-						ENDIF
-						GoToState("UncalledHorse")
-					ENDIF
-				ELSE
-					CallLastHorse()
-				ENDIF
+				SelectHorse()
 			ENDIF
 		ELSE
 			IF (LastRiddenHorse && LastRiddenHorse.IsInFaction(PlayerHorseFaction)) ; there is a last horse, and it's the players
@@ -66,6 +39,7 @@ Event OnKeyUp(Int KeyCode, Float HoldTime)
 endEvent
 
 Event OnAnimationEvent(ObjectReference akSource, string asEventName)
+{This event clears the H2Horse alias and reverts control of the horse's AI to the "stables" quest.}
     if (akSource == PlayerRef) && (asEventName == "tailHorseMount")
         GoToState("UncalledHorse")
         UnregisterForAnimationEvent(PlayerRef, "tailHorseMount")
@@ -73,33 +47,76 @@ Event OnAnimationEvent(ObjectReference akSource, string asEventName)
     endif
 EndEvent
 
-Function HorseWhistle()
+Function HorseWhistle(Actor LastRiddenHorse)
+{This function plays the whistling sound when the Player calls for their horse. Code is present here for patchless compatibility with Animated Whistling.}
 
+	Alias_PlayersHorse.Clear()
 	IF !PlayerRef.IsWeaponDrawn() && PlayerRef.GetSitState() == 0
 		Debug.SendAnimationEvent(PlayerRef, "Whistling")
 		MfgConsoleFunc.SetPhoneMe(PlayerRef, 6, 30)
-		DES_HorseCallMarker.Play(PlayerRef)
+		IF (GetState() == "UncalledHorse")
+			DES_HorseCallMarker.Play(PlayerRef)
+			Alias_PlayersHorse.ForceRefTo(LastRiddenHorse)
+		ELSE
+			DES_HorseStayMarker.Play(PlayerRef)
+		ENDIF
 		Utility.Wait(1.0)
 		MfgConsoleFunc.ResetPhonemeModifier(PlayerRef)
 		Debug.SendAnimationEvent(PlayerRef, "OffsetStop")
 	ELSE
-		DES_HorseCallMarker.Play(PlayerRef)
+		IF (GetState() == "UncalledHorse")
+			DES_HorseCallMarker.Play(PlayerRef)
+			Alias_PlayersHorse.ForceRefTo(LastRiddenHorse)
+		ELSE
+			DES_HorseStayMarker.Play(PlayerRef)
+		ENDIF
 	ENDIF
+	LastRiddenHorse.EvaluatePackage()
 
 endFunction
 
-
 Function CallLastHorse()
-
+{This function controls switching between calling the horse and telling the horse to stay.}
 	IF (GetState() == "UncalledHorse")
 		GoToState("CalledHorse")
 	ELSE
 		GoToState("UncalledHorse")
 	ENDIF
+endFunction
 
+Function SelectHorse()
+{If the Player has UI Extensions installed, this function will allowed them to pick from a list of their owned horses to call to them.}
+	IF Game.GetFormFromFile(0xE05, "UIExtensions.esp")
+		int n = DES_OwnedHorses.getSize()
+		while n > 0
+			Actor OwnedHorse = DES_OwnedHorses.GetAt(n) as actor
+			IF OwnedHorse && OwnedHorse.IsDead()
+				DES_OwnedHorses.RemoveAddedForm(OwnedHorse)
+			ENDIF
+			n -= 1
+		endwhile
+		int nHorses = DES_OwnedHorses.getSize()
+		IF nHorses > 1
+			UISelectionMenu menu = UIExtensions.GetMenu("UISelectionMenu") as UISelectionMenu	
+			menu.OpenMenu(aForm=DES_OwnedHorses)
+			Actor SelectedHorse = menu.GetResultForm() as Actor
+			StablesHorse.ForceRefTo(SelectedHorse)
+			RegisterForAnimationEvent(PlayerRef, "tailHorseMount")
+			Debug.Notification("You call for " + SelectedHorse.GetDisplayName() + ".")
+			HorseWhistle(SelectedHorse)
+			IF !PlayerRef.HasLOS(SelectedHorse)
+				float az = addAngles(PlayerRef.getAngleZ(), horseAngle)
+				SelectedHorse.moveTo(PlayerRef, horseDistance * math.sin(az), horseDistance * Math.cos(az), 0.0, true)
+			ENDIF
+			GoToState("UncalledHorse")
+		ENDIF
+	ELSE
+		CallLastHorse()
+	ENDIF
 endFunction
 
 float function addAngles(float angle, float turn)
+{This function controls the angles at which the horse is spawned if the Player doesn't currently have LOS on it.}
     angle += turn
     while(angle >= 360.0)
         angle -= 360.0
@@ -111,16 +128,13 @@ float function addAngles(float angle, float turn)
 endFunction
 
 State CalledHorse
-
+{The CalledHorse state controls both calling the horse and telling it to stay. The "stables" quest PlayersHorse alias is called and the associated actor reference is temporarily forced to an alias in H2Horse. The alias has a follow package tied to the Player. Uncalling the horse will clear the H2Horse alias and revert control of the horse's AI to the "stables" quest.}
+	
 	EVENT OnStateBegin()
-
 		Actor LastRiddenHorse = StablesHorse
-		RegisterForAnimationEvent(PlayerRef, "tailHorseMount")
+		RegisterForAnimationEvent(PlayerRef, "tailHorseMount") ;Registered to track dismount, which will remove the Horse from the H2Horse alias.
 		Debug.Notification("You call for " + LastRiddenHorse.GetDisplayName() + ".")
-		HorseWhistle()
-		Alias_PlayersHorse.Clear()
-		Alias_PlayersHorse.ForceRefTo(LastRiddenHorse)
-		LastRiddenHorse.EvaluatePackage()
+		HorseWhistle(LastRiddenHorse)
 		IF !PlayerRef.HasLOS(LastRiddenHorse)
 			float az = addAngles(PlayerRef.getAngleZ(), horseAngle)
 			LastRiddenHorse.moveTo(PlayerRef, horseDistance * math.sin(az), horseDistance * Math.cos(az), 0.0, true)
@@ -128,33 +142,20 @@ State CalledHorse
 		IF !DES_OwnedHorses.HasForm(LastRiddenHorse)
 			DES_OwnedHorses.addForm(LastRiddenHorse)
 		ENDIF
-		IF DES_OwnedHorses.GetSize() > 1 && !HorseSelectTutorial
-			IF HorseKey == 35
+		IF DES_OwnedHorses.GetSize() > 1 && !HorseSelectTutorial ;A tutorial regarding the horse selection list will play if the Player has UI Extentions installed. It will only play if HorseKey is H since the tutorial specifically refers to the key.
+			IF Game.GetFormFromFile(0xE05, "UIExtensions.esp") && HorseKey == 35
 				Utility.Wait(1)
 				HelpMessages[0].ShowAsHelpMessage("HorseSelectTutorial", messageDuration, 1.0, 1)
 				HorseSelectTutorial = True
 			ENDIF
 		ENDIF
-
 	ENDEVENT
 
 	EVENT OnStateEnd()
-
 		Actor LastRiddenHorse = StablesHorse
 		UnregisterForAnimationEvent(PlayerRef, "tailHorseMount")
 		Debug.Notification("You tell "+ LastRiddenHorse.GetDisplayName() + " to wait.")
-		IF !PlayerRef.IsWeaponDrawn() && PlayerRef.GetSitState() == 0
-			Debug.SendAnimationEvent(PlayerRef, "Whistling")
-			MfgConsoleFunc.SetPhoneMe(PlayerRef, 6, 30)
-			DES_HorseStayMarker.Play(PlayerRef)
-			Utility.Wait(1.0)
-			MfgConsoleFunc.ResetPhonemeModifier(PlayerRef)
-			Debug.SendAnimationEvent(PlayerRef, "OffsetStop")
-		ELSE
-			DES_HorseStayMarker.Play(PlayerRef)
-		ENDIF
-		Alias_PlayersHorse.Clear()
-		LastRiddenHorse.EvaluatePackage()
+		HorseWhistle(LastRiddenHorse)
 	ENDEVENT
 
 EndState
