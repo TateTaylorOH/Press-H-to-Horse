@@ -40,6 +40,7 @@ Event OnKeyUp(Int KeyCode, Float HoldTime)
 						UISelectionMenu menu = UIExtensions.GetMenu("UISelectionMenu") as UISelectionMenu	
 						menu.OpenMenu(aForm=DES_OwnedHorses)
 						Actor SelectedHorse = menu.GetResultForm() as Actor
+						StablesHorse.ForceRefTo(SelectedHorse)
 						RegisterForAnimationEvent(PlayerRef, "tailHorseMount")
 						Debug.Notification("You call for " + SelectedHorse.GetDisplayName() + ".")
 						IF !PlayerRef.IsWeaponDrawn() && PlayerRef.GetSitState() == 0
@@ -95,7 +96,7 @@ State CalledHorse
 
 	EVENT OnStateBegin()
 
-		Actor LastRiddenHorse = Game.GetPlayersLastRiddenHorse()
+		Actor LastRiddenHorse = StablesHorse
 		RegisterForAnimationEvent(PlayerRef, "tailHorseMount")
 		Debug.Notification("You call for " + LastRiddenHorse.GetDisplayName() + ".")
 		IF !PlayerRef.IsWeaponDrawn() && PlayerRef.GetSitState() == 0
@@ -130,7 +131,7 @@ State CalledHorse
 
 	EVENT OnStateEnd()
 
-		Actor LastRiddenHorse = Game.GetPlayersLastRiddenHorse()
+		Actor LastRiddenHorse = StablesHorse
 		UnregisterForAnimationEvent(PlayerRef, "tailHorseMount")
 		Debug.Notification("You tell "+ LastRiddenHorse.GetDisplayName() + " to wait.")
 		IF !PlayerRef.IsWeaponDrawn() && PlayerRef.GetSitState() == 0
