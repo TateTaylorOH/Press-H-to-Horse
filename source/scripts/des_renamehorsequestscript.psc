@@ -1,30 +1,14 @@
 Scriptname DES_RenameHorseQuestScript extends Quest  
 {Controls renaming horses and importing them onto the H2Horse framework.}
 
-;Below are inventory objects that are checked to see what visual armor to equip to the horse.}
-MiscObject Property CCHorseArmorMiscArmorElven auto
-MiscObject Property CCHorseArmorMiscArmorSteel auto
-MiscObject Property DES_DarkBrotherhoodSaddle auto
-MiscObject Property DES_ImperialSaddle auto
-MiscObject Property DES_Saddle auto
-MiscObject Property DES_StormcloakSaddle auto
-MiscObject Property DES_WhiteSaddle auto
-
-;Below are visual armors that will be equipped to the horse based on what misc item is placed in the inventory.}
-Armor Property ccBGSSSE034_HorseSaddleLight auto
-Armor Property ccBGSSSE034_HorseSaddleStormcloak auto
-Armor Property CCHorseArmorElven auto
-Armor Property CCHorseArmorSteel auto
-Armor Property HorseSaddle auto
-Armor Property HorseSaddleImperial auto
-Armor Property HorseSaddleShadowmere auto
-
-;Bellow are all the miscellaneous properties.
+Armor[] Property HorseArmorList auto
 Bool Property Debugging auto
 Faction Property PlayerHorseFaction auto
 Formlist Property DES_HorseArmors auto ;A formlist of all the armor records related to horses (i.e. HorseSaddle)
 Formlist Property DES_OwnedHorses auto ;A list of horses the Player owns.
 GlobalVariable Property DES_PlayerOwnsHorse auto ;Checks is the Player has bought a horse or not.
+Keyword Property CCHorseArmorKeyword auto
+MiscObject[] Property MiscItemList auto
 Quest Property ccBGSSSE034_HorseSaddleQuest auto
 Quest Property CCHorseArmorDialogueQuest auto
 Quest Property DES_RenameHorseQuest auto
@@ -32,10 +16,6 @@ ReferenceAlias Property Alias_PlayersHorse auto ;Refers to the "PlayersHorse" al
 String[] Property HorseFemaleImperialNamesList auto ;A list of female horse names to prefill the name box. For use with Beyond Skyrim: Cyrodiil.
 String[] Property HorseFemaleNamesList auto ;A list of just female horse names taken from Wild Horses to prefill into the name box.
 String[] Property HorseNamesList auto ;A list of male and female horse names taken from Wild Horses to prefill into the name box.
-
-Armor[] Property HorseArmorList auto
-MiscObject[] Property MiscItemList auto
-Keyword Property CCHorseArmorKeyword auto
 
 ;These functions define what the default prefilled horse name will be. They inheirt Actor from the script that calls them (usually a TIF).
 function renameAnyHorse(Actor PlayersHorse) 
@@ -85,48 +65,3 @@ bool function renameHorse(Actor PlayersHorse, string defaultName = "Honse")
 		return false	
 	ENDIF
 endFunction
-
-
-Function EquipHorse(Actor PlayersHorse)
-{This will prepare the horse for use within the H2Horse framework. It will set the horse's outfit to be blank, then check what armor the horse was wearing, give that horse the matching miscitem and reequip their inital gear. It is then handed of to the equip script to set carry weight and AI.}
-	Armor ReindeerSaddle = game.GetFormFromFile(0x804, "ccvsvsse001-winter.esl") as Armor
-	DES_HorseInventoryScript Inventory = (DES_RenameHorseQuest as DES_HorseInventoryScript)
-	DES_HorseEquipScript Equip = (Alias_PlayersHorse as DES_HorseEquipScript)
-	Debugging = papyrusinimanipulator.PullboolFromIni("Data/H2Horse.ini", "General", "Debugging", False)
-	IF !PlayersHorse.IsInFaction(PlayerHorseFaction)
-		PlayersHorse.SetFactionRank(PlayerHorseFaction, 1)
-	ENDIF
-	IF !DES_OwnedHorses.HasForm(PlayersHorse)
-		DES_OwnedHorses.AddForm(PlayersHorse)
-	ENDIF
-	DES_PlayerOwnsHorse.SetValue(1)
-	Inventory.BaseCarryWeight = PlayersHorse.GetBaseAV("CarryWeight") as int
-	IF Inventory.BaseCarryWeight == 0
-		Inventory.BaseCarryWeight = 999
-	ENDIF
-	Int i = HorseArmorList.Find(PlayersHorse.GetEquippedArmorInSlot(45))
-	IF Debugging
-		Debug.Notification(i + " " + HorseArmorList[i].GetName() + " " + MiscItemList[i].GetName())
-	ENDIF
-	IF PlayersHorse.IsEquipped(DES_HorseArmors) && PlayersHorse.GetItemCount(MiscItemList) == 0
-		IF Debugging
-			Debug.Notification(PlayersHorse.GetDisplayName() + " is being equipped for the first time.")
-		ENDIF
-		PlayersHorse.RemoveItem(DES_HorseArmors)
-		PlayersHorse.AddItem(MiscItemList[i], 1)
-		IF (PlayersHorse.GetEquippedArmorInSlot(45)).HasKeyword(CCHorseArmorKeyword)
-			IF Debugging
-				Debug.Notification(PlayersHorse.GetDisplayName() + " is wearing armor.")
-			ENDIF
-			(CCHorseArmorDialogueQuest as CCHorseArmorChangeScript).ChangeHorseArmor(i)
-			Equip.EquipHorseArmor(PlayersHorse)
-		ELSEIF PlayersHorse.IsEquipped(DES_HorseArmors)
-			IF Debugging
-				Debug.Notification(PlayersHorse.GetDisplayName() + " is wearing a saddle.")
-			ENDIF
-			Equip.EquipHorseSaddle(PlayersHorse)
-			(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(HorseArmorList[i])
-		ENDIF
-	ENDIF
-	Alias_PlayersHorse.Clear()
-EndFunction
