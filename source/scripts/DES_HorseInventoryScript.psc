@@ -30,38 +30,22 @@ Spell Property DES_HorseRally auto
 Spell Property DES_TrampleCloak auto
 
 Event OnKeyUp(Int KeyCode, Float HoldTime)
+{This event controls opening and closing the horse's inventory. It will check to see that the actor in your crosshair is a horse you own, then force it to H2Horse's alias, and then open the inventory. If horsekey is held, it will open the gift menu so you can feed the horse.}
 	If KeyCode == (DES_RenameHorseQuest as DES_HorseCallScript).horsekey && !Utility.IsInMenuMode() && !UI.IsTextInputEnabled() && Game.GetCurrentCrosshairRef()
+	Alias_PlayersHorse.ForceRefTo(Game.GetCurrentCrosshairRef())
+	Actor PlayersHorse = Alias_PlayersHorse.getActorReference()
 	Actor DwarvenHorse = Game.GetFormFromFile(0x38D5, "cctwbsse001-puzzledungeon.esm") As Actor
 	Actor Reindeer = Game.GetFormFromFile(0x80E, "ccvsvsse001-winter.esl") as Actor
 	Debugging = papyrusinimanipulator.PullboolFromIni("Data/H2Horse.ini", "General", "Debugging", False)
 		IF HoldTime < papyrusinimanipulator.PullFloatFromIni("Data/H2Horse.ini", "General", "HoldTime", 0.9000)
-			Alias_PlayersHorse.ForceRefTo(Game.GetCurrentCrosshairRef())
-			Actor PlayersHorse = Alias_PlayersHorse.getActorReference()
 			If Game.GetCurrentCrosshairRef() == PlayersHorse && PlayersHorse && PlayersHorse.IsInFaction(PlayerHorseFaction) && !PlayersHorse.IsDead() && Game.GetCurrentCrosshairRef()!= DwarvenHorse
 				RegisterForMenu("ContainerMenu")
-				IF (GetState() == "Saddled")
-					IF Debugging
-						Debug.Notification(PlayersHorse.GetDisplayName() + "'s current state: Saddled")
-					ENDIF
-					PlayersHorse.SetAV("CarryWeight", (papyrusinimanipulator.PullFloatFromIni("Data/H2Horse.ini", "General", "CarryWeight", 105.0)))
-				ELSEIF (GetState() == "Armored")
-					IF Debugging
-						Debug.Notification(PlayersHorse.GetDisplayName() + "'s current state: Armored")
-					ENDIF
-					PlayersHorse.SetAV("CarryWeight", 0.0)
-				ELSEIF (GetState() == "Unequipped")
-					IF Debugging
-						Debug.Notification(PlayersHorse.GetDisplayName() + "'s current state: Unequipped")
-					ENDIF
-					PlayersHorse.SetAV("CarryWeight", BaseCarryWeight)
-				ENDIF
+				SetCarryWeight(PlayersHorse)
 				PlayersHorse.OpenInventory(true)
 			Else
 				Alias_PlayersHorse.Clear()
 			EndIf
 		Else
-			Alias_PlayersHorse.ForceRefTo(Game.GetCurrentCrosshairRef())
-			Actor PlayersHorse = Alias_PlayersHorse.getActorReference()
 			If Game.GetCurrentCrosshairRef() == PlayersHorse && PlayersHorse.IsInFaction(PlayerHorseFaction) && !PlayersHorse.IsDead()
 				RegisterForMenu("GiftMenu")
 				IF PlayersHorse != DwarvenHorse
@@ -77,6 +61,7 @@ Event OnKeyUp(Int KeyCode, Float HoldTime)
 EndEvent
 
 Event OnMenuClose(String MenuName)
+{This event controls unregistering the relevant menu and clearing H2Horse's alias.}
 	If MenuName == "ContainerMenu"
 		UnregisterForMenu("InventoryMenu")
 		while UnequipRunning == true
@@ -89,10 +74,29 @@ Event OnMenuClose(String MenuName)
 	EndIf
 EndEvent
 
+Function SetCarryWeight(Actor PlayersHorse)
+{This function sets the horse's CarryWeight upon opening their inventory. This is done because carryWeight is not presistant across saves.}
+	IF (GetState() == "Saddled")
+		IF Debugging
+			Debug.Notification(PlayersHorse.GetDisplayName() + "'s current state: Saddled")
+		ENDIF
+		PlayersHorse.SetAV("CarryWeight", (papyrusinimanipulator.PullFloatFromIni("Data/H2Horse.ini", "General", "CarryWeight", 105.0)))
+	ELSEIF (GetState() == "Armored")
+		IF Debugging
+			Debug.Notification(PlayersHorse.GetDisplayName() + "'s current state: Armored")
+		ENDIF
+		PlayersHorse.SetAV("CarryWeight", 0.0)
+	ELSEIF (GetState() == "Unequipped")
+		IF Debugging
+			Debug.Notification(PlayersHorse.GetDisplayName() + "'s current state: Unequipped")
+		ENDIF
+		PlayersHorse.SetAV("CarryWeight", BaseCarryWeight)
+	ENDIF
+endFunction
+
 Function FirstTimeEquipHorse(Actor PlayersHorse)
 {This will prepare the horse for use within the H2Horse framework. It will set the horse's outfit to be blank, then check what armor the horse was wearing, give that horse the matching miscitem and reequip their inital gear. It is then handed of to the equip script to set carry weight and AI.}
 	Armor ReindeerSaddle = game.GetFormFromFile(0x804, "ccvsvsse001-winter.esl") as Armor
-	DES_HorseInventoryScript Inventory = (DES_RenameHorseQuest as DES_HorseInventoryScript)
 	Debugging = papyrusinimanipulator.PullboolFromIni("Data/H2Horse.ini", "General", "Debugging", False)
 	IF !PlayersHorse.IsInFaction(PlayerHorseFaction)
 		PlayersHorse.SetFactionRank(PlayerHorseFaction, 1)
@@ -101,9 +105,9 @@ Function FirstTimeEquipHorse(Actor PlayersHorse)
 		DES_OwnedHorses.AddForm(PlayersHorse)
 	ENDIF
 	DES_PlayerOwnsHorse.SetValue(1)
-	Inventory.BaseCarryWeight = PlayersHorse.GetBaseAV("CarryWeight") as int
-	IF Inventory.BaseCarryWeight == 0
-		Inventory.BaseCarryWeight = 999
+	BaseCarryWeight = PlayersHorse.GetBaseAV("CarryWeight") as int
+	IF BaseCarryWeight == 0
+		BaseCarryWeight = 999
 	ENDIF
 	Int i = HorseArmorList.Find(PlayersHorse.GetEquippedArmorInSlot(45))
 	IF Debugging
@@ -120,20 +124,21 @@ Function FirstTimeEquipHorse(Actor PlayersHorse)
 				Debug.Notification(PlayersHorse.GetDisplayName() + " is wearing armor.")
 			ENDIF
 			(CCHorseArmorDialogueQuest as CCHorseArmorChangeScript).ChangeHorseArmor(i)
-			Inventory.EquipHorseArmor(PlayersHorse)
+			ArmorMode(PlayersHorse)
 		ELSEIF PlayersHorse.IsEquipped(DES_HorseArmors)
 			IF Debugging
 				Debug.Notification(PlayersHorse.GetDisplayName() + " is wearing a saddle.")
 			ENDIF
-			Inventory.EquipHorseSaddle(PlayersHorse)
 			(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(HorseArmorList[i])
+			SaddleMode(PlayersHorse)
 		ENDIF
 	ENDIF
 	Alias_PlayersHorse.Clear()
 EndFunction
 
 Function EquipItem(Form akBaseItem, int aiItemCount, ObjectReference akItemReference, ObjectReference akSourceContainer, Actor PlayersHorse)
-	IF !DES_HorseAllForms.HasForm(akBaseItem)
+{This function prevents the Player from placing items on their horses unless they have a saddle. Placing the appropriate miscitems on the horse will cause this function to match the proper visual armor and equip it. Called in an OnItemAdded event.}
+	IF !DES_HorseAllForms.HasForm(akBaseItem) && !(GetState() == "Saddled")
 		PlayersHorse.RemoveItem(akBaseItem, aiItemCount, True, akSourceContainer)
 		Debug.Notification(PlayersHorse.GetDisplayName() +  " isn't wearing a saddle.")
 	ELSEIF DES_HorseMiscItems.HasForm(akBaseItem) && PlayersHorse.IsEquipped(DES_HorseArmors)
@@ -143,15 +148,16 @@ Function EquipItem(Form akBaseItem, int aiItemCount, ObjectReference akItemRefer
 	ELSEIF akBaseItem.HasKeyword(DES_ArmorKeyword)
 		Int i = MiscItemList.Find(akBaseItem as MiscObject)
 		(CCHorseArmorDialogueQuest as CCHorseArmorChangeScript).ChangeHorseArmor(i)
-		EquipHorseArmor(PlayersHorse)
-	ELSEIF PlayersHorse.IsEquipped(DES_HorseArmors)
+		ArmorMode(PlayersHorse)
+	ELSEIF akBaseItem.HasKeyword(DES_SaddleKeyword)
 		Int i = MiscItemList.Find(akBaseItem as MiscObject)
-		EquipHorseSaddle(PlayersHorse)
 		(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(HorseArmorList[i])
+		SaddleMode(PlayersHorse)
 	ENDIF
 endFunction
 
 Function UnequipItem(Form akBaseItem, int aiItemCount, ObjectReference akItemReference, ObjectReference akSourceContainer, Actor PlayersHorse)
+{This function monitors the horse for when the appropriate miscitems are removed. Upon removal it will revert the horse to a bareback state. Called in an OnItemRemoved event.}
 	if DES_HorseMiscItems.HasForm(akBaseItem) && PlayersHorse.GetItemCount(DES_HorseMiscItems) >= 1
 		return
 	elseif akBaseItem.HasKeyword(DES_ArmorKeyword) || akBaseItem.HasKeyword(DES_SaddleKeyword)
@@ -163,45 +169,60 @@ Function UnequipItem(Form akBaseItem, int aiItemCount, ObjectReference akItemRef
 			Debug.Notification(PlayersHorse.GetDisplayName() + "'s saddle has been emptied into your inventory.")
 			PlayersHorse.RemoveAllItems(akTransferTo = PlayerRef)
 		ENDIF
-		UnequipHorse(PlayersHorse)
+		UnequipMode(PlayersHorse)
 	endif
 endFunction
 
-Function UnequipHorse(Actor PlayersHorse)
-	GoToState("ChangingHorse")
-	HorseToEquip = PlayersHorse
-	GoToState("Unequipped")
-EndFunction
-
-Function EquipHorseArmor(Actor PlayersHorse)
-	GoToState("ChangingHorse")
-	HorseToEquip = PlayersHorse
-	GoToState("Armored")
-EndFunction
-
-Function EquipHorseSaddle(Actor PlayersHorse)
+;These functions will swap the horse between the various states of saddled, armored, and unequipped. The empty "ChangingHorse" state simply ensures that OnBeginState and OnEndState triggers appropriately.
+Function SaddleMode(Actor PlayersHorse)
 	GoToState("ChangingHorse")
 	HorseToEquip = PlayersHorse
 	GoToState("Saddled")
 EndFunction
 
-State Unequipped
+Function ArmorMode(Actor PlayersHorse)
+	GoToState("ChangingHorse")
+	HorseToEquip = PlayersHorse
+	GoToState("Armored")
+EndFunction
+
+Function UnequipMode(Actor PlayersHorse)
+	GoToState("ChangingHorse")
+	HorseToEquip = PlayersHorse
+	GoToState("Unequipped")
+EndFunction
+
+;This state will put the horse into the "Saddled Mode". It will set the carryweight to 105 (or whatever is specified in the INI) and make it so the horse will flee in combat.
+State Saddled
 	Event OnBeginState()
 		Actor PlayersHorse = HorseToEquip
+		IF PlayersHorse == none
+			PlayersHorse = Alias_PlayersHorse.getActorReference()
+		ENDIF
 		Debugging = papyrusinimanipulator.PullboolFromIni("Data/H2Horse.ini", "General", "Debugging", False)
 		IF Debugging
-			Debug.Notification(PlayersHorse.GetDisplayName() + "'s state changed: Unequipped")
+			Debug.Notification(PlayersHorse.GetDisplayName() + "'s state changed: Saddled")
 		ENDIF
-		(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(none)
-		PlayersHorse.SetOutfit(DES_NakedHorseOutfit)
-		PlayersHorse.SetAV("CarryWeight", ((DES_RenameHorseQuest as DES_HorseInventoryScript).BaseCarryWeight))		
-		UnequipRunning = False
+		PlayersHorse.SetAV("CarryWeight", (papyrusinimanipulator.PullFloatFromIni("Data/H2Horse.ini", "General", "CarryWeight", 105.0)))
+		PlayersHorse.AddSpell(DES_HorseFear)
+	EndEvent
+	
+	Event OnEndState()
+		Actor PlayersHorse = HorseToEquip
+		IF PlayersHorse == none
+			PlayersHorse = Alias_PlayersHorse.getActorReference()
+		ENDIF
+		PlayersHorse.RemoveSpell(DES_HorseFear)
 	EndEvent
 EndState
 
+;This state will put the horse into the "Armored Mode". It will set the carryweight to 0, prevent items from being placed on it, and make it so the horse will fight alongside you. A damage buff is given to the horse as well.
 State Armored
 	Event OnBeginState()
 		Actor PlayersHorse = HorseToEquip
+		IF PlayersHorse == none
+			PlayersHorse = Alias_PlayersHorse.getActorReference()
+		ENDIF
 		Debugging = papyrusinimanipulator.PullboolFromIni("Data/H2Horse.ini", "General", "Debugging", False)
 		IF Debugging
 			Debug.Notification(PlayersHorse.GetDisplayName() + "'s state changed: Armored")
@@ -213,28 +234,33 @@ State Armored
 	
 	Event OnEndState()
 		Actor PlayersHorse = HorseToEquip
+		IF PlayersHorse == none
+			PlayersHorse = Alias_PlayersHorse.getActorReference()
+		ENDIF
 		PlayersHorse.RemoveSpell(DES_TrampleCloak)
 		PlayersHorse.RemoveSpell(DES_HorseRally)
 	EndEvent
 EndState
 
-State Saddled
+;This state will put the horse into the "Unequipped Mode". It will remove all visual items from the horse and it will appear bareback. From there the horse is essentially reverted to vanilla behavior.
+State Unequipped
 	Event OnBeginState()
 		Actor PlayersHorse = HorseToEquip
+		IF PlayersHorse == none
+			PlayersHorse = Alias_PlayersHorse.getActorReference()
+		ENDIF
 		Debugging = papyrusinimanipulator.PullboolFromIni("Data/H2Horse.ini", "General", "Debugging", False)
 		IF Debugging
-			Debug.Notification(PlayersHorse.GetDisplayName() + "'s state changed: Saddled")
+			Debug.Notification(PlayersHorse.GetDisplayName() + "'s state changed: Unequipped")
 		ENDIF
-		PlayersHorse.SetAV("CarryWeight", (papyrusinimanipulator.PullFloatFromIni("Data/H2Horse.ini", "General", "CarryWeight", 105.0)))
-		PlayersHorse.AddSpell(DES_HorseFear)
-	EndEvent
-	
-	Event OnEndState()
-		Actor PlayersHorse = HorseToEquip
-		PlayersHorse.RemoveSpell(DES_HorseFear)
+		(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(none)
+		PlayersHorse.SetOutfit(DES_NakedHorseOutfit)
+		PlayersHorse.SetAV("CarryWeight", BaseCarryWeight)		
+		UnequipRunning = False
 	EndEvent
 EndState
 
+;This state is intentionally empty.
 State ChangingHorse
 
 EndState

@@ -14,7 +14,7 @@ PlayersHorse.ForceRefTo(Alias_Horse.GetActorRef())
 game.IncrementStat( "Horses Owned" )
 Actor MountToRename = Alias_Horse.GetActorRef()
 (Quest.GetQuest("DES_RenameHorseQuest") as DES_RenameHorseQuestScript).renameUniqueHorse(MountToRename, "Queen Alfsigr")
-(Quest.GetQuest("DES_RenameHorseQuest") as DES_RenameHorseQuestScript).equipHorse(MountToRename)
+(Quest.GetQuest("DES_RenameHorseQuest") as DES_HorseInventoryScript).FirstTimeEquipHorse(MountToRename)
 ;END CODE
 EndFunction
 ;END FRAGMENT

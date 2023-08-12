@@ -41,7 +41,7 @@ function OnContainerChanged(ObjectReference akNewContainer, ObjectReference akOl
 		DES_HorseMiscItems.AddForm(ReindeerSaddle)
 		DES_HorseArmors.AddForm(ReindeerSaddle)
 		DES_HorseAllForms.AddForm(ReindeerSaddle)
-		(Quest.GetQuest("DES_RenameHorseQuest") as DES_RenameHorseQuestScript).equipHorse(MountToRename)
+		(Quest.GetQuest("DES_RenameHorseQuest") as DES_HorseInventoryScript).FirstTimeEquipHorse(MountToRename)
 	endIf
 endFunction
 

@@ -21,7 +21,7 @@ function Fragment_0(ObjectReference akSpeakerRef)
 	(self.GetOwningQuest() as ccvsvsse004_farmmodmanagerscript).BuyHorse()
 	Actor MountToRename = (GetOwningQuest().getAliasByName("Horse") as ReferenceAlias).GetActorRef()
 	(Quest.GetQuest("DES_RenameHorseQuest") as DES_RenameHorseQuestScript).renameAnyHorse(MountToRename)
-	(Quest.GetQuest("DES_RenameHorseQuest") as DES_RenameHorseQuestScript).equipHorse(MountToRename)
+	(Quest.GetQuest("DES_RenameHorseQuest") as DES_HorseInventoryScript).FirstTimeEquipHorse(MountToRename)
 endFunction
 
 ; Skipped compiler generated GotoState

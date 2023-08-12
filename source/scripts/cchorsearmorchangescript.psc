@@ -71,7 +71,7 @@ function ChangeHorseArmor(Int ArmorID)
 					;	doEquipArmor = false
 					;endIf
 					if doEquipArmor
-						self.EquipHorseArmor(PlayerHorseREF, ArmorToEquip)
+						self.FirstTimeEquipHorseArmor(PlayerHorseREF, ArmorToEquip)
 					endIf
 				endIf
 			endIf
@@ -83,7 +83,7 @@ function ChangeHorseArmor(Int ArmorID)
 	endIf
 endFunction
 
-function EquipHorseArmor(actor akPlayerHorseRef, armor akArmorToEquip)
+function FirstTimeEquipHorseArmor(actor akPlayerHorseRef, armor akArmorToEquip)
 
 	self.SwapArmorForMiscObject(akPlayerHorseRef)
 	akPlayerHorseRef.UnequipItemSlot(45)

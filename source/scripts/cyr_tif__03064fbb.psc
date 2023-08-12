@@ -30,5 +30,5 @@ function Fragment_0(ObjectReference akSpeakerRef)
 	game.IncrementStat("Horses Owned", 1)
 	Actor MountToRename = Alias_Horse.GetActorRef()
 	(Quest.GetQuest("DES_RenameHorseQuest") as DES_RenameHorseQuestScript).renameCyrodiilHorse(MountToRename)
-	(Quest.GetQuest("DES_RenameHorseQuest") as DES_RenameHorseQuestScript).equipHorse(MountToRename)
+	(Quest.GetQuest("DES_RenameHorseQuest") as DES_HorseInventoryScript).FirstTimeEquipHorse(MountToRename)
 endFunction

@@ -1,21 +1,9 @@
 Scriptname DES_RenameHorseQuestScript extends Quest  
 {Controls renaming horses and importing them onto the H2Horse framework.}
 
-Armor[] Property HorseArmorList auto
-Bool Property Debugging auto
-Faction Property PlayerHorseFaction auto
-Formlist Property DES_HorseArmors auto ;A formlist of all the armor records related to horses (i.e. HorseSaddle)
-Formlist Property DES_OwnedHorses auto ;A list of horses the Player owns.
-GlobalVariable Property DES_PlayerOwnsHorse auto ;Checks is the Player has bought a horse or not.
-Keyword Property CCHorseArmorKeyword auto
-MiscObject[] Property MiscItemList auto
-Quest Property ccBGSSSE034_HorseSaddleQuest auto
-Quest Property CCHorseArmorDialogueQuest auto
-Quest Property DES_RenameHorseQuest auto
-ReferenceAlias Property Alias_PlayersHorse auto ;Refers to the "PlayersHorse" alias from the "DES_RenameHorseQuest" quest.
-String[] Property HorseFemaleImperialNamesList auto ;A list of female horse names to prefill the name box. For use with Beyond Skyrim: Cyrodiil.
-String[] Property HorseFemaleNamesList auto ;A list of just female horse names taken from Wild Horses to prefill into the name box.
 String[] Property HorseNamesList auto ;A list of male and female horse names taken from Wild Horses to prefill into the name box.
+String[] Property HorseFemaleNamesList auto ;A list of just female horse names taken from Wild Horses to prefill into the name box.
+String[] Property HorseFemaleImperialNamesList auto ;A list of female horse names to prefill the name box. For use with Beyond Skyrim: Cyrodiil.
 
 ;These functions define what the default prefilled horse name will be. They inheirt Actor from the script that calls them (usually a TIF).
 function renameAnyHorse(Actor PlayersHorse) 
