@@ -6,6 +6,8 @@ Quest Property DES_HorseCallTutorialTracker Auto
 Formlist Property DES_ValidWorldspaces auto
 ReferenceAlias Property Alias_PlayersHore auto
 ReferenceAlias Property DES_RenameHorseQuestAlias auto
+LeveledItem Property DES_LItemMiscHostlerItems75 auto
+LeveledItem Property DES_MinimumHostler auto
 
 EVENT OnPlayerLoadGame()
 	GetBaseCarryWeight()
@@ -34,13 +36,21 @@ Function InjectModdedWorldspaces()
 	IF !DES_ValidWorldspaces.HasForm(BSHeartland)
 		DES_ValidWorldspaces.AddForm(BSHeartland)
 	ENDIF
+	
+	MiscObject BSHorseshoe = Game.GetFormFromFile(0x723B8, "BSHeartland.esm") As MiscObject
+	IF !(DES_HorseCallTutorialTracker as DES_HorseCallTutorialTrackerScript).BSHorseshoeAdded == true
+		DES_MinimumHostler.AddForm(BSHorseshoe, 1, 4)
+		DES_LItemMiscHostlerItems75.AddForm(BSHorseshoe, 1, 4)
+	ENDIF
 EndFunction
 
 Function ImportDwarvenHorse()
-	IF !(DES_HorseCallTutorialTracker as DES_HorseCallTutorialTrackerScript).DwarvenHorseEquipped == true
-		Actor DwarvenHorse = Game.GetFormFromFile(0x38D5, "cctwbsse001-puzzledungeon.esm") As Actor
-		(DES_RenameHorseQuest as DES_RenameHorseQuestScript).EquipArmor(DwarvenHorse)
-		(DES_HorseCallTutorialTracker as DES_HorseCallTutorialTrackerScript).DwarvenHorseEquipped = true
-		DES_RenameHorseQuestAlias.Clear()
+	IF Game.GetFormFromFile(0x38D5, "cctwbsse001-puzzledungeon.esm") 
+		IF !(DES_HorseCallTutorialTracker as DES_HorseCallTutorialTrackerScript).DwarvenHorseEquipped == true
+			Actor DwarvenHorse = Game.GetFormFromFile(0x38D5, "cctwbsse001-puzzledungeon.esm") As Actor
+			(DES_RenameHorseQuest as DES_HorseInventoryScript).FirstTimeEquipHorse(DwarvenHorse)
+			(DES_HorseCallTutorialTracker as DES_HorseCallTutorialTrackerScript).DwarvenHorseEquipped = true
+			DES_RenameHorseQuestAlias.Clear()
+		ENDIF
 	ENDIF
 EndFunction

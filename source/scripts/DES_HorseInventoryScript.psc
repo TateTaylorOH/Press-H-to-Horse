@@ -40,7 +40,7 @@ Event OnKeyUp(Int KeyCode, Float HoldTime)
 		IF HoldTime < papyrusinimanipulator.PullFloatFromIni("Data/H2Horse.ini", "General", "HoldTime", 0.9000)
 			If Game.GetCurrentCrosshairRef() == PlayersHorse && PlayersHorse && PlayersHorse.IsInFaction(PlayerHorseFaction) && !PlayersHorse.IsDead() && Game.GetCurrentCrosshairRef()!= DwarvenHorse
 				RegisterForMenu("ContainerMenu")
-				SetCarryWeight(PlayersHorse)
+				UpdateMode(PlayersHorse)
 				PlayersHorse.OpenInventory(true)
 			Else
 				Alias_PlayersHorse.Clear()
@@ -74,8 +74,15 @@ Event OnMenuClose(String MenuName)
 	EndIf
 EndEvent
 
-Function SetCarryWeight(Actor PlayersHorse)
-{This function sets the horse's CarryWeight upon opening their inventory. This is done because carryWeight is not presistant across saves.}
+Function UpdateMode(Actor PlayersHorse)
+{This function sets the current mode of the horse who's inventory the Player is accessing.}
+	IF	!(PlayersHorse.GetEquippedArmorInSlot(45)).HasKeyword(CCHorseArmorKeyword) && PlayersHorse.IsEquipped(DES_HorseArmors)
+		SaddleMode(PlayersHorse)	
+	ELSEIF (PlayersHorse.GetEquippedArmorInSlot(45)).HasKeyword(CCHorseArmorKeyword)
+		ArmorMode(PlayersHorse)
+	ELSEIF !PlayersHorse.IsEquipped(DES_HorseArmors)
+		UnequipMode(PlayersHorse)
+	ENDIF
 	IF (GetState() == "Saddled")
 		IF Debugging
 			Debug.Notification(PlayersHorse.GetDisplayName() + "'s current state: Saddled")

@@ -2,6 +2,7 @@ Scriptname DES_HorseCallScript extends Quest
 {Controls the horse call mechanic.}
 
 Actor Property PlayerRef Auto
+Actor Property SelectedHorse Auto
 bool Property Debugging  auto
 bool Property HorseSelectTutorial  auto
 Faction Property PlayerHorseFaction Auto
@@ -22,6 +23,9 @@ Event OnKeyUp(Int KeyCode, Float HoldTime)
 {Sends an event when HorseKey is raised up. The actor called will be the last owned horse the player rode. There are checks to prevent the horse getting called into interiors as well as a mechanics to select a specific horse from a SkyUILib list menu.}
 	Actor LastRiddenHorse = Game.GetPlayersLastRiddenHorse()
 	Debugging = papyrusinimanipulator.PullboolFromIni("Data/H2Horse.ini", "General", "Debugging", False)
+	IF SelectedHorse == Alias_PlayersHorse.getActorReference()
+		LastRiddenHorse = SelectedHorse
+	ENDIF
 	IF Debugging
 		Debug.Notification("LastRiddenHorse is " + LastRiddenHorse.getDisplayName())
 	ENDIF
@@ -29,6 +33,9 @@ Event OnKeyUp(Int KeyCode, Float HoldTime)
 		IF (!PlayerRef.IsInInterior() && DES_ValidWorldspaces.HasForm(PlayerRef.getWorldSpace())) ; this is a valid place to summon the horse
 			IF HoldTime < papyrusinimanipulator.PullFloatFromIni("Data/H2Horse.ini", "General", "HoldTime", 0.9000) 
 				IF (LastRiddenHorse && LastRiddenHorse.IsInFaction(PlayerHorseFaction)) && !LastRiddenHorse.IsDead(); there is a last horse, it's the players, and it's not dead
+					IF (LastRiddenHorse.GetParentCell() != PlayerRef.GetParentCell())
+						GoToState("")
+					ENDIF
 					HorseCall(LastRiddenHorse)
 				ENDIF
 			ELSE
@@ -45,7 +52,6 @@ endEvent
 Event OnAnimationEvent(ObjectReference akSource, string asEventName)
 {This event clears the H2Horse alias and reverts control of the horse's AI to the "stables" quest.}
     if (akSource == PlayerRef) && (asEventName == "tailHorseMount")
-        GoToState("CalledHorse")
         UnregisterForAnimationEvent(PlayerRef, "tailHorseMount")
         Alias_PlayersHorse.Clear()
     endif
@@ -89,12 +95,18 @@ Function SelectHorse()
 		IF nHorses > 1
 			UISelectionMenu menu = UIExtensions.GetMenu("UISelectionMenu") as UISelectionMenu	
 			menu.OpenMenu(aForm=DES_OwnedHorses)
-			Actor SelectedHorse = menu.GetResultForm() as Actor
+			SelectedHorse = menu.GetResultForm() as Actor
 			RegisterForAnimationEvent(PlayerRef, "tailHorseMount")
 			Debug.Notification("You call for " + SelectedHorse.GetDisplayName() + ".")
+			IF (LastRiddenHorse.GetParentCell() != PlayerRef.GetParentCell())
+				GoToState("")
+			ENDIF
 			HorseCall(SelectedHorse)
 		ENDIF
 	ELSE
+		IF (LastRiddenHorse.GetParentCell() != PlayerRef.GetParentCell())
+			GoToState("")
+		ENDIF
 		HorseCall(LastRiddenHorse)
 	ENDIF
 endFunction

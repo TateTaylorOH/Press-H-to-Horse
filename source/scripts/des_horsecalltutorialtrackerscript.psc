@@ -16,17 +16,12 @@ bool Property ShowTutorials auto
 LeveledItem Property DES_LItemMiscHostlerItems75 auto
 LeveledItem Property DES_MinimumHostler auto
 bool Property DwarvenHorseEquipped auto
+bool Property BSHorseshoeAdded auto
 ReferenceAlias Property DES_RenameHorseQuestAlias auto
 
 Event OnInit()
 	DES_HorseCallTutorialTracker.RegisterForMenu("RaceSex Menu")
 	ccBGSSSE034_WildHorsesQuest.SetStage(10)
-	IF !DwarvenHorseEquipped == true
-		Actor DwarvenHorse = Game.GetFormFromFile(0x38D5, "cctwbsse001-puzzledungeon.esm") As Actor
-		(DES_RenameHorseQuest as DES_RenameHorseQuestScript).EquipArmor(DwarvenHorse)
-		DwarvenHorseEquipped = true
-		DES_RenameHorseQuestAlias.Clear()
-	ENDIF
 EndEvent
 
 Event OnMenuClose(String MenuName)
@@ -34,8 +29,15 @@ Event OnMenuClose(String MenuName)
 	If MenuName == "RaceSex Menu"
 		RegisterForAnimationEvent(PlayerRef, "tailHorseDismount")
 		DES_HorseCallTutorialTracker.UnregisterForMenu("RaceSex Menu")
+		IF !DwarvenHorseEquipped == true
+			Actor DwarvenHorse = Game.GetFormFromFile(0x38D5, "cctwbsse001-puzzledungeon.esm") As Actor
+			(DES_RenameHorseQuest as DES_HorseInventoryScript).FirstTimeEquipHorse(DwarvenHorse)
+			DwarvenHorseEquipped = true
+			DES_RenameHorseQuestAlias.Clear()
+		ENDIF
 		DES_MinimumHostler.AddForm(BSHorseshoe, 1, 4)
 		DES_LItemMiscHostlerItems75.AddForm(BSHorseshoe, 1, 4)
+		BSHorseshoeAdded = true
 	EndIf
 EndEvent
 
