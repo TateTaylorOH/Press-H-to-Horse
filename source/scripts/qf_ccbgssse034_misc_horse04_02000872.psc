@@ -1,6 +1,6 @@
 ;/ Decompiled by Champollion V1.0.1
 Source   : QF_ccBGSSSE034_Misc_Horse04_02000872.psc
-Modified : 2021-08-19 11:15:01
+ModIFied : 2021-08-19 11:15:01
 Compiled : 2021-08-24 17:21:27
 User     : builds
 Computer : RKVBGSGPUVM04
@@ -12,18 +12,18 @@ referencealias property Alias_Horse01Pointer auto
 
 ;-- Variables ---------------------------------------
 
-;-- Functions ---------------------------------------
+;-- FUNCTIONs ---------------------------------------
 
-function Fragment_0()
+FUNCTION Fragment_0()
 
 	self.SetObjectiveDisplayed(0, true, false)
-endFunction
+ENDFUNCTION
 
 ; Skipped compiler generated GetState
 
-function Fragment_3()
+FUNCTION Fragment_3()
 
 	self.SetObjectiveCompleted(0, true)
-endFunction
+ENDFUNCTION
 
-; Skipped compiler generated GotoState
+; Skipped compiler generated GoToState

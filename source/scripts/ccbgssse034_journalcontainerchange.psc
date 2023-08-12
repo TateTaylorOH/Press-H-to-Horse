@@ -1,6 +1,6 @@
 ;/ Decompiled by Champollion V1.0.1
 Source   : ccBGSSSE034_JournalContainerChange.psc
-Modified : 2021-08-19 11:15:01
+ModIFied : 2021-08-19 11:15:01
 Compiled : 2021-08-24 17:21:27
 User     : builds
 Computer : RKVBGSGPUVM04
@@ -12,29 +12,29 @@ scriptName ccBGSSSE034_JournalContainerChange extends ReferenceAlias
 
 ;-- Variables ---------------------------------------
 
-;-- Functions ---------------------------------------
+;-- FUNCTIONs ---------------------------------------
 
-; Skipped compiler generated GotoState
+; Skipped compiler generated GoToState
 
 ; Skipped compiler generated GetState
 
-;-- State -------------------------------------------
-auto state Waiting
+;-- STATE -------------------------------------------
+auto STATE Waiting
 
-	function OnRead()
+	FUNCTION OnRead()
 
-		if self.GetOwningQuest().GetStage() == 0
+		IF self.GetOwningQuest().GetStage() == 0
 			self.GetOwningQuest().SetStage(10)
-			self.GotoState("Complete")
-		endIf
-	endFunction
-endState
+			self.GoToState("Complete")
+		ENDIF
+	ENDFUNCTION
+ENDSTATE
 
-;-- State -------------------------------------------
-state Complete
+;-- STATE -------------------------------------------
+STATE Complete
 
-	function OnRead()
+	FUNCTION OnRead()
 
-		; Empty function
-	endFunction
-endState
+		; Empty FUNCTION
+	ENDFUNCTION
+ENDSTATE

@@ -1,6 +1,6 @@
 ;/ Decompiled by Champollion V1.0.1
 Source   : ccVSVSSE001_DeedScript.psc
-Modified : 2021-08-19 11:15:44
+ModIFied : 2021-08-19 11:15:44
 Compiled : 2021-08-25 05:50:30
 User     : builds
 Computer : RKVBGSGPUVM04
@@ -18,13 +18,13 @@ referencealias property PlayerReindeer auto
 
 ;-- Variables ---------------------------------------
 
-;-- Functions ---------------------------------------
+;-- FUNCTIONs ---------------------------------------
 
 ; Skipped compiler generated GetState
 
-function OnContainerChanged(ObjectReference akNewContainer, ObjectReference akOldContainer)
+FUNCTION OnContainerChanged(ObjectReference akNewContainer, ObjectReference akOldContainer)
 
-	if akOldContainer == merchantChest && akNewContainer == game.GetPlayer() as ObjectReference
+	IF akOldContainer == merchantChest && akNewContainer == game.GetPlayer() as ObjectReference
 		Alias_Reindeer.GetActorRef().SetFactionRank(PlayerHorseFaction, 1)
 		Alias_Reindeer.GetActorRef().SetFactionOwner(PlayerFaction)
 		PlayerHorse.Clear()
@@ -42,7 +42,7 @@ function OnContainerChanged(ObjectReference akNewContainer, ObjectReference akOl
 		DES_HorseArmors.AddForm(ReindeerSaddle)
 		DES_HorseAllForms.AddForm(ReindeerSaddle)
 		(Quest.GetQuest("DES_RenameHorseQuest") as DES_HorseInventoryScript).FirstTimeEquipHorse(MountToRename)
-	endIf
-endFunction
+	ENDIF
+ENDFUNCTION
 
-; Skipped compiler generated GotoState
+; Skipped compiler generated GoToState

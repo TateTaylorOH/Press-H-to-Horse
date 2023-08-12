@@ -11,7 +11,7 @@ float property messageDuration = 3.0 auto
 float property messageInterval = 1.0 auto
 Message[] Property HelpMessages Auto
 
-Event OnItemAdded(Form akBaseItem, int aiItemCount, ObjectReference akItemReference, ObjectReference akSourceContainer)
+EVENT OnItemAdded(Form akBaseItem, int aiItemCount, ObjectReference akItemReference, ObjectReference akSourceContainer)
 	IF akBaseItem.HasKeyword(DES_SaddleKeyword)
 		IF (DES_HorseCallTutorialTracker as DES_HorseCallTutorialTrackerScript).ShowTutorials && !SaddleTutorial
 			while Utility.IsInMenuMode()

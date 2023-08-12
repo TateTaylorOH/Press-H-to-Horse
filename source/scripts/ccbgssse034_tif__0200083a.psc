@@ -1,6 +1,6 @@
 ;/ Decompiled by Champollion V1.0.1
 Source   : ccBGSSSE034_TIF__0200083A.psc
-Modified : 2021-08-19 11:15:00
+ModIFied : 2021-08-19 11:15:00
 Compiled : 2021-08-24 17:21:27
 User     : builds
 Computer : RKVBGSGPUVM04
@@ -12,14 +12,14 @@ armor property HorseSaddleShadowmere auto
 
 ;-- Variables ---------------------------------------
 
-;-- Functions ---------------------------------------
+;-- FUNCTIONs ---------------------------------------
 
-function Fragment_0(ObjectReference akSpeakerRef)
+FUNCTION Fragment_0(ObjectReference akSpeakerRef)
 
 	actor akSpeaker = akSpeakerRef as actor
 	(self.GetOwningQuest() as ccbgssse034_saddlequestscript).ChangeHorseSaddle(HorseSaddleShadowmere)
-endFunction
+ENDFUNCTION
 
-; Skipped compiler generated GotoState
+; Skipped compiler generated GoToState
 
 ; Skipped compiler generated GetState

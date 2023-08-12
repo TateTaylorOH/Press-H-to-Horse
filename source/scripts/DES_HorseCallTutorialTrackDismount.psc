@@ -1,11 +1,11 @@
 Scriptname DES_HorseCallTutorialTrackDismount extends Quest
 
-Event OnInit()
-    RegisterForAnimationEvent (PlayerRef, "tailHorseDismount")
-EndEvent
+EVENT OnInit()
+    RegisterForAnimationEVENT (PlayerRef, "tailHorseDismount")
+ENDEVENT
 
-Event OnPlayerLoad()
-    RegisterForAnimationEvent (PlayerRef, "tailHorseDismount")
-EndEvent
+EVENT OnPlayerLoad()
+    RegisterForAnimationEVENT (PlayerRef, "tailHorseDismount")
+ENDEVENT
 
 Actor Property PlayerRef Auto

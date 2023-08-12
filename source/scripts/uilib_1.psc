@@ -1,6 +1,6 @@
 ;/ Decompiled by Champollion V1.0.1
 Source   : UILIB_1.psc
-Modified : 2014-08-20 14:16:49
+ModIFied : 2014-08-20 14:16:49
 Compiled : 2014-08-20 14:16:51
 User     : User
 Computer : USER-PC
@@ -20,130 +20,130 @@ String sInput
 String sTitle
 String sInitialText
 
-;-- Functions ---------------------------------------
+;-- FUNCTIONs ---------------------------------------
 
-function TextInputMenu_Open(Form akClient) global
+FUNCTION TextInputMenu_Open(Form akClient) global
 
-	akClient.RegisterForModEvent("UILIB_1_textInputOpen", "OnTextInputOpen")
-	akClient.RegisterForModEvent("UILIB_1_textInputClose", "OnTextInputClose")
+	akClient.RegisterForModEVENT("UILIB_1_textInputOpen", "OnTextInputOpen")
+	akClient.RegisterForModEVENT("UILIB_1_textInputClose", "OnTextInputClose")
 	ui.OpenCustomMenu("uilib/uilib_1_textinputmenu", 0)
-endFunction
+ENDFUNCTION
 
-Bool function NotificationMenu_PrepareArea() global
+Bool FUNCTION NotIFicationMenu_PrepareArea() global
 
-	Int iVersion = ui.GetInt("HUD Menu", "_global.uilib_1.NotificationArea.UILIB_VERSION")
-	if iVersion == 0
+	Int iVersion = ui.GetInt("HUD Menu", "_global.uilib_1.NotIFicationArea.UILIB_VERSION")
+	IF iVersion == 0
 		Int iHandle = uicallback.Create("HUD Menu", "_root.HUDMovieBaseInstance.createEmptyMovieClip")
-		if !iHandle
+		IF !iHandle
 			return false
-		endIf
-		uicallback.PushString(iHandle, "uilib_1_notificationAreaContainer")
+		ENDIF
+		uicallback.PushString(iHandle, "uilib_1_notIFicationAreaContainer")
 		uicallback.PushInt(iHandle, -16380)
-		if !uicallback.Send(iHandle)
+		IF !uicallback.Send(iHandle)
 			return false
-		endIf
-		ui.InvokeString("HUD Menu", "_root.HUDMovieBaseInstance.uilib_1_notificationAreaContainer.loadMovie", "uilib/uilib_1_notificationarea.swf")
+		ENDIF
+		ui.InvokeString("HUD Menu", "_root.HUDMovieBaseInstance.uilib_1_notIFicationAreaContainer.loadMovie", "uilib/uilib_1_notIFicationarea.swf")
 		utility.Wait(0.500000)
-		iVersion = ui.GetInt("HUD Menu", "_global.uilib_1.NotificationArea.UILIB_VERSION")
-		if iVersion == 0
-			ui.InvokeString("HUD Menu", "_root.HUDMovieBaseInstance.uilib_1_notificationAreaContainer.loadMovie", "exported/uilib/uilib_1_notificationarea.swf")
+		iVersion = ui.GetInt("HUD Menu", "_global.uilib_1.NotIFicationArea.UILIB_VERSION")
+		IF iVersion == 0
+			ui.InvokeString("HUD Menu", "_root.HUDMovieBaseInstance.uilib_1_notIFicationAreaContainer.loadMovie", "exported/uilib/uilib_1_notIFicationarea.swf")
 			utility.Wait(0.500000)
-			iVersion = ui.GetInt("HUD Menu", "_global.uilib_1.NotificationArea.UILIB_VERSION")
-			if iVersion == 0
-				debug.Trace("===== UILib: Notification injection failed =====", 0)
+			iVersion = ui.GetInt("HUD Menu", "_global.uilib_1.NotIFicationArea.UILIB_VERSION")
+			IF iVersion == 0
+				debug.Trace("===== UILib: NotIFication injection failed =====", 0)
 				return false
-			endIf
-			ui.InvokeString("HUD Menu", "_root.HUDMovieBaseInstance.uilib_1_notificationAreaContainer.SetRootPath", "exported/")
-		endIf
-	endIf
+			ENDIF
+			ui.InvokeString("HUD Menu", "_root.HUDMovieBaseInstance.uilib_1_notIFicationAreaContainer.SetRootPath", "exported/")
+		ENDIF
+	ENDIF
 	return true
-endFunction
+ENDFUNCTION
 
-function ListMenu_Open(Form akClient) global
+FUNCTION ListMenu_Open(Form akClient) global
 
-	akClient.RegisterForModEvent("UILIB_1_listMenuOpen", "OnListMenuOpen")
-	akClient.RegisterForModEvent("UILIB_1_listMenuClose", "OnListMenuClose")
+	akClient.RegisterForModEVENT("UILIB_1_listMenuOpen", "OnListMenuOpen")
+	akClient.RegisterForModEVENT("UILIB_1_listMenuClose", "OnListMenuClose")
 	ui.OpenCustomMenu("uilib/uilib_1_listmenu", 0)
-endFunction
+ENDFUNCTION
 
-function ListMenu_Release(Form akClient) global
+FUNCTION ListMenu_Release(Form akClient) global
 
-	akClient.UnregisterForModEvent("UILIB_1_listMenuOpen")
-	akClient.UnregisterForModEvent("UILIB_1_listMenuClose")
-endFunction
+	akClient.UnregisterForModEVENT("UILIB_1_listMenuOpen")
+	akClient.UnregisterForModEVENT("UILIB_1_listMenuClose")
+ENDFUNCTION
 
-function ListMenu_SetData(String asTitle, String[] asOptions, Int aiStartIndex, Int aiDefaultIndex) global
+FUNCTION ListMenu_SetData(String asTitle, String[] asOptions, Int aiStartIndex, Int aiDefaultIndex) global
 
 	ui.InvokeNumber("CustomMenu", "_root.listDialog.setPlatform", (game.UsingGamepad() as Int) as Float)
 	ui.InvokeStringA("CustomMenu", "_root.listDialog.initListData", asOptions)
 	Int iHandle = uicallback.Create("CustomMenu", "_root.listDialog.initListParams")
-	if iHandle
+	IF iHandle
 		uicallback.PushString(iHandle, asTitle)
 		uicallback.PushInt(iHandle, aiStartIndex)
 		uicallback.PushInt(iHandle, aiDefaultIndex)
 		uicallback.Send(iHandle)
-	endIf
-endFunction
+	ENDIF
+ENDFUNCTION
 
-function TextInputMenu_SetData(String asTitle, String asInitialText) global
+FUNCTION TextInputMenu_SetData(String asTitle, String asInitialText) global
 
 	ui.InvokeNumber("CustomMenu", "_root.textInputDialog.setPlatform", (game.UsingGamepad() as Int) as Float)
 	String[] sData = new String[2]
 	sData[0] = asTitle
 	sData[1] = asInitialText
 	ui.InvokeStringA("CustomMenu", "_root.textInputDialog.initData", sData)
-endFunction
+ENDFUNCTION
 
-function TextInputMenu_Release(Form akClient) global
+FUNCTION TextInputMenu_Release(Form akClient) global
 
-	akClient.UnregisterForModEvent("UILIB_1_textInputOpen")
-	akClient.UnregisterForModEvent("UILIB_1_textInputClose")
-endFunction
+	akClient.UnregisterForModEVENT("UILIB_1_textInputOpen")
+	akClient.UnregisterForModEVENT("UILIB_1_textInputClose")
+ENDFUNCTION
 
-function OnTextInputClose(String asEventName, String asInput, Float afCancelled, Form akSender)
+FUNCTION OnTextInputClose(String AsEventName, String asInput, Float afCancelled, Form akSender)
 
-	if asEventName == "UILIB_1_textInputClose"
-		if afCancelled as Bool
+	IF AsEventName == "UILIB_1_textInputClose"
+		IF afCancelled as Bool
 			sInput = ""
 		else
 			sInput = asInput
-		endIf
+		ENDIF
 		bMenuOpen = false
-	endIf
-endFunction
+	ENDIF
+ENDFUNCTION
 
-function OnListMenuClose(String asEventName, String asStringArg, Float afInput, Form akSender)
+FUNCTION OnListMenuClose(String AsEventName, String asStringArg, Float afInput, Form akSender)
 
-	if asEventName == "UILIB_1_listMenuClose"
+	IF AsEventName == "UILIB_1_listMenuClose"
 		iInput = afInput as Int
 		bMenuOpen = false
-	endIf
-endFunction
+	ENDIF
+ENDFUNCTION
 
-function ShowNotificationIcon(String asMessage, String asIconPath, Int aiIconFrame, String asColor)
+FUNCTION ShowNotIFicationIcon(String asMessage, String asIconPath, Int aiIconFrame, String asColor)
 
-	if !UILIB_1.NotificationMenu_PrepareArea()
+	IF !UILIB_1.NotIFicationMenu_PrepareArea()
 		return 
-	endIf
-	Int iHandle = uicallback.Create("HUD Menu", "_root.HUDMovieBaseInstance.uilib_1_notificationAreaContainer.notificationArea.ShowIconMessage")
-	if iHandle
+	ENDIF
+	Int iHandle = uicallback.Create("HUD Menu", "_root.HUDMovieBaseInstance.uilib_1_notIFicationAreaContainer.notIFicationArea.ShowIconMessage")
+	IF iHandle
 		uicallback.PushString(iHandle, asMessage)
 		uicallback.PushString(iHandle, asColor)
 		uicallback.PushString(iHandle, asIconPath)
 		uicallback.PushInt(iHandle, aiIconFrame)
 		uicallback.Send(iHandle)
-	endIf
-endFunction
+	ENDIF
+ENDFUNCTION
 
-; Skipped compiler generated GotoState
+; Skipped compiler generated GoToState
 
 ; Skipped compiler generated GetState
 
-Int function ShowList(String asTitle, String[] asOptions, Int aiStartIndex, Int aiDefaultIndex)
+Int FUNCTION ShowList(String asTitle, String[] asOptions, Int aiStartIndex, Int aiDefaultIndex)
 
-	if bMenuOpen
+	IF bMenuOpen
 		return -1
-	endIf
+	ENDIF
 	bMenuOpen = true
 	iInput = -1
 	sTitle = asTitle
@@ -156,26 +156,26 @@ Int function ShowList(String asTitle, String[] asOptions, Int aiStartIndex, Int 
 	endWhile
 	UILIB_1.ListMenu_Release(self as Form)
 	return iInput
-endFunction
+ENDFUNCTION
 
-function ShowNotification(String asMessage, String asColor)
+FUNCTION ShowNotIFication(String asMessage, String asColor)
 
-	if !UILIB_1.NotificationMenu_PrepareArea()
+	IF !UILIB_1.NotIFicationMenu_PrepareArea()
 		return 
-	endIf
-	Int iHandle = uicallback.Create("HUD Menu", "_root.HUDMovieBaseInstance.uilib_1_notificationAreaContainer.notificationArea.ShowMessage")
-	if iHandle
+	ENDIF
+	Int iHandle = uicallback.Create("HUD Menu", "_root.HUDMovieBaseInstance.uilib_1_notIFicationAreaContainer.notIFicationArea.ShowMessage")
+	IF iHandle
 		uicallback.PushString(iHandle, asMessage)
 		uicallback.PushString(iHandle, asColor)
 		uicallback.Send(iHandle)
-	endIf
-endFunction
+	ENDIF
+ENDFUNCTION
 
-String function ShowTextInput(String asTitle, String asInitialText)
+String FUNCTION ShowTextInput(String asTitle, String asInitialText)
 
-	if bMenuOpen
+	IF bMenuOpen
 		return ""
-	endIf
+	ENDIF
 	bMenuOpen = true
 	sInput = ""
 	sTitle = asTitle
@@ -186,18 +186,18 @@ String function ShowTextInput(String asTitle, String asInitialText)
 	endWhile
 	UILIB_1.TextInputMenu_Release(self as Form)
 	return sInput
-endFunction
+ENDFUNCTION
 
-function OnTextInputOpen(String asEventName, String asStringArg, Float afNumArg, Form akSender)
+FUNCTION OnTextInputOpen(String AsEventName, String asStringArg, Float afNumArg, Form akSender)
 
-	if asEventName == "UILIB_1_textInputOpen"
+	IF AsEventName == "UILIB_1_textInputOpen"
 		UILIB_1.TextInputMenu_SetData(sTitle, sInitialText)
-	endIf
-endFunction
+	ENDIF
+ENDFUNCTION
 
-function OnListMenuOpen(String asEventName, String asStringArg, Float afNumArg, Form akSender)
+FUNCTION OnListMenuOpen(String AsEventName, String asStringArg, Float afNumArg, Form akSender)
 
-	if asEventName == "UILIB_1_listMenuOpen"
+	IF AsEventName == "UILIB_1_listMenuOpen"
 		UILIB_1.ListMenu_SetData(sTitle, sOptions, iStartIndex, iDefaultIndex)
-	endIf
-endFunction
+	ENDIF
+ENDFUNCTION

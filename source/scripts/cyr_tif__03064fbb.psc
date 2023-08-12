@@ -1,6 +1,6 @@
 ;/ Decompiled by Champollion V1.0.1
 Source   : CYR_TIF__03064FBB.psc
-Modified : 2015-04-07 07:00:48
+ModIFied : 2015-04-07 07:00:48
 Compiled : 2015-04-07 07:00:49
 User     : Blackstorm
 Computer : BLACKST-4R0FPJ1
@@ -16,13 +16,13 @@ faction property PlayerHorseFaction auto
 
 ;-- Variables ---------------------------------------
 
-;-- Functions ---------------------------------------
+;-- FUNCTIONs ---------------------------------------
 
 ; Skipped compiler generated GetState
 
-; Skipped compiler generated GotoState
+; Skipped compiler generated GoToState
 
-function Fragment_0(ObjectReference akSpeakerRef)
+FUNCTION Fragment_0(ObjectReference akSpeakerRef)
 	game.GetPlayer().RemoveItem(Gold001 as form, 3000, false, none)
 	Alias_Horse.GetActorRef().SetFactionRank(PlayerHorseFaction, 1)
 	Alias_Horse.GetActorRef().SetFactionOwner(PlayerFaction)
@@ -31,4 +31,4 @@ function Fragment_0(ObjectReference akSpeakerRef)
 	Actor MountToRename = Alias_Horse.GetActorRef()
 	(Quest.GetQuest("DES_RenameHorseQuest") as DES_RenameHorseQuestScript).renameCyrodiilHorse(MountToRename)
 	(Quest.GetQuest("DES_RenameHorseQuest") as DES_HorseInventoryScript).FirstTimeEquipHorse(MountToRename)
-endFunction
+ENDFUNCTION

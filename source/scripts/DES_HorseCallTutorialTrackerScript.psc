@@ -19,15 +19,15 @@ bool Property DwarvenHorseEquipped auto
 bool Property BSHorseshoeAdded auto
 ReferenceAlias Property DES_RenameHorseQuestAlias auto
 
-Event OnInit()
+EVENT OnInit()
 	DES_HorseCallTutorialTracker.RegisterForMenu("RaceSex Menu")
 	ccBGSSSE034_WildHorsesQuest.SetStage(10)
-EndEvent
+ENDEVENT
 
-Event OnMenuClose(String MenuName)
+EVENT OnMenuClose(String MenuName)
 	MiscObject BSHorseshoe = Game.GetFormFromFile(0x723B8, "BSHeartland.esm") As MiscObject
-	If MenuName == "RaceSex Menu"
-		RegisterForAnimationEvent(PlayerRef, "tailHorseDismount")
+	IF MenuName == "RaceSex Menu"
+		RegisterForAnimationEVENT(PlayerRef, "tailHorseDismount")
 		DES_HorseCallTutorialTracker.UnregisterForMenu("RaceSex Menu")
 		IF !DwarvenHorseEquipped == true
 			Actor DwarvenHorse = Game.GetFormFromFile(0x38D5, "cctwbsse001-puzzledungeon.esm") As Actor
@@ -38,15 +38,15 @@ Event OnMenuClose(String MenuName)
 		DES_MinimumHostler.AddForm(BSHorseshoe, 1, 4)
 		DES_LItemMiscHostlerItems75.AddForm(BSHorseshoe, 1, 4)
 		BSHorseshoeAdded = true
-	EndIf
-EndEvent
+	ENDIF
+ENDEVENT
 
-Event OnAnimationEvent(ObjectReference akSource, string asEventName)
-	;Debug.MessageBox("OnAnimationEvent fired")
-	if (akSource == PlayerRef) && (asEventName == "tailHorseDismount")
+EVENT OnAnimationEVENT(ObjectReference akSource, string AsEventName)
+	;Debug.MessageBox("OnAnimationEVENT fired")
+	IF (akSource == PlayerRef) && (AsEventName == "tailHorseDismount")
 	Utility.Wait(3)
 		IF !HorseCallTutorial
-			If game.getPlayersLastRiddenHorse().isinfaction(PlayerHorseFaction)
+			IF game.getPlayersLastRiddenHorse().isinfaction(PlayerHorseFaction)
 				(DES_RenameHorseQuest as DES_HorseCallScript).horsekey = papyrusinimanipulator.PullIntFromIni("Data/H2Horse.ini", "General", "HorseKey", 35)
 				ShowTutorials = papyrusinimanipulator.PullboolFromIni("Data/H2Horse.ini", "General", "ShowTutorials", True)
 				DES_RenameHorseQuest.RegisterForKey((DES_RenameHorseQuest as DES_HorseCallScript).horsekey)
@@ -64,13 +64,13 @@ Event OnAnimationEvent(ObjectReference akSource, string asEventName)
 					HelpMessages[3].ShowAsHelpMessage("HorseFoodTutorial", messageDuration, 1.0, 1)
 				ENDIF
 				DES_PlayerOwnsHorse.SetValue(1)
-				DES_HorseCallTutorialTracker.UnregisterForAnimationEvent(PlayerRef, "tailHorseDismount")
+				DES_HorseCallTutorialTracker.UnregisterForAnimationEVENT(PlayerRef, "tailHorseDismount")
 				HorseCallTutorial = true
 				(Alias_Player as DES_SaddleHelpScript).BarebackTutorial = true
 				IF HorseCallTutorial && (Alias_Player as DES_SaddleHelpScript).SaddleTutorial && (Alias_Player as DES_SaddleHelpScript).ArmorTutorial && (Alias_Player as DES_SaddleHelpScript).BarebackTutorial || !ShowTutorials
 					DES_HorseCallTutorialTracker.stop()
 				ENDIF
 			ENDIF
-		endif
-	endif
+		ENDIF
+	ENDIF
 ENDEVENT
