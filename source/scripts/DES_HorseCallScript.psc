@@ -20,14 +20,14 @@ float horseAngle = 180.0 ; where the horse should appear relative to the player,
 float horseDistance = 512.0
 
 EVENT OnKeyUp(Int KeyCode, Float HoldTime)
-{Sends an EVENT when HorseKey is raised up. The actor called will be the last owned horse the player rode. There are checks to prEVENT the horse getting called into interiors as well as a mechanics to select a specIFic horse from a SkyUILib list menu.}
+{Sends an event when HorseKey is raised up. The actor called will be the last owned horse the player rode. There are checks to prevent the horse getting called into interiors as well as a mechanic to select a specIFic horse from a SkyUILib list menu.}
 	Actor LastRiddenHorse = Game.GetPlayersLastRiddenHorse()
 	Debugging = papyrusinimanipulator.PullboolFromIni("Data/H2Horse.ini", "General", "Debugging", False)
-	IF SelectedHorse == Alias_PlayersHorse.getActorReference()
+	IF SelectedHorse && SelectedHorse == Alias_PlayersHorse.getActorReference()
 		LastRiddenHorse = SelectedHorse
 	ENDIF
 	IF Debugging
-		Debug.NotIFication("LastRiddenHorse is " + LastRiddenHorse.getDisplayName())
+		Debug.Notification("LastRiddenHorse is " + LastRiddenHorse.getDisplayName())
 	ENDIF
 	IF (KeyCode == horseKey && !Utility.IsInMenuMode() && !UI.IsTextInputEnabled()) && !Game.GetCurrentCrosshairRef() && !PlayerRef.IsOnMount(); this is a valid keypress
 		IF (!PlayerRef.IsInInterior() && DES_ValidWorldspaces.HasForm(PlayerRef.getWorldSpace())) ; this is a valid place to summon the horse
@@ -43,7 +43,7 @@ EVENT OnKeyUp(Int KeyCode, Float HoldTime)
 			ENDIF
 		ELSE
 			IF (LastRiddenHorse && LastRiddenHorse.IsInFaction(PlayerHorseFaction)) ; there is a last horse, and it's the players
-				Debug.NotIFication(LastRiddenHorse.GetDisplayName() + " cannot be called here.")
+				Debug.Notification(LastRiddenHorse.GetDisplayName() + " cannot be called here.")
 			ENDIF
 		ENDIF
 	ENDIF
@@ -60,7 +60,7 @@ ENDEVENT
 FUNCTION HorseCall(Actor LastRiddenHorse)
 {This function controls switching between calling the horse and telling the horse to stay.}
 		RegisterForAnimationEVENT(PlayerRef, "tailHorseMount") ;Registered to track dismount, which will remove the Horse from the H2Horse alias.
-		Debug.NotIFication("You call for " + LastRiddenHorse.GetDisplayName() + ".")
+		Debug.Notification("You call for " + LastRiddenHorse.GetDisplayName() + ".")
 		HorseWhistle(LastRiddenHorse)
 		IF !PlayerRef.HasLOS(LastRiddenHorse)
 			float az = addAngles(PlayerRef.getAngleZ(), horseAngle)
@@ -76,7 +76,6 @@ FUNCTION HorseCall(Actor LastRiddenHorse)
 				HorseSelectTutorial = True
 			ENDIF
 		ENDIF
-		GoToState("CalledHorse")
 ENDFUNCTION
 
 FUNCTION SelectHorse()
@@ -97,7 +96,7 @@ FUNCTION SelectHorse()
 			menu.OpenMenu(aForm=DES_OwnedHorses)
 			SelectedHorse = menu.GetResultForm() as Actor
 			RegisterForAnimationEVENT(PlayerRef, "tailHorseMount")
-			Debug.NotIFication("You call for " + SelectedHorse.GetDisplayName() + ".")
+			Debug.Notification("You call for " + SelectedHorse.GetDisplayName() + ".")
 			IF (LastRiddenHorse.GetParentCell() != PlayerRef.GetParentCell())
 				GoToState("")
 			ENDIF
@@ -120,18 +119,19 @@ FUNCTION HorseWhistle(Actor LastRiddenHorse)
         MfgConsoleFunc.SetPhoneMe(PlayerRef, 6, 30)
     ENDIF
     IF !(GetState() == "CalledHorse")
-		DES_HorseCallMarker.Play(PlayerRef)
 		Alias_PlayersHorse.ForceRefTo(LastRiddenHorse)
+		GoToState("CalledHorse")
+		DES_HorseCallMarker.Play(PlayerRef)
     ELSE
-		DES_HorseStayMarker.Play(PlayerRef)
         Alias_PlayersHorse.Clear()
+		DES_HorseStayMarker.Play(PlayerRef)
     ENDIF
+    LastRiddenHorse.EvaluatePackage()
     IF doingExtraBullshit
         Utility.Wait(1.0)
         MfgConsoleFunc.ResetPhonemeModIFier(PlayerRef)
         Debug.SendAnimationEVENT(PlayerRef, "OffsetStop")
     ENDIF
-    LastRiddenHorse.EvaluatePackage()
 ENDFUNCTION
 
 float FUNCTION addAngles(float angle, float turn)
@@ -149,7 +149,7 @@ ENDFUNCTION
 STATE CalledHorse
 	FUNCTION HorseCall(Actor LastRiddenHorse)
 		UnregisterForAnimationEVENT(PlayerRef, "tailHorseMount")
-		Debug.NotIFication("You tell "+ LastRiddenHorse.GetDisplayName() + " to wait.")
+		Debug.Notification("You tell "+ LastRiddenHorse.GetDisplayName() + " to wait.")
 		HorseWhistle(LastRiddenHorse)
 		GoToState("")
 	ENDFUNCTION

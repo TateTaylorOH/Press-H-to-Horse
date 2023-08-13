@@ -1,43 +1,43 @@
 Scriptname DES_HorseCallTutorialTrackerScript extends Quest
 
-float property messageDuration = 3.0 auto
-float property messageInterval = 1.0 auto
-Message[] Property HelpMessages Auto
-Quest Property DES_HorseCallTutorialTracker auto
-Quest Property DES_RenameHorseQuest auto
-Quest Property ccBGSSSE034_WildHorsesQuest auto
 Actor Property PlayerRef Auto
+bool Property BSHorseshoeAdded auto
+bool property HorseCallTutorial auto
+bool Property ShowTutorials auto
 Faction Property PlayerHorseFaction Auto
+Formlist Property DES_HorseMiscItems auto
 Formlist Property DES_ValidWorldspaces auto
 GlobalVariable Property DES_PlayerOwnsHorse auto
-bool property HorseCallTutorial auto
-ReferenceAlias Property Alias_Player  auto
-bool Property ShowTutorials auto
 LeveledItem Property DES_LItemMiscHostlerItems75 auto
 LeveledItem Property DES_MinimumHostler auto
-bool Property DwarvenHorseEquipped auto
-bool Property BSHorseshoeAdded auto
+Quest Property ccBGSSSE034_WildHorsesQuest auto
+Quest Property DES_HorseCallTutorialTracker auto
+Quest Property DES_RenameHorseQuest auto
+ReferenceAlias Property Alias_HorseQuestPlayer  auto
+ReferenceAlias Property Alias_Player  auto
 ReferenceAlias Property DES_RenameHorseQuestAlias auto
+
+Message[] Property HelpMessages Auto
+float property messageDuration = 3.0 auto
+float property messageInterval = 1.0 auto
 
 EVENT OnInit()
 	DES_HorseCallTutorialTracker.RegisterForMenu("RaceSex Menu")
 	ccBGSSSE034_WildHorsesQuest.SetStage(10)
+	Alias_HorseQuestPlayer.AddInventoryEventFilter(DES_HorseMiscItems)
 ENDEVENT
 
 EVENT OnMenuClose(String MenuName)
-	MiscObject BSHorseshoe = Game.GetFormFromFile(0x723B8, "BSHeartland.esm") As MiscObject
+	DES_RegisterKeyOnLoad OnLoadScript = Alias_Player as DES_RegisterKeyOnLoad
 	IF MenuName == "RaceSex Menu"
+		Form BSHeartland = Game.GetFormFromFile(0xA764B, "BSHeartland.esm") as Worldspace
 		RegisterForAnimationEVENT(PlayerRef, "tailHorseDismount")
 		DES_HorseCallTutorialTracker.UnregisterForMenu("RaceSex Menu")
-		IF !DwarvenHorseEquipped == true
-			Actor DwarvenHorse = Game.GetFormFromFile(0x38D5, "cctwbsse001-puzzledungeon.esm") As Actor
-			(DES_RenameHorseQuest as DES_HorseInventoryScript).FirstTimeEquipHorse(DwarvenHorse)
-			DwarvenHorseEquipped = true
-			DES_RenameHorseQuestAlias.Clear()
+		OnLoadScript.GetBaseCarryWeight()
+		OnLoadScript.RegisterKey()
+		IF Game.GetFormFromFile(0xA764B, "BSHeartland.esm")
+			OnLoadScript.ImportCyrodiil()
 		ENDIF
-		DES_MinimumHostler.AddForm(BSHorseshoe, 1, 4)
-		DES_LItemMiscHostlerItems75.AddForm(BSHorseshoe, 1, 4)
-		BSHorseshoeAdded = true
 	ENDIF
 ENDEVENT
 
@@ -47,13 +47,7 @@ EVENT OnAnimationEVENT(ObjectReference akSource, string AsEventName)
 	Utility.Wait(3)
 		IF !HorseCallTutorial
 			IF game.getPlayersLastRiddenHorse().isinfaction(PlayerHorseFaction)
-				(DES_RenameHorseQuest as DES_HorseCallScript).horsekey = papyrusinimanipulator.PullIntFromIni("Data/H2Horse.ini", "General", "HorseKey", 35)
 				ShowTutorials = papyrusinimanipulator.PullboolFromIni("Data/H2Horse.ini", "General", "ShowTutorials", True)
-				DES_RenameHorseQuest.RegisterForKey((DES_RenameHorseQuest as DES_HorseCallScript).horsekey)
-				Form BSHeartland = Game.GetFormFromFile(0xA764B, "BSHeartland.esm") as Worldspace
-				IF !DES_ValidWorldspaces.HasForm(BSHeartland)
-					DES_ValidWorldspaces.AddForm(BSHeartland)
-				ENDIF
 				IF ShowTutorials && (DES_RenameHorseQuest as DES_HorseCallScript).horsekey == 35
 					HelpMessages[0].ShowAsHelpMessage("HorseCallTutorial", messageDuration, 1.0, 1)
 					Utility.wait(messageDuration + messageInterval + 0.1)

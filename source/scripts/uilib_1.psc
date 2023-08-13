@@ -29,31 +29,31 @@ FUNCTION TextInputMenu_Open(Form akClient) global
 	ui.OpenCustomMenu("uilib/uilib_1_textinputmenu", 0)
 ENDFUNCTION
 
-Bool FUNCTION NotIFicationMenu_PrepareArea() global
+Bool FUNCTION NotificationMenu_PrepareArea() global
 
-	Int iVersion = ui.GetInt("HUD Menu", "_global.uilib_1.NotIFicationArea.UILIB_VERSION")
+	Int iVersion = ui.GetInt("HUD Menu", "_global.uilib_1.NotificationArea.UILIB_VERSION")
 	IF iVersion == 0
 		Int iHandle = uicallback.Create("HUD Menu", "_root.HUDMovieBaseInstance.createEmptyMovieClip")
 		IF !iHandle
 			return false
 		ENDIF
-		uicallback.PushString(iHandle, "uilib_1_notIFicationAreaContainer")
+		uicallback.PushString(iHandle, "uilib_1_NotificationAreaContainer")
 		uicallback.PushInt(iHandle, -16380)
 		IF !uicallback.Send(iHandle)
 			return false
 		ENDIF
-		ui.InvokeString("HUD Menu", "_root.HUDMovieBaseInstance.uilib_1_notIFicationAreaContainer.loadMovie", "uilib/uilib_1_notIFicationarea.swf")
+		ui.InvokeString("HUD Menu", "_root.HUDMovieBaseInstance.uilib_1_NotificationAreaContainer.loadMovie", "uilib/uilib_1_Notificationarea.swf")
 		utility.Wait(0.500000)
-		iVersion = ui.GetInt("HUD Menu", "_global.uilib_1.NotIFicationArea.UILIB_VERSION")
+		iVersion = ui.GetInt("HUD Menu", "_global.uilib_1.NotificationArea.UILIB_VERSION")
 		IF iVersion == 0
-			ui.InvokeString("HUD Menu", "_root.HUDMovieBaseInstance.uilib_1_notIFicationAreaContainer.loadMovie", "exported/uilib/uilib_1_notIFicationarea.swf")
+			ui.InvokeString("HUD Menu", "_root.HUDMovieBaseInstance.uilib_1_NotificationAreaContainer.loadMovie", "exported/uilib/uilib_1_Notificationarea.swf")
 			utility.Wait(0.500000)
-			iVersion = ui.GetInt("HUD Menu", "_global.uilib_1.NotIFicationArea.UILIB_VERSION")
+			iVersion = ui.GetInt("HUD Menu", "_global.uilib_1.NotificationArea.UILIB_VERSION")
 			IF iVersion == 0
-				debug.Trace("===== UILib: NotIFication injection failed =====", 0)
+				debug.Trace("===== UILib: Notification injection failed =====", 0)
 				return false
 			ENDIF
-			ui.InvokeString("HUD Menu", "_root.HUDMovieBaseInstance.uilib_1_notIFicationAreaContainer.SetRootPath", "exported/")
+			ui.InvokeString("HUD Menu", "_root.HUDMovieBaseInstance.uilib_1_NotificationAreaContainer.SetRootPath", "exported/")
 		ENDIF
 	ENDIF
 	return true
@@ -120,12 +120,12 @@ FUNCTION OnListMenuClose(String AsEventName, String asStringArg, Float afInput, 
 	ENDIF
 ENDFUNCTION
 
-FUNCTION ShowNotIFicationIcon(String asMessage, String asIconPath, Int aiIconFrame, String asColor)
+FUNCTION ShowNotificationIcon(String asMessage, String asIconPath, Int aiIconFrame, String asColor)
 
-	IF !UILIB_1.NotIFicationMenu_PrepareArea()
+	IF !UILIB_1.NotificationMenu_PrepareArea()
 		return 
 	ENDIF
-	Int iHandle = uicallback.Create("HUD Menu", "_root.HUDMovieBaseInstance.uilib_1_notIFicationAreaContainer.notIFicationArea.ShowIconMessage")
+	Int iHandle = uicallback.Create("HUD Menu", "_root.HUDMovieBaseInstance.uilib_1_NotificationAreaContainer.NotificationArea.ShowIconMessage")
 	IF iHandle
 		uicallback.PushString(iHandle, asMessage)
 		uicallback.PushString(iHandle, asColor)
@@ -158,12 +158,12 @@ Int FUNCTION ShowList(String asTitle, String[] asOptions, Int aiStartIndex, Int 
 	return iInput
 ENDFUNCTION
 
-FUNCTION ShowNotIFication(String asMessage, String asColor)
+FUNCTION ShowNotification(String asMessage, String asColor)
 
-	IF !UILIB_1.NotIFicationMenu_PrepareArea()
+	IF !UILIB_1.NotificationMenu_PrepareArea()
 		return 
 	ENDIF
-	Int iHandle = uicallback.Create("HUD Menu", "_root.HUDMovieBaseInstance.uilib_1_notIFicationAreaContainer.notIFicationArea.ShowMessage")
+	Int iHandle = uicallback.Create("HUD Menu", "_root.HUDMovieBaseInstance.uilib_1_NotificationAreaContainer.NotificationArea.ShowMessage")
 	IF iHandle
 		uicallback.PushString(iHandle, asMessage)
 		uicallback.PushString(iHandle, asColor)
