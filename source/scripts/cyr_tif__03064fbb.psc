@@ -1,10 +1,3 @@
-;/ Decompiled by Champollion V1.0.1
-Source   : CYR_TIF__03064FBB.psc
-ModIFied : 2015-04-07 07:00:48
-Compiled : 2015-04-07 07:00:49
-User     : Blackstorm
-Computer : BLACKST-4R0FPJ1
-/;
 scriptName CYR_TIF__03064FBB extends TopicInfo hidden
 
 ;-- Properties --------------------------------------
@@ -29,6 +22,6 @@ FUNCTION Fragment_0(ObjectReference akSpeakerRef)
 	PlayerHorse.ForceRefTo(Alias_Horse.GetActorRef())
 	game.IncrementStat("Horses Owned", 1)
 	Actor MountToRename = Alias_Horse.GetActorRef()
-	(Quest.GetQuest("DES_RenameHorseQuest") as DES_RenameHorseQuestScript).renameCyrodiilHorse(MountToRename)
-	(Quest.GetQuest("DES_RenameHorseQuest") as DES_HorseInventoryScript).FirstTimeEquipHorse(MountToRename)
+	(Quest.GetQuest("DES_HorseHandler") as DES_RenameHorseQuestScript).renameCyrodiilHorse(MountToRename)
+	(Quest.GetQuest("DES_HorseHandler") as DES_HorseInventoryScript).FirstTimeEquipHorse(MountToRename)
 ENDFUNCTION

@@ -1,4 +1,5 @@
 Scriptname DES_HorseInventoryScript extends Quest  
+{Controls everything to do with equiping horses and managing their inventory.}
 
 Actor Property DES_HorseStomachRef auto
 Actor Property HorseToEquip auto
@@ -23,15 +24,14 @@ MiscObject[] Property MiscItemList auto
 Outfit Property DES_NakedHorseOutfit auto
 Quest Property ccBGSSSE034_HorseSaddleQuest auto
 Quest Property CCHorseArmorDialogueQuest auto
-Quest Property DES_RenameHorseQuest auto
+Quest Property DES_HorseHandler auto
 ReferenceAlias Property Alias_PlayersHorse auto
 Spell Property DES_HorseFear auto
 Spell Property DES_HorseRally auto
-Spell Property DES_TrampleCloak auto
 
 EVENT OnKeyUp(Int KeyCode, Float HoldTime)
 {This event controls opening and closing the horse's inventory. It will check to see that the actor in your crosshair is a horse you own, then force it to H2Horse's alias, and then open the inventory. IF horsekey is held, it will open the gIFt menu so you can feed the horse.}
-	IF KeyCode == (DES_RenameHorseQuest as DES_HorseCallScript).horsekey && !Utility.IsInMenuMode() && !UI.IsTextInputEnabled() && Game.GetCurrentCrosshairRef()
+	IF KeyCode == (DES_HorseHandler as DES_HorseCallScript).horsekey && !Utility.IsInMenuMode() && !UI.IsTextInputEnabled() && Game.GetCurrentCrosshairRef()
 	Alias_PlayersHorse.ForceRefTo(Game.GetCurrentCrosshairRef())
 	Actor PlayersHorse = Alias_PlayersHorse.getActorReference()
 	Actor DwarvenHorse = Game.GetFormFromFile(0x38D5, "cctwbsse001-puzzledungeon.esm") As Actor
@@ -71,6 +71,7 @@ EVENT OnMenuClose(String MenuName)
 	ELSEIF MenuName == "GIFtMenu"
 		UnregisterForMenu("GIFtMenu")
 		Alias_PlayersHorse.Clear()
+		(DES_HorseHandler as DES_HorseCallScript).GoToState("")
 	ENDIF
 ENDEVENT
 
@@ -235,7 +236,6 @@ STATE Armored
 			Debug.Notification(PlayersHorse.GetDisplayName() + "'s state changed: Armored")
 		ENDIF
 		PlayersHorse.SetAV("CarryWeight", 0.0)
-		PlayersHorse.AddSpell(DES_TrampleCloak)
 		PlayersHorse.AddSpell(DES_HorseRally)
 	ENDEVENT
 	
@@ -244,7 +244,6 @@ STATE Armored
 		IF PlayersHorse == none
 			PlayersHorse = Alias_PlayersHorse.getActorReference()
 		ENDIF
-		PlayersHorse.RemoveSpell(DES_TrampleCloak)
 		PlayersHorse.RemoveSpell(DES_HorseRally)
 	ENDEVENT
 ENDSTATE

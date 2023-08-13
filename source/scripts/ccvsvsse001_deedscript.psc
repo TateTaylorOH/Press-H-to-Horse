@@ -1,10 +1,3 @@
-;/ Decompiled by Champollion V1.0.1
-Source   : ccVSVSSE001_DeedScript.psc
-ModIFied : 2021-08-19 11:15:44
-Compiled : 2021-08-25 05:50:30
-User     : builds
-Computer : RKVBGSGPUVM04
-/;
 scriptName ccVSVSSE001_DeedScript extends ObjectReference
 
 ;-- Properties --------------------------------------
@@ -37,11 +30,11 @@ FUNCTION OnContainerChanged(ObjectReference akNewContainer, ObjectReference akOl
 		Formlist DES_HorseArmors = game.GetFormFromFile(0xDD7, "H2Horse.esp") as Formlist
 		Formlist DES_HorseAllForms = game.GetFormFromFile(0xDD8, "H2Horse.esp") as Formlist
 		Armor ReindeerSaddle = game.GetFormFromFile(0x804, "ccvsvsse001-winter.esl") as Armor
-		(Quest.GetQuest("DES_RenameHorseQuest") as DES_RenameHorseQuestScript).renameUniqueHorse(MountToRename, "Cloudberry")
+		(Quest.GetQuest("DES_HorseHandler") as DES_RenameHorseQuestScript).renameUniqueHorse(MountToRename, "Cloudberry")
 		DES_HorseMiscItems.AddForm(ReindeerSaddle)
 		DES_HorseArmors.AddForm(ReindeerSaddle)
 		DES_HorseAllForms.AddForm(ReindeerSaddle)
-		(Quest.GetQuest("DES_RenameHorseQuest") as DES_HorseInventoryScript).FirstTimeEquipHorse(MountToRename)
+		(Quest.GetQuest("DES_HorseHandler") as DES_HorseInventoryScript).FirstTimeEquipHorse(MountToRename)
 	ENDIF
 ENDFUNCTION
 

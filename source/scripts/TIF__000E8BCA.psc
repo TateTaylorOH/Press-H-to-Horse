@@ -16,7 +16,7 @@ FUNCTION Fragment_0(ObjectReference akSpeakerRef)
 Actor akSpeaker = akSpeakerRef as Actor
 ;BEGIN CODE
 Actor Frost = Game.GetFormFromFile(0x97E1F, "Skyrim.esm") as Actor
-(Quest.GetQuest("DES_RenameHorseQuest") as DES_HorseInventoryScript).FirstTimeEquipHorse(Frost)
+(Quest.GetQuest("DES_HorseHandler") as DES_HorseInventoryScript).FirstTimeEquipHorse(Frost)
 GetOwningQuest().setStage(225)
 ;END CODE
 ENDFUNCTION

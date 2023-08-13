@@ -1,10 +1,3 @@
-;/ Decompiled by Champollion V1.0.1
-Source   : BYOHHouseBuildingScript.psc
-Modified : 2022-12-11 15:35:16
-Compiled : 2023-08-10 20:46:44
-User     : thest
-Computer : TATEPC
-/;
 scriptName byohhousebuildingscript extends Quest conditional
 {script for BYOHHouseBuilding quest}
 

@@ -1,4 +1,5 @@
 Scriptname DES_HorseCallTutorialTrackerScript extends Quest
+{This script performs startup tasks and displays tutorial help messages when the Player purchases their first horse.}
 
 Actor Property PlayerRef Auto
 bool Property BSHorseshoeAdded auto
@@ -11,9 +12,8 @@ LeveledItem Property DES_LItemMiscHostlerItems75 auto
 LeveledItem Property DES_MinimumHostler auto
 Quest Property ccBGSSSE034_WildHorsesQuest auto
 Quest Property DES_HorseCallTutorialTracker auto
-Quest Property DES_RenameHorseQuest auto
+Quest Property DES_HorseHandler auto
 ReferenceAlias Property Alias_Player  auto
-ReferenceAlias Property DES_RenameHorseQuestAlias auto
 
 Message[] Property HelpMessages Auto
 float property messageDuration = 3.0 auto
@@ -25,7 +25,7 @@ EVENT OnInit()
 ENDEVENT
 
 EVENT OnMenuClose(String MenuName)
-	DES_RegisterKeyOnLoad OnLoadScript = Alias_Player as DES_RegisterKeyOnLoad
+	DES_OnLoadUpdateScript OnLoadScript = Alias_Player as DES_OnLoadUpdateScript
 	IF MenuName == "RaceSex Menu"
 		Form BSHeartland = Game.GetFormFromFile(0xA764B, "BSHeartland.esm") as Worldspace
 		RegisterForAnimationEVENT(PlayerRef, "tailHorseDismount")
@@ -45,7 +45,7 @@ EVENT OnAnimationEVENT(ObjectReference akSource, string AsEventName)
 		IF !HorseCallTutorial
 			IF game.getPlayersLastRiddenHorse().isinfaction(PlayerHorseFaction)
 				ShowTutorials = papyrusinimanipulator.PullboolFromIni("Data/H2Horse.ini", "General", "ShowTutorials", True)
-				IF ShowTutorials && (DES_RenameHorseQuest as DES_HorseCallScript).horsekey == 35
+				IF ShowTutorials && (DES_HorseHandler as DES_HorseCallScript).horsekey == 35
 					HelpMessages[0].ShowAsHelpMessage("HorseCallTutorial", messageDuration, 1.0, 1)
 					Utility.wait(messageDuration + messageInterval + 0.1)
 					HelpMessages[1].ShowAsHelpMessage("HorseWaitTutorial", messageDuration, 1.0, 1)

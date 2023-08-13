@@ -38,7 +38,7 @@ auto state normalState
 					iIndex += 1
 				endWhile
 				DLCDwarvenPuzzleHorse.EnableNoWait(true)
-				(Quest.GetQuest("DES_RenameHorseQuest") as DES_HorseInventoryScript).FirstTimeEquipHorse(DLCDwarvenPuzzleHorse)
+				(Quest.GetQuest("DES_HorseHandler") as DES_HorseInventoryScript).FirstTimeEquipHorse(DLCDwarvenPuzzleHorse)
 				DisableNoWait(true)
 			else
 				DLCDwarvenpuzzleDungeonHorseFailMessage.Show()

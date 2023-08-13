@@ -1,10 +1,3 @@
-;/ Decompiled by Champollion V1.0.1
-Source   : BYOHHouseHorseScript.psc
-Modified : 2022-12-11 15:35:16
-Compiled : 2023-08-10 20:46:37
-User     : thest
-Computer : TATEPC
-/;
 scriptName byohhousehorsescript extends ObjectReference
 {enable horse on load after buying}
 

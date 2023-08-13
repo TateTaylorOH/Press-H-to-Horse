@@ -7,7 +7,7 @@ FUNCTION Fragment_0(ObjectReference akSpeakerRef)
 Actor akSpeaker = akSpeakerRef as Actor
 ;BEGIN CODE
 Actor MountToRename = Game.GetPlayersLastRiddenHorse()
-(Quest.GetQuest("DES_RenameHorseQuest") as DES_RenameHorseQuestScript).renameAnyHorse(MountToRename )
+(Quest.GetQuest("DES_HorseHandler") as DES_RenameHorseQuestScript).renameAnyHorse(MountToRename )
 ;END CODE
 ENDFUNCTION
 ;END FRAGMENT

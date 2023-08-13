@@ -1,10 +1,3 @@
-;/ Decompiled by Champollion V1.0.1
-Source   : CCHorseArmorChangeScript.psc
-ModIFied : 2020-02-19 18:48:13
-Compiled : 2021-12-15 14:09:59
-User     : builds
-Computer : RKVBGSBUILD08
-/;
 scriptName CCHorseArmorChangeScript extends Quest
 {Changes horse armors at hostlers and blacksmiths}
 

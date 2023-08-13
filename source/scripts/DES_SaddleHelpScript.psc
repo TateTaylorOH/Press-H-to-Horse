@@ -1,4 +1,5 @@
 Scriptname DES_SaddleHelpScript extends ReferenceAlias  
+{Displays help messages for the differnet types of horse equipment.}
 
 bool property SaddleTutorial auto
 bool property ArmorTutorial auto

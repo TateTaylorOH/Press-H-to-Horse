@@ -10,3 +10,7 @@ EVENT OnItemRemoved(Form akBaseItem, int aiItemCount, ObjectReference akItemRefe
 	Actor PlayersHorse = self.GetActorReference()
 	(self.GetOwningQuest() as DES_HorseInventoryScript).UnequipItem(akBaseItem, aiItemCount, akItemReference, akSourceContainer, PlayersHorse)
 ENDEVENT
+
+EVENT OnDeath(Actor akKiller)
+	Clear()
+ENDEVENT

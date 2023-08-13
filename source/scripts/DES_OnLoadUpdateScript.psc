@@ -1,7 +1,8 @@
-Scriptname DES_RegisterKeyOnLoad extends ReferenceAlias
+Scriptname DES_OnLoadUpdateScript extends ReferenceAlias  
+{Manages various aspects of the mod that may need updated when the Player reloads their game.}
 
 GlobalVariable Property DES_PlayerOwnsHorse auto
-Quest Property DES_RenameHorseQuest Auto
+Quest Property DES_HorseHandler Auto
 Quest Property DES_HorseCallTutorialTracker Auto
 Formlist Property DES_ValidWorldspaces auto
 ReferenceAlias Property Alias_PlayersHorse auto
@@ -27,8 +28,9 @@ ENDFUNCTION
 
 FUNCTION RegisterKey()
 	(self.GetOwningQuest() as DES_HorseCallScript).horsekey = papyrusinimanipulator.PullIntFromIni("Data/H2Horse.ini", "General", "HorseKey", 35)
-	DES_RenameHorseQuest.UnregisterForKey((self.GetOwningQuest() as DES_HorseCallScript).horsekey)
-	DES_RenameHorseQuest.RegisterForKey((self.GetOwningQuest() as DES_HorseCallScript).horsekey)
+	DES_HorseHandler.UnregisterForKey((self.GetOwningQuest() as DES_HorseCallScript).horsekey)
+	Utility.Wait(0.1)
+	DES_HorseHandler.RegisterForKey((self.GetOwningQuest() as DES_HorseCallScript).horsekey)
 ENDFUNCTION
 
 FUNCTION ImportModdedWorldspace(Worldspace WorldToImport)

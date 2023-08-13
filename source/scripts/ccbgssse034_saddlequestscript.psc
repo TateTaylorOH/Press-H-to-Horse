@@ -1,10 +1,3 @@
-;/ Decompiled by Champollion V1.0.1
-Source   : ccBGSSSE034_SaddleQuestScript.psc
-ModIFied : 2021-08-19 11:15:01
-Compiled : 2021-08-24 17:21:27
-User     : builds
-Computer : RKVBGSGPUVM04
-/;
 scriptName ccBGSSSE034_SaddleQuestScript extends Quest
 {Handles changing saddle on and renaming last ridden horse}
 

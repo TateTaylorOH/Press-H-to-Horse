@@ -8,8 +8,8 @@ Actor akSpeaker = akSpeakerRef as Actor
 ;BEGIN CODE
 (GetOwningQuest() as BYOHHouseBuildingScript).BuyHorse(akSpeaker)
 Actor MountToRename = (GetOwningQuest().getAliasByName("HouseHorse") as ReferenceAlias).GetActorRef()
-(Quest.GetQuest("DES_RenameHorseQuest") as DES_RenameHorseQuestScript).renameAnyHorse(MountToRename)
-(Quest.GetQuest("DES_RenameHorseQuest") as DES_HorseInventoryScript).FirstTimeEquipHorse(MountToRename)
+(Quest.GetQuest("DES_HorseHandler") as DES_RenameHorseQuestScript).renameAnyHorse(MountToRename)
+(Quest.GetQuest("DES_HorseHandler") as DES_HorseInventoryScript).FirstTimeEquipHorse(MountToRename)
 ;END CODE
 ENDFUNCTION
 ;END FRAGMENT

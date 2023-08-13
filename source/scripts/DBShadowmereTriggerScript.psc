@@ -11,7 +11,7 @@ IF(game.getPlayer()==AkActivator)
 		pDB07.SetObjectiveCompleted (666)
 		pDB07.SetObjectiveDisplayed(20, 1)
 		Actor Shadowmere = ShadowmereAlias.getactorreference()
-		(Quest.GetQuest("DES_RenameHorseQuest") as DES_HorseInventoryScript).FirstTimeEquipHorse(Shadowmere)
+		(Quest.GetQuest("DES_HorseHandler") as DES_HorseInventoryScript).FirstTimeEquipHorse(Shadowmere)
 		Disable()
 	ENDIF
 ENDIF
