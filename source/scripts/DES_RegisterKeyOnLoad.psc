@@ -3,7 +3,6 @@ Scriptname DES_RegisterKeyOnLoad extends ReferenceAlias
 GlobalVariable Property DES_PlayerOwnsHorse auto
 Quest Property DES_RenameHorseQuest Auto
 Quest Property DES_HorseCallTutorialTracker Auto
-Formlist Property DES_HorseMiscItems auto
 Formlist Property DES_ValidWorldspaces auto
 ReferenceAlias Property Alias_PlayersHorse auto
 ReferenceAlias Property Alias_BSBrumaHostler auto
@@ -16,7 +15,6 @@ EVENT OnPlayerLoadGame()
 	IF Game.GetFormFromFile(0xA764B, "BSHeartland.esm")
 		ImportCyrodiil()
 	ENDIF
-	AddInventoryEventFilter(DES_HorseMiscItems)
 ENDEVENT
 
 FUNCTION GetBaseCarryWeight()

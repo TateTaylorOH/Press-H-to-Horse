@@ -5,7 +5,6 @@ bool Property BSHorseshoeAdded auto
 bool property HorseCallTutorial auto
 bool Property ShowTutorials auto
 Faction Property PlayerHorseFaction Auto
-Formlist Property DES_HorseMiscItems auto
 Formlist Property DES_ValidWorldspaces auto
 GlobalVariable Property DES_PlayerOwnsHorse auto
 LeveledItem Property DES_LItemMiscHostlerItems75 auto
@@ -13,7 +12,6 @@ LeveledItem Property DES_MinimumHostler auto
 Quest Property ccBGSSSE034_WildHorsesQuest auto
 Quest Property DES_HorseCallTutorialTracker auto
 Quest Property DES_RenameHorseQuest auto
-ReferenceAlias Property Alias_HorseQuestPlayer  auto
 ReferenceAlias Property Alias_Player  auto
 ReferenceAlias Property DES_RenameHorseQuestAlias auto
 
@@ -24,7 +22,6 @@ float property messageInterval = 1.0 auto
 EVENT OnInit()
 	DES_HorseCallTutorialTracker.RegisterForMenu("RaceSex Menu")
 	ccBGSSSE034_WildHorsesQuest.SetStage(10)
-	Alias_HorseQuestPlayer.AddInventoryEventFilter(DES_HorseMiscItems)
 ENDEVENT
 
 EVENT OnMenuClose(String MenuName)
