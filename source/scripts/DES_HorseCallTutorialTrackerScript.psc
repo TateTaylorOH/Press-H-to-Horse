@@ -14,6 +14,7 @@ Quest Property ccBGSSSE034_WildHorsesQuest auto
 Quest Property DES_HorseCallTutorialTracker auto
 Quest Property DES_HorseHandler auto
 ReferenceAlias Property Alias_Player  auto
+ReferenceAlias Property Alias_HorseHandlerPlayer auto
 
 Message[] Property HelpMessages Auto
 float property messageDuration = 3.0 auto
@@ -25,7 +26,7 @@ EVENT OnInit()
 ENDEVENT
 
 EVENT OnMenuClose(String MenuName)
-	DES_OnLoadUpdateScript OnLoadScript = Alias_Player as DES_OnLoadUpdateScript
+	DES_OnLoadUpdateScript OnLoadScript = Alias_HorseHandlerPlayer as DES_OnLoadUpdateScript
 	IF MenuName == "RaceSex Menu"
 		Form BSHeartland = Game.GetFormFromFile(0xA764B, "BSHeartland.esm") as Worldspace
 		RegisterForAnimationEVENT(PlayerRef, "tailHorseDismount")

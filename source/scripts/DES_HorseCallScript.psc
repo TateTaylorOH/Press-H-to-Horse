@@ -54,6 +54,7 @@ EVENT OnAnimationEVENT(ObjectReference akSource, string AsEventName)
     IF (akSource == PlayerRef) && (AsEventName == "tailHorseMount")
         UnregisterForAnimationEVENT(PlayerRef, "tailHorseMount")
         Alias_PlayersHorse.Clear()
+        GoToState("")
     ENDIF
 ENDEVENT
 

@@ -68,10 +68,11 @@ EVENT OnMenuClose(String MenuName)
 			utility.wait(0.1)
 		endwhile
 		Alias_PlayersHorse.Clear()
+		((DES_HorseHandler as Quest) as DES_HorseCallScript).GoToState("")
 	ELSEIF MenuName == "GIFtMenu"
 		UnregisterForMenu("GIFtMenu")
 		Alias_PlayersHorse.Clear()
-		(DES_HorseHandler as DES_HorseCallScript).GoToState("")
+		((DES_HorseHandler as Quest) as DES_HorseCallScript).GoToState("")
 	ENDIF
 ENDEVENT
 
