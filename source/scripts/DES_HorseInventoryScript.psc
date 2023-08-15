@@ -4,7 +4,6 @@ Scriptname DES_HorseInventoryScript extends Quest
 Actor Property DES_HorseStomachRef auto
 Actor Property HorseToEquip auto
 Actor Property PlayerRef auto
-Armor[] Property HorseArmorList auto
 Bool Property Debugging auto
 Bool Property EquipRunning auto
 Bool Property UnequipRunning auto
@@ -20,7 +19,6 @@ int Property BaseCarryWeight auto
 Keyword Property CCHorseArmorKeyword auto
 Keyword Property DES_ArmorKeyword auto
 Keyword Property DES_SaddleKeyword auto
-MiscObject[] Property MiscItemList auto
 Outfit Property DES_NakedHorseOutfit auto
 Quest Property ccBGSSSE034_HorseSaddleQuest auto
 Quest Property CCHorseArmorDialogueQuest auto
@@ -35,7 +33,6 @@ EVENT OnKeyUp(Int KeyCode, Float HoldTime)
 	Alias_PlayersHorse.ForceRefTo(Game.GetCurrentCrosshairRef())
 	Actor PlayersHorse = Alias_PlayersHorse.getActorReference()
 	Actor DwarvenHorse = Game.GetFormFromFile(0x38D5, "cctwbsse001-puzzledungeon.esm") As Actor
-	Actor Reindeer = Game.GetFormFromFile(0x80E, "ccvsvsse001-winter.esl") as Actor
 	Debugging = papyrusinimanipulator.PullboolFromIni("Data/H2Horse.ini", "General", "Debugging", False)
 		IF HoldTime < papyrusinimanipulator.PullFloatFromIni("Data/H2Horse.ini", "General", "HoldTime", 0.9000)
 			IF Game.GetCurrentCrosshairRef() == PlayersHorse && PlayersHorse && PlayersHorse.IsInFaction(PlayerHorseFaction) && !PlayersHorse.IsDead() && Game.GetCurrentCrosshairRef()!= DwarvenHorse
@@ -110,6 +107,7 @@ FUNCTION FirstTimeEquipHorse(Actor PlayersHorse)
 	IF !PlayersHorse.IsInFaction(PlayerHorseFaction)
 		PlayersHorse.SetFactionRank(PlayerHorseFaction, 1)
 	ENDIF
+	PlayersHorse.SetActorOwner(PlayerRef.GetActorBase())
 	IF !DES_OwnedHorses.HasForm(PlayersHorse)
 		DES_OwnedHorses.AddForm(PlayersHorse)
 	ENDIF
@@ -118,16 +116,16 @@ FUNCTION FirstTimeEquipHorse(Actor PlayersHorse)
 	IF BaseCarryWeight == 0
 		BaseCarryWeight = 999
 	ENDIF
-	Int i = HorseArmorList.Find(PlayersHorse.GetEquippedArmorInSlot(45))
+	Int i = DES_HorseArmors.Find(PlayersHorse.GetEquippedArmorInSlot(45))
 	IF Debugging
-		Debug.Notification(i + " " + HorseArmorList[i].GetName() + " " + MiscItemList[i].GetName())
+		Debug.Notification(i + " " + (DES_HorseArmors.GetAt(i)).GetName() + " " + (DES_HorseMiscItems.GetAt(i)).GetName())
 	ENDIF
-	IF PlayersHorse.IsEquipped(DES_HorseArmors) && PlayersHorse.GetItemCount(MiscItemList) == 0
+	IF PlayersHorse.IsEquipped(DES_HorseArmors) && PlayersHorse.GetItemCount(DES_HorseMiscItems) == 0
 		IF Debugging
 			Debug.Notification(PlayersHorse.GetDisplayName() + " is being equipped for the first time.")
 		ENDIF
-		PlayersHorse.RemoveItem(DES_HorseArmors)
-		PlayersHorse.AddItem(MiscItemList[i], 1)
+		PlayersHorse.RemoveAllItems()
+		PlayersHorse.AddItem(DES_HorseMiscItems.GetAt(i), 1)
 		IF (PlayersHorse.GetEquippedArmorInSlot(45)).HasKeyword(CCHorseArmorKeyword)
 			IF Debugging
 				Debug.Notification(PlayersHorse.GetDisplayName() + " is wearing armor.")
@@ -138,7 +136,7 @@ FUNCTION FirstTimeEquipHorse(Actor PlayersHorse)
 			IF Debugging
 				Debug.Notification(PlayersHorse.GetDisplayName() + " is wearing a saddle.")
 			ENDIF
-			(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(HorseArmorList[i])
+			(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(DES_HorseArmors.GetAt(i) as Armor)
 			SaddleMode(PlayersHorse)
 		ENDIF
 	ENDIF
@@ -147,7 +145,10 @@ ENDFUNCTION
 
 FUNCTION EquipItem(Form akBaseItem, int aiItemCount, ObjectReference akItemReference, ObjectReference akSourceContainer, Actor PlayersHorse)
 {This function prevents the Player from placing items on their horses unless they have a saddle. Placing the appropriate miscitems on the horse will cause This function to match the proper visual armor and equip it. Called in an OnItemAdded EVENT.}
-	IF !DES_HorseAllForms.HasForm(akBaseItem) && !(GetState() == "Saddled")
+	IF DES_HorseMiscItems.HasForm(akBaseItem) && (PlayersHorse.GetDisplayName()) == "Wild Horse"
+		PlayersHorse.RemoveItem(akBaseItem, aiItemCount, True, akSourceContainer)
+		Debug.Notification("You cannot equip an unregistered " + PlayersHorse.GetDisplayName() + ".")		
+	ELSEIF !DES_HorseAllForms.HasForm(akBaseItem) && !(GetState() == "Saddled")
 		PlayersHorse.RemoveItem(akBaseItem, aiItemCount, True, akSourceContainer)
 		Debug.Notification(PlayersHorse.GetDisplayName() +  " isn't wearing a saddle.")
 	ELSEIF DES_HorseMiscItems.HasForm(akBaseItem) && PlayersHorse.IsEquipped(DES_HorseArmors)
@@ -155,12 +156,12 @@ FUNCTION EquipItem(Form akBaseItem, int aiItemCount, ObjectReference akItemRefer
 		Debug.Notification(PlayersHorse.GetDisplayName() +  " is already equipped.")
 		return
 	ELSEIF akBaseItem.HasKeyword(DES_ArmorKeyword)
-		Int i = MiscItemList.Find(akBaseItem as MiscObject)
+		Int i = DES_HorseMiscItems.Find(akBaseItem as MiscObject)
 		(CCHorseArmorDialogueQuest as CCHorseArmorChangeScript).ChangeHorseArmor(i)
 		ArmorMode(PlayersHorse)
 	ELSEIF akBaseItem.HasKeyword(DES_SaddleKeyword)
-		Int i = MiscItemList.Find(akBaseItem as MiscObject)
-		(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(HorseArmorList[i])
+		Int i = DES_HorseMiscItems.Find(akBaseItem as MiscObject)
+		(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(DES_HorseArmors.GetAt(i) as Armor)
 		SaddleMode(PlayersHorse)
 	ENDIF
 ENDFUNCTION

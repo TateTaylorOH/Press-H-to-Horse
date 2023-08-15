@@ -1,4 +1,4 @@
-Scriptname DES_HorseCallTutorialTrackDismount extends Quest
+Scriptname DES_HorseCallTutorialTrackDismount extends ReferenceAlias
 
 EVENT OnInit()
     RegisterForAnimationEVENT (PlayerRef, "tailHorseDismount")
