@@ -37,7 +37,7 @@ EVENT OnKeyUp(Int KeyCode, Float HoldTime)
 		IF HoldTime < papyrusinimanipulator.PullFloatFromIni("Data/H2Horse.ini", "General", "HoldTime", 0.9000)
 			IF Game.GetCurrentCrosshairRef() == PlayersHorse && PlayersHorse && PlayersHorse.IsInFaction(PlayerHorseFaction) && !PlayersHorse.IsDead() && Game.GetCurrentCrosshairRef()!= DwarvenHorse
 				RegisterForMenu("ContainerMenu")
-				UpdateMode(PlayersHorse)
+				SetCarryWeight(PlayersHorse)
 				PlayersHorse.OpenInventory(true)
 			Else
 				Alias_PlayersHorse.Clear()
@@ -73,31 +73,13 @@ EVENT OnMenuClose(String MenuName)
 	ENDIF
 ENDEVENT
 
-FUNCTION UpdateMode(Actor PlayersHorse)
+FUNCTION SetCarryWeight(Actor PlayersHorse)
 {This function sets the current mode of the horse who's inventory the Player is accessing.}
-	IF	!(PlayersHorse.GetEquippedArmorInSlot(45)).HasKeyword(CCHorseArmorKeyword) && PlayersHorse.IsEquipped(DES_HorseArmors)
-		SaddleMode(PlayersHorse)	
-	ELSEIF (PlayersHorse.GetEquippedArmorInSlot(45)).HasKeyword(CCHorseArmorKeyword)
-		ArmorMode(PlayersHorse)
-	ELSEIF !PlayersHorse.IsEquipped(DES_HorseArmors)
-		UnequipMode(PlayersHorse)
+	UnequipMode(PlayersHorse)
+	IF Debugging
+		Debug.Notification(PlayersHorse.GetDisplayName() + "'s current state: Unequipped")
 	ENDIF
-	IF (GetState() == "Saddled")
-		IF Debugging
-			Debug.Notification(PlayersHorse.GetDisplayName() + "'s current state: Saddled")
-		ENDIF
-		PlayersHorse.SetAV("CarryWeight", (papyrusinimanipulator.PullFloatFromIni("Data/H2Horse.ini", "General", "CarryWeight", 105.0)))
-	ELSEIF (GetState() == "Armored")
-		IF Debugging
-			Debug.Notification(PlayersHorse.GetDisplayName() + "'s current state: Armored")
-		ENDIF
-		PlayersHorse.SetAV("CarryWeight", 0.0)
-	ELSEIF (GetState() == "Unequipped")
-		IF Debugging
-			Debug.Notification(PlayersHorse.GetDisplayName() + "'s current state: Unequipped")
-		ENDIF
-		PlayersHorse.SetAV("CarryWeight", BaseCarryWeight)
-	ENDIF
+	PlayersHorse.SetAV("CarryWeight", BaseCarryWeight)
 ENDFUNCTION
 
 FUNCTION FirstTimeEquipHorse(Actor PlayersHorse)
@@ -224,6 +206,14 @@ STATE Saddled
 		ENDIF
 		PlayersHorse.RemoveSpell(DES_HorseFear)
 	ENDEVENT
+	
+	FUNCTION SetCarryWeight(Actor PlayersHorse)
+		SaddleMode(PlayersHorse)	
+		IF Debugging
+			Debug.Notification(PlayersHorse.GetDisplayName() + "'s current state: Saddled")
+		ENDIF
+		PlayersHorse.SetAV("CarryWeight", (papyrusinimanipulator.PullFloatFromIni("Data/H2Horse.ini", "General", "CarryWeight", 105.0)))
+	ENDFUNCTION
 ENDSTATE
 
 ;This state will put the horse into the "Armored Mode". It will set the carryweight to 0, prEVENT items from being placed on it, and make it so the horse will fight alongside you. A damage buff is given to the horse as well.
@@ -248,6 +238,14 @@ STATE Armored
 		ENDIF
 		PlayersHorse.RemoveSpell(DES_HorseRally)
 	ENDEVENT
+	
+	FUNCTION SetCarryWeight(Actor PlayersHorse)
+		ArmorMode(PlayersHorse)
+		IF Debugging
+			Debug.Notification(PlayersHorse.GetDisplayName() + "'s current state: Armored")
+		ENDIF
+		PlayersHorse.SetAV("CarryWeight", 0.0)
+	ENDFUNCTION
 ENDSTATE
 
 ;This state will put the horse into the "Unequipped Mode". It will remove all visual items from the horse and it will appear bareback. From there the horse is essentially reverted to vanilla behavior.
@@ -266,6 +264,14 @@ STATE Unequipped
 		PlayersHorse.SetAV("CarryWeight", BaseCarryWeight)		
 		UnequipRunning = False
 	ENDEVENT
+	
+	FUNCTION SetCarryWeight(Actor PlayersHorse)
+		UnequipMode(PlayersHorse)
+		IF Debugging
+			Debug.Notification(PlayersHorse.GetDisplayName() + "'s current state: Unequipped")
+		ENDIF
+		PlayersHorse.SetAV("CarryWeight", BaseCarryWeight)
+	ENDFUNCTION
 ENDSTATE
 
 ;This state is intentionally empty.
