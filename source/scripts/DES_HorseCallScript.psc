@@ -19,6 +19,12 @@ float property messageInterval = 1.0 auto
 float horseAngle = 180.0 ; where the horse should appear relative to the player, clockwise from north.
 float horseDistance = 512.0
 
+float Property LongPressTime
+    float Function Get()
+        return papyrusinimanipulator.PullFloatFromIni("Data/H2Horse.ini", "General", "HoldTime", 0.9000)
+    EndFunction
+EndProperty
+
 EVENT OnKeyUp(Int KeyCode, Float HoldTime)
 {Sends an event when HorseKey is raised up. The actor called will be the last owned horse the player rode. There are checks to prevent the horse getting called into interiors as well as a mechanic to select a specIFic horse from a SkyUILib list menu.}
 	Actor LastRiddenHorse = Game.GetPlayersLastRiddenHorse()
@@ -29,12 +35,12 @@ EVENT OnKeyUp(Int KeyCode, Float HoldTime)
 	IF Debugging
 		Debug.Notification("LastRiddenHorse is " + LastRiddenHorse.getDisplayName())
 	ENDIF
-	IF (KeyCode == horseKey && !Utility.IsInMenuMode() && !UI.IsTextInputEnabled()) && !Game.GetCurrentCrosshairRef() && !PlayerRef.IsOnMount(); this is a valid keypress
-		IF (!PlayerRef.IsInInterior() && DES_ValidWorldspaces.HasForm(PlayerRef.getWorldSpace())) ; this is a valid place to summon the horse
-			IF HoldTime < papyrusinimanipulator.PullFloatFromIni("Data/H2Horse.ini", "General", "HoldTime", 0.9000) 
-				IF (LastRiddenHorse && LastRiddenHorse.IsInFaction(PlayerHorseFaction)) && !LastRiddenHorse.IsDead(); there is a last horse, it's the players, and it's not dead
+	IF (KeyCode == horseKey && !Utility.IsInMenuMode() && !UI.IsTextInputEnabled()) && !Game.GetCurrentCrosshairRef() && !PlayerRef.IsOnMount()
+		IF (!PlayerRef.IsInInterior() && DES_ValidWorldspaces.HasForm(PlayerRef.getWorldSpace()))
+			IF HoldTime < LongPressTime
+				IF (LastRiddenHorse && LastRiddenHorse.IsInFaction(PlayerHorseFaction)) && !LastRiddenHorse.IsDead()
 					IF (LastRiddenHorse.GetParentCell() != PlayerRef.GetParentCell())
-						GoToState("")
+						GoToState("Waiting")
 					ENDIF
 					HorseCall(LastRiddenHorse)
 				ENDIF
@@ -54,30 +60,9 @@ EVENT OnAnimationEVENT(ObjectReference akSource, string AsEventName)
     IF (akSource == PlayerRef) && (AsEventName == "tailHorseMount")
         UnregisterForAnimationEVENT(PlayerRef, "tailHorseMount")
         Alias_PlayersHorse.Clear()
-        GoToState("")
+        GoToState("Waiting")
     ENDIF
 ENDEVENT
-
-FUNCTION HorseCall(Actor LastRiddenHorse)
-{This function controls switching between calling the horse and telling the horse to stay.}
-		RegisterForAnimationEVENT(PlayerRef, "tailHorseMount") ;Registered to track dismount, which will remove the Horse from the H2Horse alias.
-		Debug.Notification("You call for " + LastRiddenHorse.GetDisplayName() + ".")
-		HorseWhistle(LastRiddenHorse)
-		IF !PlayerRef.HasLOS(LastRiddenHorse)
-			float az = addAngles(PlayerRef.getAngleZ(), horseAngle)
-			LastRiddenHorse.moveTo(PlayerRef, horseDistance * math.sin(az), horseDistance * Math.cos(az), 0.0, true)
-		ENDIF
-		IF !DES_OwnedHorses.HasForm(LastRiddenHorse)
-			DES_OwnedHorses.addForm(LastRiddenHorse)
-		ENDIF
-		IF DES_OwnedHorses.GetSize() > 1 && !HorseSelectTutorial ;A tutorial regarding the horse selection list will play IF the Player has UI Extentions installed. It will only play IF HorseKey is H since the tutorial specIFically refers to the key.
-			IF Game.GetFormFromFile(0xE05, "UIExtensions.esp") && HorseKey == 35
-				Utility.Wait(1)
-				HelpMessages[0].ShowAsHelpMessage("HorseSelectTutorial", messageDuration, 1.0, 1)
-				HorseSelectTutorial = True
-			ENDIF
-		ENDIF
-ENDFUNCTION
 
 FUNCTION SelectHorse()
 {IF the Player has UI Extensions installed, This function will allowed them to pick from a list of their owned horses to call to them.}
@@ -99,13 +84,13 @@ FUNCTION SelectHorse()
 			RegisterForAnimationEVENT(PlayerRef, "tailHorseMount")
 			Debug.Notification("You call for " + SelectedHorse.GetDisplayName() + ".")
 			IF (LastRiddenHorse.GetParentCell() != PlayerRef.GetParentCell())
-				GoToState("")
+				GoToState("Waiting")
 			ENDIF
 			HorseCall(SelectedHorse)
 		ENDIF
 	ELSE
 		IF (LastRiddenHorse.GetParentCell() != PlayerRef.GetParentCell())
-			GoToState("")
+			GoToState("Waiting")
 		ENDIF
 		HorseCall(LastRiddenHorse)
 	ENDIF
@@ -147,11 +132,38 @@ float FUNCTION addAngles(float angle, float turn)
     return angle
 ENDFUNCTION
 
+;This function is intentionally empty and is overridden by the two call states.
+FUNCTION HorseCall(Actor LastRiddenHorse)
+{This function controls switching between calling the horse and telling the horse to stay.}
+ENDFUNCTION
+
+auto STATE Waiting
+	FUNCTION HorseCall(Actor LastRiddenHorse)
+		RegisterForAnimationEVENT(PlayerRef, "tailHorseMount") ;Registered to track dismount, which will remove the Horse from the H2Horse alias.
+		Debug.Notification("You call for " + LastRiddenHorse.GetDisplayName() + ".")
+		HorseWhistle(LastRiddenHorse)
+		IF !PlayerRef.HasLOS(LastRiddenHorse)
+			float az = addAngles(PlayerRef.getAngleZ(), horseAngle)
+			LastRiddenHorse.moveTo(PlayerRef, horseDistance * math.sin(az), horseDistance * Math.cos(az), 0.0, true)
+		ENDIF
+		IF !DES_OwnedHorses.HasForm(LastRiddenHorse)
+			DES_OwnedHorses.addForm(LastRiddenHorse)
+		ENDIF
+		IF DES_OwnedHorses.GetSize() > 1 && !HorseSelectTutorial ;A tutorial regarding the horse selection list will play IF the Player has UI Extentions installed. It will only play IF HorseKey is H since the tutorial specIFically refers to the key.
+			IF Game.GetFormFromFile(0xE05, "UIExtensions.esp") && HorseKey == 35
+				Utility.Wait(1)
+				HelpMessages[0].ShowAsHelpMessage("HorseSelectTutorial", messageDuration, 1.0, 1)
+				HorseSelectTutorial = True
+			ENDIF
+		ENDIF
+	ENDFUNCTION
+ENDSTATE
+
 STATE CalledHorse
 	FUNCTION HorseCall(Actor LastRiddenHorse)
 		UnregisterForAnimationEVENT(PlayerRef, "tailHorseMount")
 		Debug.Notification("You tell "+ LastRiddenHorse.GetDisplayName() + " to wait.")
 		HorseWhistle(LastRiddenHorse)
-		GoToState("")
+		GoToState("Waiting")
 	ENDFUNCTION
 ENDSTATE

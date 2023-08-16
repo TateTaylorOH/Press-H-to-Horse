@@ -6,7 +6,9 @@ Actor Property HorseToEquip auto
 Actor Property PlayerRef auto
 Bool Property Debugging auto
 Bool Property EquipRunning auto
+Bool Property RegistryTutorial auto
 Bool Property UnequipRunning auto
+Faction Property DES_RegisteredWildHorses auto
 Faction Property PlayerHorseFaction auto
 Formlist Property DES_CarFood auto
 Formlist Property DES_HorseAllForms auto
@@ -15,6 +17,7 @@ Formlist Property DES_HorseFood auto
 Formlist Property DES_HorseMiscItems auto
 Formlist Property DES_OwnedHorses auto
 GlobalVariable Property DES_PlayerOwnsHorse auto
+idle property HorseIdleRearUp auto
 int Property BaseCarryWeight auto
 Keyword Property CCHorseArmorKeyword auto
 Keyword Property DES_ArmorKeyword auto
@@ -27,33 +30,49 @@ ReferenceAlias Property Alias_PlayersHorse auto
 Spell Property DES_HorseFear auto
 Spell Property DES_HorseRally auto
 
+Message Property DES_HorseRegistryTutorial Auto
+float property messageDuration = 3.0 auto
+float property messageInterval = 1.0 auto
+
+Race Property DwarvenHorse
+    race Function Get()
+        return Game.GetFormFromFile(0x38D5, "cctwbsse001-puzzledungeon.esm") As Race
+    EndFunction
+EndProperty
+
+Race Property Reindeer
+    race Function Get()
+        return Game.GetFormFromFile(0xD61, "ccvsvsse001-winter.esl") as Race
+    EndFunction
+EndProperty
+
 EVENT OnKeyUp(Int KeyCode, Float HoldTime)
 {This event controls opening and closing the horse's inventory. It will check to see that the actor in your crosshair is a horse you own, then force it to H2Horse's alias, and then open the inventory. IF horsekey is held, it will open the gIFt menu so you can feed the horse.}
 	IF KeyCode == (DES_HorseHandler as DES_HorseCallScript).horsekey && !Utility.IsInMenuMode() && !UI.IsTextInputEnabled() && Game.GetCurrentCrosshairRef()
 	Alias_PlayersHorse.ForceRefTo(Game.GetCurrentCrosshairRef())
 	Actor PlayersHorse = Alias_PlayersHorse.getActorReference()
-	Actor DwarvenHorse = Game.GetFormFromFile(0x38D5, "cctwbsse001-puzzledungeon.esm") As Actor
-	Debugging = papyrusinimanipulator.PullboolFromIni("Data/H2Horse.ini", "General", "Debugging", False)
-		IF HoldTime < papyrusinimanipulator.PullFloatFromIni("Data/H2Horse.ini", "General", "HoldTime", 0.9000)
-			IF Game.GetCurrentCrosshairRef() == PlayersHorse && PlayersHorse && PlayersHorse.IsInFaction(PlayerHorseFaction) && !PlayersHorse.IsDead() && Game.GetCurrentCrosshairRef()!= DwarvenHorse
-				RegisterForMenu("ContainerMenu")
-				SetCarryWeight(PlayersHorse)
-				PlayersHorse.OpenInventory(true)
-			Else
-				Alias_PlayersHorse.Clear()
-			ENDIF
-		Else
-			IF Game.GetCurrentCrosshairRef() == PlayersHorse && PlayersHorse.IsInFaction(PlayerHorseFaction) && !PlayersHorse.IsDead()
-				RegisterForMenu("GIFtMenu")
-				IF PlayersHorse != DwarvenHorse
+		IF PlayersHorse && PlayersHorse.IsInFaction(PlayerHorseFaction) && !PlayersHorse.IsDead()
+			IF HoldTime < papyrusinimanipulator.PullFloatFromIni("Data/H2Horse.ini", "General", "HoldTime", 0.9000)
+				IF PlayersHorse.GetRace() != DwarvenHorse
+					RegisterForMenu("ContainerMenu")
+					SetCarryWeight(PlayersHorse)
+					PlayersHorse.OpenInventory(true)
+				ELSE
+					Alias_PlayersHorse.Clear()
+				ENDIF
+			ELSE
+				RegisterForMenu("GiftMenu")
+				IF PlayersHorse.GetRace() != DwarvenHorse
 					DES_HorseStomachRef.ShowGIFtMenu(true, DES_HorseFood)
 				ELSE
 					DES_HorseStomachRef.ShowGIFtMenu(true, DES_CarFood)
 				ENDIF
-			Else
-				Alias_PlayersHorse.Clear()
 			ENDIF
+		ELSE
+			return
 		ENDIF
+	ELSE
+		return
 	ENDIF
 ENDEVENT
 
@@ -73,13 +92,9 @@ EVENT OnMenuClose(String MenuName)
 	ENDIF
 ENDEVENT
 
+;This function is intentionally empty and is overridden by the three equip states.
 FUNCTION SetCarryWeight(Actor PlayersHorse)
-{This function sets the current mode of the horse who's inventory the Player is accessing.}
-	UnequipMode(PlayersHorse)
-	IF Debugging
-		Debug.Notification(PlayersHorse.GetDisplayName() + "'s current state: Unequipped")
-	ENDIF
-	PlayersHorse.SetAV("CarryWeight", BaseCarryWeight)
+{This function is called when the Player opens the horse's inventory. It will set the horse into the proper equip mode and set the proper carryweight.}
 ENDFUNCTION
 
 FUNCTION FirstTimeEquipHorse(Actor PlayersHorse)
@@ -127,9 +142,17 @@ ENDFUNCTION
 
 FUNCTION EquipItem(Form akBaseItem, int aiItemCount, ObjectReference akItemReference, ObjectReference akSourceContainer, Actor PlayersHorse)
 {This function prevents the Player from placing items on their horses unless they have a saddle. Placing the appropriate miscitems on the horse will cause This function to match the proper visual armor and equip it. Called in an OnItemAdded EVENT.}
-	IF DES_HorseMiscItems.HasForm(akBaseItem) && (PlayersHorse.GetDisplayName()) == "Wild Horse"
+	IF DES_HorseMiscItems.HasForm(akBaseItem) && !PlayersHorse.IsInFaction(DES_RegisteredWildHorses) && PlayersHorse.GetRace() != Reindeer
 		PlayersHorse.RemoveItem(akBaseItem, aiItemCount, True, akSourceContainer)
-		Debug.Notification("You cannot equip an unregistered " + PlayersHorse.GetDisplayName() + ".")		
+		UI.InvokeString("HUD Menu", "_global.skse.CloseMenu", "ContainerMenu")
+		Utility.Wait(0.5)
+		IF RegistryTutorial
+			Debug.Notification("This horse is not registered.")
+		ELSE
+			DES_HorseRegistryTutorial.ShowAsHelpMessage("RegistryTutorial", messageDuration, 1.0, 1)
+			RegistryTutorial = true
+		ENDIF
+		PlayersHorse.PlayIdle(HorseIdleRearUp)
 	ELSEIF !DES_HorseAllForms.HasForm(akBaseItem) && !(GetState() == "Saddled")
 		PlayersHorse.RemoveItem(akBaseItem, aiItemCount, True, akSourceContainer)
 		Debug.Notification(PlayersHorse.GetDisplayName() +  " isn't wearing a saddle.")

@@ -7,8 +7,9 @@ Function Fragment_0(ObjectReference akSpeakerRef)
 Actor akSpeaker = akSpeakerRef as Actor
 ;BEGIN CODE
 Actor MountToRename = Game.GetPlayersLastRiddenHorse()
-(Quest.GetQuest("DES_HorseHandler") as DES_RenameHorseQuestScript).renameAnyHorse(MountToRename )
+(Quest.GetQuest("DES_HorseHandler") as DES_RenameHorseQuestScript).renameAnyHorse(MountToRename)
 PlayerRef.RemoveItem(Gold001, 1500)
+MountToRename.AddToFaction(DES_RegisteredWildHorses)
 DES_IsWildHorse.SetValue(0)
 ;END CODE
 EndFunction
@@ -19,3 +20,4 @@ EndFunction
 MiscObject Property Gold001 auto
 Actor Property PlayerRef auto
 GlobalVariable Property DES_IsWildHorse auto
+Faction Property DES_RegisteredWildHorses auto
