@@ -135,6 +135,7 @@ ENDFUNCTION
 ;This function is intentionally empty and is overridden by the two call states.
 FUNCTION HorseCall(Actor LastRiddenHorse)
 {This function controls switching between calling the horse and telling the horse to stay.}
+GoToState("Waiting")
 ENDFUNCTION
 
 auto STATE Waiting

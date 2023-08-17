@@ -8,7 +8,7 @@ Bool Property Debugging auto
 Bool Property EquipRunning auto
 Bool Property RegistryTutorial auto
 Bool Property UnequipRunning auto
-Faction Property DES_RegisteredWildHorses auto
+Faction Property DES_RegisteredHorses auto
 Faction Property PlayerHorseFaction auto
 Formlist Property DES_CarFood auto
 Formlist Property DES_HorseAllForms auto
@@ -84,11 +84,11 @@ EVENT OnMenuClose(String MenuName)
 			utility.wait(0.1)
 		endwhile
 		Alias_PlayersHorse.Clear()
-		((DES_HorseHandler as Quest) as DES_HorseCallScript).GoToState("")
+		((DES_HorseHandler as Quest) as DES_HorseCallScript).GoToState("Waiting")
 	ELSEIF MenuName == "GIFtMenu"
 		UnregisterForMenu("GIFtMenu")
 		Alias_PlayersHorse.Clear()
-		((DES_HorseHandler as Quest) as DES_HorseCallScript).GoToState("")
+		((DES_HorseHandler as Quest) as DES_HorseCallScript).GoToState("Waiting")
 	ENDIF
 ENDEVENT
 
@@ -99,10 +99,12 @@ ENDFUNCTION
 
 FUNCTION FirstTimeEquipHorse(Actor PlayersHorse)
 {This will prepare the horse for use within the H2Horse framework. It will set the horse's outfit to be blank, then check what armor the horse was wearing, give that horse the matching miscitem and reequip their inital gear. It is then handed of to the equip script to set carry weight and AI.}
-	Armor ReindeerSaddle = game.GetFormFromFile(0x804, "ccvsvsse001-winter.esl") as Armor
 	Debugging = papyrusinimanipulator.PullboolFromIni("Data/H2Horse.ini", "General", "Debugging", False)
 	IF !PlayersHorse.IsInFaction(PlayerHorseFaction)
 		PlayersHorse.SetFactionRank(PlayerHorseFaction, 1)
+	ENDIF
+	IF !PlayersHorse.IsInFaction(DES_RegisteredHorses)
+		PlayersHorse.AddToFaction(DES_RegisteredHorses)
 	ENDIF
 	PlayersHorse.SetActorOwner(PlayerRef.GetActorBase())
 	IF !DES_OwnedHorses.HasForm(PlayersHorse)
@@ -117,7 +119,11 @@ FUNCTION FirstTimeEquipHorse(Actor PlayersHorse)
 	IF Debugging
 		Debug.Notification(i + " " + (DES_HorseArmors.GetAt(i)).GetName() + " " + (DES_HorseMiscItems.GetAt(i)).GetName())
 	ENDIF
-	IF PlayersHorse.IsEquipped(DES_HorseArmors) && PlayersHorse.GetItemCount(DES_HorseMiscItems) == 0
+	IF PlayersHorse.GetRace() == Reindeer
+		SaddleMode(PlayersHorse)
+	ELSEIF PlayersHorse.GetRace() == DwarvenHorse
+		ArmorMode(PlayersHorse)
+	ELSEIF PlayersHorse.IsEquipped(DES_HorseArmors) && PlayersHorse.GetItemCount(DES_HorseMiscItems) == 0
 		IF Debugging
 			Debug.Notification(PlayersHorse.GetDisplayName() + " is being equipped for the first time.")
 		ENDIF
@@ -142,7 +148,7 @@ ENDFUNCTION
 
 FUNCTION EquipItem(Form akBaseItem, int aiItemCount, ObjectReference akItemReference, ObjectReference akSourceContainer, Actor PlayersHorse)
 {This function prevents the Player from placing items on their horses unless they have a saddle. Placing the appropriate miscitems on the horse will cause This function to match the proper visual armor and equip it. Called in an OnItemAdded EVENT.}
-	IF DES_HorseMiscItems.HasForm(akBaseItem) && !PlayersHorse.IsInFaction(DES_RegisteredWildHorses) && PlayersHorse.GetRace() != Reindeer
+	IF DES_HorseMiscItems.HasForm(akBaseItem) && !PlayersHorse.IsInFaction(DES_RegisteredHorses) && PlayersHorse.GetRace() != Reindeer
 		PlayersHorse.RemoveItem(akBaseItem, aiItemCount, True, akSourceContainer)
 		UI.InvokeString("HUD Menu", "_global.skse.CloseMenu", "ContainerMenu")
 		Utility.Wait(0.5)
@@ -156,7 +162,7 @@ FUNCTION EquipItem(Form akBaseItem, int aiItemCount, ObjectReference akItemRefer
 	ELSEIF !DES_HorseAllForms.HasForm(akBaseItem) && !(GetState() == "Saddled")
 		PlayersHorse.RemoveItem(akBaseItem, aiItemCount, True, akSourceContainer)
 		Debug.Notification(PlayersHorse.GetDisplayName() +  " isn't wearing a saddle.")
-	ELSEIF DES_HorseMiscItems.HasForm(akBaseItem) && PlayersHorse.IsEquipped(DES_HorseArmors)
+	ELSEIF DES_HorseMiscItems.HasForm(akBaseItem) && PlayersHorse.IsEquipped(DES_HorseArmors) || DES_HorseMiscItems.HasForm(akBaseItem) && PlayersHorse.GetRace() == Reindeer
 		PlayersHorse.RemoveItem(akBaseItem, aiItemCount, True, akSourceContainer)
 		Debug.Notification(PlayersHorse.GetDisplayName() +  " is already equipped.")
 		return
@@ -173,7 +179,7 @@ ENDFUNCTION
 
 FUNCTION UnequipItem(Form akBaseItem, int aiItemCount, ObjectReference akItemReference, ObjectReference akSourceContainer, Actor PlayersHorse)
 {This function monitors the horse for when the appropriate miscitems are removed. Upon removal it will revert the horse to a bareback STATE. Called in an OnItemRemoved EVENT.}
-	IF DES_HorseMiscItems.HasForm(akBaseItem) && PlayersHorse.GetItemCount(DES_HorseMiscItems) >= 1
+	IF DES_HorseMiscItems.HasForm(akBaseItem) && PlayersHorse.GetItemCount(DES_HorseMiscItems) >= 1 || PlayersHorse.GetRace() == Reindeer
 		return
 	ELSEIF akBaseItem.HasKeyword(DES_ArmorKeyword) || akBaseItem.HasKeyword(DES_SaddleKeyword)
 		UnequipRunning = true
