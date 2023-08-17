@@ -59,8 +59,7 @@ ENDEVENT
 EVENT OnAnimationEVENT(ObjectReference akSource, string AsEventName)
 {This EVENT clears the H2Horse alias and reverts control of the horse's AI to the "stables" quest.}
     IF (akSource == PlayerRef) && (AsEventName == "tailHorseMount")
-        UnregisterForAnimationEVENT(PlayerRef, "tailHorseMount")
-	 Alias_LastRiddenHorse.ForceRefTo(Game.GetPlayersLastRiddenHorse())
+        Alias_LastRiddenHorse.ForceRefTo(Game.GetPlayersLastRiddenHorse())
         Alias_PlayersHorse.Clear()
         GoToState("Waiting")
     ENDIF
@@ -83,7 +82,6 @@ FUNCTION SelectHorse()
 			UISelectionMenu menu = UIExtensions.GetMenu("UISelectionMenu") as UISelectionMenu	
 			menu.OpenMenu(aForm=DES_OwnedHorses)
 			SelectedHorse = menu.GetResultForm() as Actor
-			RegisterForAnimationEVENT(PlayerRef, "tailHorseMount")
 			Debug.Notification("You call for " + SelectedHorse.GetDisplayName() + ".")
 			IF (LastRiddenHorse.GetParentCell() != PlayerRef.GetParentCell())
 				GoToState("Waiting")
@@ -142,7 +140,6 @@ ENDFUNCTION
 
 auto STATE Waiting
 	FUNCTION HorseCall(Actor LastRiddenHorse)
-		RegisterForAnimationEVENT(PlayerRef, "tailHorseMount") ;Registered to track dismount, which will remove the Horse from the H2Horse alias.
 		Debug.Notification("You call for " + LastRiddenHorse.GetDisplayName() + ".")
 		HorseWhistle(LastRiddenHorse)
 		IF !PlayerRef.HasLOS(LastRiddenHorse)
@@ -164,7 +161,6 @@ ENDSTATE
 
 STATE CalledHorse
 	FUNCTION HorseCall(Actor LastRiddenHorse)
-		UnregisterForAnimationEVENT(PlayerRef, "tailHorseMount")
 		Debug.Notification("You tell "+ LastRiddenHorse.GetDisplayName() + " to wait.")
 		HorseWhistle(LastRiddenHorse)
 		GoToState("Waiting")

@@ -1,6 +1,7 @@
 Scriptname DES_OnLoadUpdateScript extends ReferenceAlias  
 {Manages various aspects of the mod that may need updated when the Player reloads their game.}
 
+Actor Property PlayerRef auto
 GlobalVariable Property DES_PlayerOwnsHorse auto
 Quest Property DES_HorseHandler Auto
 Quest Property DES_HorseCallTutorialTracker Auto
@@ -12,6 +13,7 @@ LeveledItem Property DES_LItemMiscHostlerItems75 auto
 LeveledItem Property DES_MinimumHostler auto
 
 EVENT OnPlayerLoadGame()
+	RegisterForAnimationEvent(PlayerRef, "tailHorseMount")
 	GetBaseCarryWeight()
 	RegisterKey()
 	GetLastRiddenHorse()

@@ -31,6 +31,7 @@ EVENT OnMenuClose(String MenuName)
 		Form BSHeartland = Game.GetFormFromFile(0xA764B, "BSHeartland.esm") as Worldspace
 		RegisterForAnimationEVENT(PlayerRef, "tailHorseDismount")
 		DES_HorseCallTutorialTracker.UnregisterForMenu("RaceSex Menu")
+		RegisterForAnimationEVENT(PlayerRef, "tailHorseMount")
 		OnLoadScript.GetBaseCarryWeight()
 		OnLoadScript.RegisterKey()
 		OnLoadScript.GetLastRiddenHorse()
