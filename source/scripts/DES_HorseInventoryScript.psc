@@ -108,7 +108,7 @@ FUNCTION FirstTimeEquipHorse(Actor PlayersHorse)
 		PlayersHorse.SetFactionRank(PlayerHorseFaction, 1)
 	ENDIF
 	IF !PlayersHorse.IsInFaction(DES_RegisteredHorses)
-		PlayersHorse.AddToFaction(DES_RegisteredHorses)
+		PlayersHorse.SetFactionRank(DES_RegisteredHorses, 0)
 	ENDIF
 	PlayersHorse.SetActorOwner(PlayerRef.GetActorBase())
 	IF !DES_OwnedHorses.HasForm(PlayersHorse)
@@ -166,7 +166,7 @@ FUNCTION EquipItem(Form akBaseItem, int aiItemCount, ObjectReference akItemRefer
 	ELSEIF !DES_HorseAllForms.HasForm(akBaseItem) && !(GetState() == "Saddled")
 		PlayersHorse.RemoveItem(akBaseItem, aiItemCount, True, akSourceContainer)
 		Debug.Notification(PlayersHorse.GetDisplayName() +  " isn't wearing a saddle.")
-	ELSEIF DES_HorseMiscItems.HasForm(akBaseItem) && PlayersHorse.IsEquipped(DES_HorseArmors) || DES_HorseMiscItems.HasForm(akBaseItem) && PlayersHorse.GetRace() == Reindeer
+	ELSEIF DES_HorseMiscItems.HasForm(akBaseItem) && PlayersHorse.IsEquipped(DES_HorseArmors)
 		PlayersHorse.RemoveItem(akBaseItem, aiItemCount, True, akSourceContainer)
 		Debug.Notification(PlayersHorse.GetDisplayName() +  " is already equipped.")
 		return
