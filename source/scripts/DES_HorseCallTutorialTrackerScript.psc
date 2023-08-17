@@ -33,6 +33,7 @@ EVENT OnMenuClose(String MenuName)
 		DES_HorseCallTutorialTracker.UnregisterForMenu("RaceSex Menu")
 		OnLoadScript.GetBaseCarryWeight()
 		OnLoadScript.RegisterKey()
+		OnLoadScript.GetLastRiddenHorse()
 		IF Game.GetFormFromFile(0xA764B, "BSHeartland.esm")
 			OnLoadScript.ImportCyrodiil()
 		ENDIF

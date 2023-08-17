@@ -6,6 +6,7 @@ Quest Property DES_HorseHandler Auto
 Quest Property DES_HorseCallTutorialTracker Auto
 Formlist Property DES_ValidWorldspaces auto
 ReferenceAlias Property Alias_PlayersHorse auto
+ReferenceAlias Property Alias_LastRiddenHorse auto
 ReferenceAlias Property Alias_BSBrumaHostler auto
 LeveledItem Property DES_LItemMiscHostlerItems75 auto
 LeveledItem Property DES_MinimumHostler auto
@@ -13,6 +14,7 @@ LeveledItem Property DES_MinimumHostler auto
 EVENT OnPlayerLoadGame()
 	GetBaseCarryWeight()
 	RegisterKey()
+	GetLastRiddenHorse()
 	IF Game.GetFormFromFile(0xA764B, "BSHeartland.esm")
 		ImportCyrodiil()
 	ENDIF
@@ -31,6 +33,12 @@ FUNCTION RegisterKey()
 	DES_HorseHandler.UnregisterForKey((self.GetOwningQuest() as DES_HorseCallScript).horsekey)
 	Utility.Wait(0.1)
 	DES_HorseHandler.RegisterForKey((self.GetOwningQuest() as DES_HorseCallScript).horsekey)
+ENDFUNCTION
+
+FUNCTION GetLastRiddenHorse()
+	Alias_LastRiddenHorse.Clear()
+	Utility.Wait(0.1)
+	Alias_LastRiddenHorse.ForceRefTo(Game.GetPlayersLastRiddenHorse())
 ENDFUNCTION
 
 FUNCTION ImportModdedWorldspace(Worldspace WorldToImport)

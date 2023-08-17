@@ -10,6 +10,7 @@ Formlist Property DES_OwnedHorses auto
 Formlist Property DES_ValidWorldspaces auto
 int property horseKey auto
 ReferenceAlias Property Alias_PlayersHorse auto
+ReferenceAlias Property Alias_LastRiddenHorse auto
 Sound Property DES_HorseCallMarker auto
 Sound Property DES_HorseStayMarker auto
 
@@ -59,6 +60,7 @@ EVENT OnAnimationEVENT(ObjectReference akSource, string AsEventName)
 {This EVENT clears the H2Horse alias and reverts control of the horse's AI to the "stables" quest.}
     IF (akSource == PlayerRef) && (AsEventName == "tailHorseMount")
         UnregisterForAnimationEVENT(PlayerRef, "tailHorseMount")
+	 Alias_LastRiddenHorse.ForceRefTo(Game.GetPlayersLastRiddenHorse())
         Alias_PlayersHorse.Clear()
         GoToState("Waiting")
     ENDIF

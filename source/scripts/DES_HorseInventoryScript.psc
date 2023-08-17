@@ -27,6 +27,7 @@ Quest Property ccBGSSSE034_HorseSaddleQuest auto
 Quest Property CCHorseArmorDialogueQuest auto
 Quest Property DES_HorseHandler auto
 ReferenceAlias Property Alias_PlayersHorse auto
+ReferenceAlias Property Alias_LastRiddenHorse auto
 Spell Property DES_HorseFear auto
 Spell Property DES_HorseRally auto
 
@@ -100,6 +101,9 @@ ENDFUNCTION
 FUNCTION FirstTimeEquipHorse(Actor PlayersHorse)
 {This will prepare the horse for use within the H2Horse framework. It will set the horse's outfit to be blank, then check what armor the horse was wearing, give that horse the matching miscitem and reequip their inital gear. It is then handed of to the equip script to set carry weight and AI.}
 	Debugging = papyrusinimanipulator.PullboolFromIni("Data/H2Horse.ini", "General", "Debugging", False)
+	IF !Alias_LastRiddenHorse
+		Alias_LastRiddenHorse.ForceRefTo(PlayersHorse)
+	ENDIF
 	IF !PlayersHorse.IsInFaction(PlayerHorseFaction)
 		PlayersHorse.SetFactionRank(PlayerHorseFaction, 1)
 	ENDIF

@@ -1,6 +1,6 @@
 ;BEGIN FRAGMENT CODE - Do not edit anything between this and the end comment
 ;NEXT FRAGMENT INDEX 1
-Scriptname TIF__060DF45C Extends TopicInfo Hidden
+Scriptname TIF__06144865 Extends TopicInfo Hidden
 
 ;BEGIN FRAGMENT Fragment_0
 Function Fragment_0(ObjectReference akSpeakerRef)
@@ -15,5 +15,5 @@ EndFunction
 
 ;END FRAGMENT CODE - Do not edit anything between this and the begin comment
 
-MiscObject Property Gold001 auto
 Actor Property PlayerRef auto
+MiscObject Property Gold001 auto
