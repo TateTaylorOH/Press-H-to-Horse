@@ -35,9 +35,8 @@ EVENT OnMenuClose(String MenuName)
 		OnLoadScript.GetBaseCarryWeight()
 		OnLoadScript.RegisterKey()
 		OnLoadScript.GetLastRiddenHorse()
-		IF Game.GetFormFromFile(0xA764B, "BSHeartland.esm")
-			OnLoadScript.ImportCyrodiil()
-		ENDIF
+		OnLoadScript.InjectCWUniforms()
+		OnLoadScript.ImportCyrodiil()
 	ENDIF
 ENDEVENT
 

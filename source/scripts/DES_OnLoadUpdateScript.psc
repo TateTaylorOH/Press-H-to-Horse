@@ -2,7 +2,14 @@ Scriptname DES_OnLoadUpdateScript extends ReferenceAlias
 {Manages various aspects of the mod that may need updated when the Player reloads their game.}
 
 Actor Property PlayerRef auto
+Bool Property SaddlesAddedToCWUniforms auto
 GlobalVariable Property DES_PlayerOwnsHorse auto
+LeveledItem Property CWPlayerUniformImperialLight auto
+LeveledItem Property CWPlayerUniformImperialMedium auto
+LeveledItem Property CWPlayerUniformImperialHeavy auto
+LeveledItem Property CWPlayerUniformSons auto
+MiscObject Property DES_ImperialSaddle auto
+MiscObject Property DES_StormcloakSaddle auto
 Quest Property DES_HorseHandler Auto
 Quest Property DES_HorseCallTutorialTracker Auto
 Formlist Property DES_ValidWorldspaces auto
@@ -17,8 +24,15 @@ EVENT OnPlayerLoadGame()
 	GetBaseCarryWeight()
 	RegisterKey()
 	GetLastRiddenHorse()
-	IF Game.GetFormFromFile(0xA764B, "BSHeartland.esm")
-		ImportCyrodiil()
+	InjectCWUniforms()
+	ImportCyrodiil()
+ENDEVENT
+
+EVENT OnAnimationEVENT(ObjectReference akSource, string AsEventName)
+    IF (akSource == PlayerRef) && (AsEventName == "tailHorseMount")
+		Alias_LastRiddenHorse.Clear()
+		Utility.Wait(0.1)
+		Alias_LastRiddenHorse.ForceRefTo(Game.GetPlayersLastRiddenHorse())
 	ENDIF
 ENDEVENT
 
@@ -43,6 +57,16 @@ FUNCTION GetLastRiddenHorse()
 	Alias_LastRiddenHorse.ForceRefTo(Game.GetPlayersLastRiddenHorse())
 ENDFUNCTION
 
+FUNCTION InjectCWUniforms()
+	IF !SaddlesAddedToCWUniforms == true
+		CWPlayerUniformImperialLight.AddForm(DES_ImperialSaddle, 1, 1)
+		CWPlayerUniformImperialMedium.AddForm(DES_ImperialSaddle, 1, 1)
+		CWPlayerUniformImperialHeavy.AddForm(DES_ImperialSaddle, 1, 1)
+		CWPlayerUniformSons.AddForm(DES_StormcloakSaddle, 1, 1)
+		SaddlesAddedToCWUniforms = true
+	ENDIF
+ENDFUNCTION
+
 FUNCTION ImportModdedWorldspace(Worldspace WorldToImport)
 	IF !DES_ValidWorldspaces.HasForm(WorldToImport)
 		DES_ValidWorldspaces.AddForm(WorldToImport)
@@ -55,16 +79,18 @@ FUNCTION ImportModdedHostler(Actor HostlerToImport, ReferenceAlias HostlerToImpo
 ENDFUNCTION
 
 FUNCTION ImportCyrodiil()
-	Actor BSBrumaHostler = Game.GetFormFromFile(0x65115, "BSHeartland.esm") As Actor
-	Faction CYRJobMerchantFaction = Game.GetFormFromFile(0x5BBDE, "BSHeartland.esm") As Faction
-	Form BSHeartland = Game.GetFormFromFile(0xA764B, "BSHeartland.esm") as Worldspace
-	MiscObject BSHorseshoe = Game.GetFormFromFile(0x723B8, "BSHeartland.esm") As MiscObject
-	ImportModdedWorldspace(BSHeartland as Worldspace)
-	IF BSBrumaHostler != Alias_BSBrumaHostler.getactorRef()
-		ImportModdedHostler(BSBrumaHostler, Alias_BSBrumaHostler, CYRJobMerchantFaction)
-	ENDIF
-	IF !(DES_HorseCallTutorialTracker as DES_HorseCallTutorialTrackerScript).BSHorseshoeAdded == true
-		DES_MinimumHostler.AddForm(BSHorseshoe, 1, 4)
-		DES_LItemMiscHostlerItems75.AddForm(BSHorseshoe, 1, 4)
+	IF Game.GetFormFromFile(0xA764B, "BSHeartland.esm")
+		Actor BSBrumaHostler = Game.GetFormFromFile(0x65115, "BSHeartland.esm") As Actor
+		Faction CYRJobMerchantFaction = Game.GetFormFromFile(0x5BBDE, "BSHeartland.esm") As Faction
+		Form BSHeartland = Game.GetFormFromFile(0xA764B, "BSHeartland.esm") as Worldspace
+		MiscObject BSHorseshoe = Game.GetFormFromFile(0x723B8, "BSHeartland.esm") As MiscObject
+		ImportModdedWorldspace(BSHeartland as Worldspace)
+		IF BSBrumaHostler != Alias_BSBrumaHostler.getactorRef()
+			ImportModdedHostler(BSBrumaHostler, Alias_BSBrumaHostler, CYRJobMerchantFaction)
+		ENDIF
+		IF !(DES_HorseCallTutorialTracker as DES_HorseCallTutorialTrackerScript).BSHorseshoeAdded == true
+			DES_MinimumHostler.AddForm(BSHorseshoe, 1, 4)
+			DES_LItemMiscHostlerItems75.AddForm(BSHorseshoe, 1, 4)
+		ENDIF
 	ENDIF
 ENDFUNCTION
