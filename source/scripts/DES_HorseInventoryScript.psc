@@ -13,7 +13,10 @@ Faction Property PlayerHorseFaction auto
 Formlist Property DES_CarFood auto
 Formlist Property DES_HorseAllForms auto
 Formlist Property DES_HorseArmors auto
+Formlist Property DES_HorsesBuiltInArmor auto
+Formlist Property DES_HorsesBuiltInSaddle auto
 Formlist Property DES_HorseFood auto
+Formlist Property DES_HorsesMechanical auto
 Formlist Property DES_HorseMiscItems auto
 Formlist Property DES_OwnedHorses auto
 GlobalVariable Property DES_PlayerOwnsHorse auto
@@ -35,18 +38,6 @@ Message Property DES_HorseRegistryTutorial Auto
 float property messageDuration = 3.0 auto
 float property messageInterval = 1.0 auto
 
-Race Property DwarvenHorse
-    race Function Get()
-        return Game.GetFormFromFile(0x38D5, "cctwbsse001-puzzledungeon.esm") As Race
-    EndFunction
-EndProperty
-
-Race Property Reindeer
-    race Function Get()
-        return Game.GetFormFromFile(0xD61, "ccvsvsse001-winter.esl") as Race
-    EndFunction
-EndProperty
-
 EVENT OnKeyUp(Int KeyCode, Float HoldTime)
 {This event controls opening and closing the horse's inventory. It will check to see that the actor in your crosshair is a horse you own, then force it to H2Horse's alias, and then open the inventory. IF horsekey is held, it will open the gIFt menu so you can feed the horse.}
 	IF KeyCode == (DES_HorseHandler as DES_HorseCallScript).horsekey && !Utility.IsInMenuMode() && !UI.IsTextInputEnabled() && Game.GetCurrentCrosshairRef()
@@ -54,7 +45,7 @@ EVENT OnKeyUp(Int KeyCode, Float HoldTime)
 	Actor PlayersHorse = Alias_PlayersHorse.getActorReference()
 		IF PlayersHorse && PlayersHorse.IsInFaction(PlayerHorseFaction) && !PlayersHorse.IsDead()
 			IF HoldTime < papyrusinimanipulator.PullFloatFromIni("Data/H2Horse.ini", "General", "HoldTime", 0.9000)
-				IF PlayersHorse.GetRace() != DwarvenHorse
+				IF !DES_HorsesBuiltInArmor.HasForm(PlayersHorse)
 					RegisterForMenu("ContainerMenu")
 					UpdateMode(PlayersHorse)
 					SetCarryWeight(PlayersHorse)
@@ -64,7 +55,7 @@ EVENT OnKeyUp(Int KeyCode, Float HoldTime)
 				ENDIF
 			ELSE
 				RegisterForMenu("GiftMenu")
-				IF PlayersHorse.GetRace() != DwarvenHorse
+				IF DES_HorsesMechanical.HasForm(PlayersHorse)
 					DES_HorseStomachRef.ShowGIFtMenu(true, DES_HorseFood)
 				ELSE
 					DES_HorseStomachRef.ShowGIFtMenu(true, DES_CarFood)
@@ -96,9 +87,9 @@ ENDEVENT
 
 FUNCTION UpdateMode(Actor PlayersHorse)
 {This function will check the horse whose inventory you're opening to determine what equip mode it should be in.}
-	IF	!(PlayersHorse.GetEquippedArmorInSlot(45)).HasKeyword(CCHorseArmorKeyword) && PlayersHorse.IsEquipped(DES_HorseArmors) || PlayersHorse.GetRace() == Reindeer
+	IF	!(PlayersHorse.GetEquippedArmorInSlot(45)).HasKeyword(CCHorseArmorKeyword) && PlayersHorse.IsEquipped(DES_HorseArmors) || DES_HorsesBuiltInSaddle.HasForm(PlayersHorse)
 		SaddleMode(PlayersHorse)	
-	ELSEIF (PlayersHorse.GetEquippedArmorInSlot(45)).HasKeyword(CCHorseArmorKeyword)
+	ELSEIF (PlayersHorse.GetEquippedArmorInSlot(45)).HasKeyword(CCHorseArmorKeyword) || DES_HorsesBuiltInArmor.HasForm(PlayersHorse)
 		ArmorMode(PlayersHorse)
 	ELSEIF !PlayersHorse.IsEquipped(DES_HorseArmors)
 		UnequipMode(PlayersHorse)
@@ -135,10 +126,10 @@ FUNCTION FirstTimeEquipHorse(Actor PlayersHorse)
 	IF Debugging
 		Debug.Notification(i + " " + (DES_HorseArmors.GetAt(i)).GetName() + " " + (DES_HorseMiscItems.GetAt(i)).GetName())
 	ENDIF
-	IF PlayersHorse.GetRace() == Reindeer
+	IF DES_HorsesBuiltInSaddle.HasForm(PlayersHorse)
 		SaddleMode(PlayersHorse)
 		return
-	ELSEIF PlayersHorse.GetRace() == DwarvenHorse
+	ELSEIF DES_HorsesBuiltInArmor.HasForm(PlayersHorse)
 		ArmorMode(PlayersHorse)
 		return
 	ELSEIF PlayersHorse.IsEquipped(DES_HorseArmors) && PlayersHorse.GetItemCount(DES_HorseMiscItems) == 0
@@ -180,7 +171,7 @@ FUNCTION EquipItem(Form akBaseItem, int aiItemCount, ObjectReference akItemRefer
 	ELSEIF !DES_HorseAllForms.HasForm(akBaseItem) && !(GetState() == "Saddled")
 		PlayersHorse.RemoveItem(akBaseItem, aiItemCount, True, akSourceContainer)
 		Debug.Notification(PlayersHorse.GetDisplayName() +  " isn't wearing a saddle.")
-	ELSEIF DES_HorseMiscItems.HasForm(akBaseItem) && PlayersHorse.IsEquipped(DES_HorseArmors) || DES_HorseMiscItems.HasForm(akBaseItem) && PlayersHorse.GetRace() == Reindeer
+	ELSEIF DES_HorseMiscItems.HasForm(akBaseItem) && PlayersHorse.IsEquipped(DES_HorseArmors) || DES_HorseMiscItems.HasForm(akBaseItem) && DES_HorsesBuiltInSaddle.HasForm(PlayersHorse)
 		PlayersHorse.RemoveItem(akBaseItem, aiItemCount, True, akSourceContainer)
 		Debug.Notification(PlayersHorse.GetDisplayName() +  " is already equipped.")
 		return
@@ -197,7 +188,7 @@ ENDFUNCTION
 
 FUNCTION UnequipItem(Form akBaseItem, int aiItemCount, ObjectReference akItemReference, ObjectReference akSourceContainer, Actor PlayersHorse)
 {This function monitors the horse for when the appropriate miscitems are removed. Upon removal it will revert the horse to a bareback STATE. Called in an OnItemRemoved EVENT.}
-	IF DES_HorseMiscItems.HasForm(akBaseItem) && PlayersHorse.GetItemCount(DES_HorseMiscItems) >= 1 || PlayersHorse.GetRace() == Reindeer
+	IF DES_HorseMiscItems.HasForm(akBaseItem) && PlayersHorse.GetItemCount(DES_HorseMiscItems) >= 1 || DES_HorsesBuiltInSaddle.HasForm(PlayersHorse) || DES_HorsesBuiltInArmor.HasForm(PlayersHorse)
 		return
 	ELSEIF akBaseItem.HasKeyword(DES_ArmorKeyword) || akBaseItem.HasKeyword(DES_SaddleKeyword)
 		UnequipRunning = true
