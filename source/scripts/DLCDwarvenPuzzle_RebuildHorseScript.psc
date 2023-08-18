@@ -39,7 +39,7 @@ auto state normalState
 				endWhile
 				DLCDwarvenPuzzleHorse.EnableNoWait(true)
 				Formlist DES_HorsesBuiltInArmor Game.GetFormFromFile(0xxxxxx, "H2Horse.esp") As Actor
-				Formlist DES_HorsesMechanical Game.GetFormFromFile(0xxxxxx, "H2Horse.esp") As Actor
+				Formlist DES_HorsesMechanical Game.GetFormFromFile(0xxxxxx, "H2Horse.esp") As Formlist
 				(Quest.GetQuest("DES_HorseHandler") as DES_HorseInventoryScript).FirstTimeEquipHorse(DLCDwarvenPuzzleHorse)
 				DES_HorsesBuiltInArmor.AddForm(DLCDwarvenPuzzleHorse)
 				DES_HorsesMechanical.AddForm(DLCDwarvenPuzzleHorse)
