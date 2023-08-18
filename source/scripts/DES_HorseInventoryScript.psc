@@ -56,6 +56,7 @@ EVENT OnKeyUp(Int KeyCode, Float HoldTime)
 			IF HoldTime < papyrusinimanipulator.PullFloatFromIni("Data/H2Horse.ini", "General", "HoldTime", 0.9000)
 				IF PlayersHorse.GetRace() != DwarvenHorse
 					RegisterForMenu("ContainerMenu")
+					UpdateMode(PlayersHorse)
 					SetCarryWeight(PlayersHorse)
 					PlayersHorse.OpenInventory(true)
 				ELSE
@@ -93,9 +94,20 @@ EVENT OnMenuClose(String MenuName)
 	ENDIF
 ENDEVENT
 
+FUNCTION UpdateMode(Actor PlayersHorse)
+{This function will check the horse whose inventory you're opening to determine what equip mode it should be in.}
+	IF	!(PlayersHorse.GetEquippedArmorInSlot(45)).HasKeyword(CCHorseArmorKeyword) && PlayersHorse.IsEquipped(DES_HorseArmors) || PlayersHorse.GetRace() == Reindeer
+		SaddleMode(PlayersHorse)	
+	ELSEIF (PlayersHorse.GetEquippedArmorInSlot(45)).HasKeyword(CCHorseArmorKeyword)
+		ArmorMode(PlayersHorse)
+	ELSEIF !PlayersHorse.IsEquipped(DES_HorseArmors)
+		UnequipMode(PlayersHorse)
+	ENDIF
+ENDFUNCTION
+
 ;This function is intentionally empty and is overridden by the three equip states.
 FUNCTION SetCarryWeight(Actor PlayersHorse)
-{This function is called when the Player opens the horse's inventory. It will set the horse into the proper equip mode and set the proper carryweight.}
+{This function is called when the Player opens the horse's inventory. It will set the horse to the proper carryweight.}
 ENDFUNCTION
 
 FUNCTION FirstTimeEquipHorse(Actor PlayersHorse)
@@ -125,8 +137,10 @@ FUNCTION FirstTimeEquipHorse(Actor PlayersHorse)
 	ENDIF
 	IF PlayersHorse.GetRace() == Reindeer
 		SaddleMode(PlayersHorse)
+		return
 	ELSEIF PlayersHorse.GetRace() == DwarvenHorse
 		ArmorMode(PlayersHorse)
+		return
 	ELSEIF PlayersHorse.IsEquipped(DES_HorseArmors) && PlayersHorse.GetItemCount(DES_HorseMiscItems) == 0
 		IF Debugging
 			Debug.Notification(PlayersHorse.GetDisplayName() + " is being equipped for the first time.")
@@ -152,7 +166,7 @@ ENDFUNCTION
 
 FUNCTION EquipItem(Form akBaseItem, int aiItemCount, ObjectReference akItemReference, ObjectReference akSourceContainer, Actor PlayersHorse)
 {This function prevents the Player from placing items on their horses unless they have a saddle. Placing the appropriate miscitems on the horse will cause This function to match the proper visual armor and equip it. Called in an OnItemAdded EVENT.}
-	IF DES_HorseMiscItems.HasForm(akBaseItem) && !PlayersHorse.IsInFaction(DES_RegisteredHorses) && PlayersHorse.GetRace() != Reindeer
+	IF DES_HorseMiscItems.HasForm(akBaseItem) && !PlayersHorse.IsInFaction(DES_RegisteredHorses)
 		PlayersHorse.RemoveItem(akBaseItem, aiItemCount, True, akSourceContainer)
 		UI.InvokeString("HUD Menu", "_global.skse.CloseMenu", "ContainerMenu")
 		Utility.Wait(0.5)
@@ -166,7 +180,7 @@ FUNCTION EquipItem(Form akBaseItem, int aiItemCount, ObjectReference akItemRefer
 	ELSEIF !DES_HorseAllForms.HasForm(akBaseItem) && !(GetState() == "Saddled")
 		PlayersHorse.RemoveItem(akBaseItem, aiItemCount, True, akSourceContainer)
 		Debug.Notification(PlayersHorse.GetDisplayName() +  " isn't wearing a saddle.")
-	ELSEIF DES_HorseMiscItems.HasForm(akBaseItem) && PlayersHorse.IsEquipped(DES_HorseArmors)
+	ELSEIF DES_HorseMiscItems.HasForm(akBaseItem) && PlayersHorse.IsEquipped(DES_HorseArmors) || DES_HorseMiscItems.HasForm(akBaseItem) && PlayersHorse.GetRace() == Reindeer
 		PlayersHorse.RemoveItem(akBaseItem, aiItemCount, True, akSourceContainer)
 		Debug.Notification(PlayersHorse.GetDisplayName() +  " is already equipped.")
 		return
@@ -241,7 +255,6 @@ STATE Saddled
 	ENDEVENT
 	
 	FUNCTION SetCarryWeight(Actor PlayersHorse)
-		SaddleMode(PlayersHorse)	
 		IF Debugging
 			Debug.Notification(PlayersHorse.GetDisplayName() + "'s current state: Saddled")
 		ENDIF
@@ -273,7 +286,6 @@ STATE Armored
 	ENDEVENT
 	
 	FUNCTION SetCarryWeight(Actor PlayersHorse)
-		ArmorMode(PlayersHorse)
 		IF Debugging
 			Debug.Notification(PlayersHorse.GetDisplayName() + "'s current state: Armored")
 		ENDIF
@@ -299,7 +311,6 @@ STATE Unequipped
 	ENDEVENT
 	
 	FUNCTION SetCarryWeight(Actor PlayersHorse)
-		UnequipMode(PlayersHorse)
 		IF Debugging
 			Debug.Notification(PlayersHorse.GetDisplayName() + "'s current state: Unequipped")
 		ENDIF
