@@ -55,7 +55,7 @@ EVENT OnKeyUp(Int KeyCode, Float HoldTime)
 				ENDIF
 			ELSE
 				RegisterForMenu("GiftMenu")
-				IF DES_HorsesMechanical.HasForm(PlayersHorse)
+				IF !DES_HorsesMechanical.HasForm(PlayersHorse)
 					DES_HorseStomachRef.ShowGIFtMenu(true, DES_HorseFood)
 				ELSE
 					DES_HorseStomachRef.ShowGIFtMenu(true, DES_CarFood)
