@@ -38,7 +38,11 @@ auto state normalState
 					iIndex += 1
 				endWhile
 				DLCDwarvenPuzzleHorse.EnableNoWait(true)
+				Formlist DES_HorsesBuiltInArmor Game.GetFormFromFile(0xxxxxx, "H2Horse.esp") As Actor
+				Formlist DES_HorsesMechanical Game.GetFormFromFile(0xxxxxx, "H2Horse.esp") As Actor
 				(Quest.GetQuest("DES_HorseHandler") as DES_HorseInventoryScript).FirstTimeEquipHorse(DLCDwarvenPuzzleHorse)
+				DES_HorsesBuiltInArmor.AddForm(DLCDwarvenPuzzleHorse)
+				DES_HorsesMechanical.AddForm(DLCDwarvenPuzzleHorse)
 				DisableNoWait(true)
 			else
 				DLCDwarvenpuzzleDungeonHorseFailMessage.Show()
