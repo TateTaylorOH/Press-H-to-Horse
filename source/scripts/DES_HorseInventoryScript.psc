@@ -8,17 +8,19 @@ Bool Property Debugging auto
 Bool Property EquipRunning auto
 Bool Property RegistryTutorial auto
 Bool Property UnequipRunning auto
+Faction Property DES_HorsesArmorExclusions auto
+Faction Property DES_HorsesDaedric auto
+Faction Property DES_HorsesMechanical auto
+Faction Property DES_HorsesSaddleExclusions auto
 Faction Property DES_RegisteredHorses auto
 Faction Property PlayerHorseFaction auto
 Formlist Property DES_CarFood auto
 Formlist Property DES_HorseAllForms auto
 Formlist Property DES_HorseArmors auto
-Formlist Property DES_HorsesBuiltInArmor auto
-Formlist Property DES_HorsesBuiltInSaddle auto
 Formlist Property DES_HorseFood auto
-Formlist Property DES_HorsesMechanical auto
 Formlist Property DES_HorseMiscItems auto
 Formlist Property DES_OwnedHorses auto
+Formlist Property DES_SpookyFood auto
 GlobalVariable Property DES_PlayerOwnsHorse auto
 idle property HorseIdleRearUp auto
 int Property BaseCarryWeight auto
@@ -29,8 +31,8 @@ Outfit Property DES_NakedHorseOutfit auto
 Quest Property ccBGSSSE034_HorseSaddleQuest auto
 Quest Property CCHorseArmorDialogueQuest auto
 Quest Property DES_HorseHandler auto
-ReferenceAlias Property Alias_PlayersHorse auto
 ReferenceAlias Property Alias_LastRiddenHorse auto
+ReferenceAlias Property Alias_PlayersHorse auto
 Spell Property DES_HorseFear auto
 Spell Property DES_HorseRally auto
 
@@ -44,21 +46,19 @@ EVENT OnKeyUp(Int KeyCode, Float HoldTime)
 	Alias_PlayersHorse.ForceRefTo(Game.GetCurrentCrosshairRef())
 	Actor PlayersHorse = Alias_PlayersHorse.getActorReference()
 		IF PlayersHorse && PlayersHorse.IsInFaction(PlayerHorseFaction) && !PlayersHorse.IsDead()
-			IF HoldTime < papyrusinimanipulator.PullFloatFromIni("Data/H2Horse.ini", "General", "HoldTime", 0.9000)
-				IF !DES_HorsesBuiltInArmor.HasForm(PlayersHorse)
-					RegisterForMenu("ContainerMenu")
-					UpdateMode(PlayersHorse)
-					SetCarryWeight(PlayersHorse)
-					PlayersHorse.OpenInventory(true)
-				ELSE
-					Alias_PlayersHorse.Clear()
-				ENDIF
+			IF HoldTime < papyrusinimanipulator.PullFloatFromIni("Data/H2Horse.ini", "General", "HoldTime", 0.5000)
+				RegisterForMenu("ContainerMenu")
+				UpdateMode(PlayersHorse)
+				SetCarryWeight(PlayersHorse)
+				PlayersHorse.OpenInventory(true)
 			ELSE
 				RegisterForMenu("GiftMenu")
-				IF !DES_HorsesMechanical.HasForm(PlayersHorse)
+				IF !PlayersHorse.IsInFaction(DES_HorsesMechanical) && !PlayersHorse.IsInFaction(DES_HorsesDaedric)
 					DES_HorseStomachRef.ShowGIFtMenu(true, DES_HorseFood)
-				ELSE
+				ELSEIF PlayersHorse.IsInFaction(DES_HorsesMechanical)
 					DES_HorseStomachRef.ShowGIFtMenu(true, DES_CarFood)
+				ELSEIF PlayersHorse.IsInFaction(DES_HorsesDaedric)
+					DES_HorseStomachRef.ShowGIFtMenu(true, DES_SpookyFood)
 				ENDIF
 			ENDIF
 		ELSE
@@ -87,11 +87,11 @@ ENDEVENT
 
 FUNCTION UpdateMode(Actor PlayersHorse)
 {This function will check the horse whose inventory you're opening to determine what equip mode it should be in.}
-	IF	!(PlayersHorse.GetEquippedArmorInSlot(45)).HasKeyword(CCHorseArmorKeyword) && PlayersHorse.IsEquipped(DES_HorseArmors) || DES_HorsesBuiltInSaddle.HasForm(PlayersHorse)
+	IF	!(PlayersHorse.GetEquippedArmorInSlot(45)).HasKeyword(CCHorseArmorKeyword) && PlayersHorse.IsEquipped(DES_HorseArmors) || PlayersHorse.IsInFaction(DES_HorsesSaddleExclusions)
 		SaddleMode(PlayersHorse)	
-	ELSEIF (PlayersHorse.GetEquippedArmorInSlot(45)).HasKeyword(CCHorseArmorKeyword) || DES_HorsesBuiltInArmor.HasForm(PlayersHorse)
+	ELSEIF (PlayersHorse.GetEquippedArmorInSlot(45)).HasKeyword(CCHorseArmorKeyword) && PlayersHorse.IsEquipped(DES_HorseArmors) || PlayersHorse.IsInFaction(DES_HorsesArmorExclusions)
 		ArmorMode(PlayersHorse)
-	ELSEIF !PlayersHorse.IsEquipped(DES_HorseArmors)
+	ELSEIF !PlayersHorse.IsEquipped(DES_HorseArmors) && !PlayersHorse.IsInFaction(DES_HorsesSaddleExclusions) && !PlayersHorse.IsInFaction(DES_HorsesArmorExclusions)
 		UnequipMode(PlayersHorse)
 	ENDIF
 ENDFUNCTION
@@ -107,13 +107,9 @@ FUNCTION FirstTimeEquipHorse(Actor PlayersHorse)
 	IF !Alias_LastRiddenHorse
 		Alias_LastRiddenHorse.ForceRefTo(PlayersHorse)
 	ENDIF
-	IF !PlayersHorse.IsInFaction(PlayerHorseFaction)
-		PlayersHorse.SetFactionRank(PlayerHorseFaction, 1)
-	ENDIF
 	IF !PlayersHorse.IsInFaction(DES_RegisteredHorses)
-		PlayersHorse.SetFactionRank(DES_RegisteredHorses, 0)
+		PlayersHorse.AddToFaction(DES_RegisteredHorses)
 	ENDIF
-	PlayersHorse.SetActorOwner(PlayerRef.GetActorBase())
 	IF !DES_OwnedHorses.HasForm(PlayersHorse)
 		DES_OwnedHorses.AddForm(PlayersHorse)
 	ENDIF
@@ -126,11 +122,7 @@ FUNCTION FirstTimeEquipHorse(Actor PlayersHorse)
 	IF Debugging
 		Debug.Notification(i + " " + (DES_HorseArmors.GetAt(i)).GetName() + " " + (DES_HorseMiscItems.GetAt(i)).GetName())
 	ENDIF
-	IF DES_HorsesBuiltInSaddle.HasForm(PlayersHorse)
-		SaddleMode(PlayersHorse)
-		return
-	ELSEIF DES_HorsesBuiltInArmor.HasForm(PlayersHorse)
-		ArmorMode(PlayersHorse)
+	IF  PlayersHorse.IsInFaction(DES_HorsesSaddleExclusions) || PlayersHorse.IsInFaction(DES_HorsesArmorExclusions)
 		return
 	ELSEIF PlayersHorse.IsEquipped(DES_HorseArmors) && PlayersHorse.GetItemCount(DES_HorseMiscItems) == 0
 		IF Debugging
@@ -171,7 +163,7 @@ FUNCTION EquipItem(Form akBaseItem, int aiItemCount, ObjectReference akItemRefer
 	ELSEIF !DES_HorseAllForms.HasForm(akBaseItem) && !(GetState() == "Saddled")
 		PlayersHorse.RemoveItem(akBaseItem, aiItemCount, True, akSourceContainer)
 		Debug.Notification(PlayersHorse.GetDisplayName() +  " isn't wearing a saddle.")
-	ELSEIF DES_HorseMiscItems.HasForm(akBaseItem) && PlayersHorse.IsEquipped(DES_HorseArmors) || DES_HorseMiscItems.HasForm(akBaseItem) && DES_HorsesBuiltInSaddle.HasForm(PlayersHorse)
+	ELSEIF DES_HorseMiscItems.HasForm(akBaseItem) && PlayersHorse.IsEquipped(DES_HorseArmors) || DES_HorseMiscItems.HasForm(akBaseItem) && PlayersHorse.IsInFaction(DES_HorsesSaddleExclusions) || DES_HorseMiscItems.HasForm(akBaseItem) && PlayersHorse.IsInFaction(DES_HorsesArmorExclusions)
 		PlayersHorse.RemoveItem(akBaseItem, aiItemCount, True, akSourceContainer)
 		Debug.Notification(PlayersHorse.GetDisplayName() +  " is already equipped.")
 		return
@@ -188,7 +180,7 @@ ENDFUNCTION
 
 FUNCTION UnequipItem(Form akBaseItem, int aiItemCount, ObjectReference akItemReference, ObjectReference akSourceContainer, Actor PlayersHorse)
 {This function monitors the horse for when the appropriate miscitems are removed. Upon removal it will revert the horse to a bareback STATE. Called in an OnItemRemoved EVENT.}
-	IF DES_HorseMiscItems.HasForm(akBaseItem) && PlayersHorse.GetItemCount(DES_HorseMiscItems) >= 1 || DES_HorsesBuiltInSaddle.HasForm(PlayersHorse) || DES_HorsesBuiltInArmor.HasForm(PlayersHorse)
+	if DES_HorseMiscItems.HasForm(akBaseItem) && PlayersHorse.GetItemCount(DES_HorseMiscItems) >= 1 || PlayersHorse.IsInFaction(DES_HorsesSaddleExclusions) || PlayersHorse.IsInFaction(DES_HorsesArmorExclusions)
 		return
 	ELSEIF akBaseItem.HasKeyword(DES_ArmorKeyword) || akBaseItem.HasKeyword(DES_SaddleKeyword)
 		UnequipRunning = true
