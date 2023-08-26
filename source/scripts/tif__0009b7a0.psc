@@ -3,7 +3,7 @@
 Scriptname TIF__0009B7A0 Extends TopicInfo Hidden
 
 ;BEGIN FRAGMENT Fragment_0
-Function Fragment_0(ObjectReference akSpeakerRef)
+FUNCTION Fragment_0(ObjectReference akSpeakerRef)
 Actor akSpeaker = akSpeakerRef as Actor
 ;BEGIN CODE
 ;
@@ -12,9 +12,11 @@ Alias_Horse.GetActorRef().SetFactionRank(PlayerHorseFaction, 1)
 Alias_Horse.GetActorRef().SetFactionOwner(PlayerFaction)
 PlayersHorse.ForceRefTo(Alias_Horse.GetActorRef())
 game.IncrementStat( "Horses Owned" )
-(Quest.GetQuest("DES_RenameHorseQuest") as DES_RenameHorseQuestScript).RenameFemaleHorse()
+Actor MountToRename = Alias_Horse.GetActorRef()
+(Quest.GetQuest("DES_HorseHandler") as DES_RenameHorseQuestScript).RenameFemaleHorse(MountToRename)
+(Quest.GetQuest("DES_HorseHandler") as DES_HorseInventoryScript).FirstTimeEquipHorse(MountToRename)
 ;END CODE
-EndFunction
+ENDFUNCTION
 ;END FRAGMENT
 
 ;END FRAGMENT CODE - Do not edit anything between this and the begin comment

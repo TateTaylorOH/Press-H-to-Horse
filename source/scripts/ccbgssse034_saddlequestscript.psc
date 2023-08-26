@@ -1,10 +1,3 @@
-;/ Decompiled by Champollion V1.0.1
-Source   : ccBGSSSE034_SaddleQuestScript.psc
-Modified : 2021-08-19 11:15:01
-Compiled : 2021-08-24 17:21:27
-User     : builds
-Computer : RKVBGSGPUVM04
-/;
 scriptName ccBGSSSE034_SaddleQuestScript extends Quest
 {Handles changing saddle on and renaming last ridden horse}
 
@@ -34,33 +27,33 @@ Actor PlayerREF
 Actor HorseToReSaddle
 Actor HorseToRename
 
-;-- Functions ---------------------------------------
+;-- FUNCTIONs ---------------------------------------
 
-function OnInit()
+FUNCTION OnInit()
 
 	PlayerREF = game.GetPlayer()
-endFunction
+ENDFUNCTION
 
 ; Skipped compiler generated GetState
 
-; Skipped compiler generated GotoState
+; Skipped compiler generated GoToState
 
-function ChangeHorseSaddle(armor SaddleToEquip)
+FUNCTION ChangeHorseSaddle(armor SaddleToEquip)
 
 	;HorseToReSaddle = game.GetPlayersLastRiddenHorse()
-	;if !HorseToReSaddle && StablesPlayersHorse.GetActorReference() as Bool
+	;IF !HorseToReSaddle && StablesPlayersHorse.GetActorReference() as Bool
 		HorseToReSaddle = StablesPlayersHorse.GetActorReference()
-	;endIf
-	if HorseToReSaddle
+	;ENDIF
+	IF HorseToReSaddle
 		debug.trace("ccBGSSSE034: Current horse is " + HorseToReSaddle as String, 0)
-		if DisallowedHorses.find(HorseToReSaddle.GetActorBase(), 0) != -1 || HorseToReSaddle.HasKeyword(ccDisallowSaddleSwap)
+		IF DisallowedHorses.find(HorseToReSaddle.GetActorBase(), 0) != -1 || HorseToReSaddle.HasKeyword(ccDisallowSaddleSwap)
 			debug.trace("CCBGSSSE034: Current horse cannot have saddle changed", 0)
 			MessageCannotChangeSaddle.Show(0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000)
-		elseIf HorseToReSaddle.HasKeyword(SpecialHorseKeyword) && !HorseToReSaddle.IsInFaction(PlayerHorseFaction)
+		ELSEIF HorseToReSaddle.HasKeyword(SpecialHorseKeyword) && !HorseToReSaddle.IsInFaction(PlayerHorseFaction)
 			debug.trace("CCBGSSSE034: Current horse is still wild, cannot change saddle", 0)
 			ccBGSSSE034_MessageMustBeTamedSaddle.Show(0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000)
-		elseIf SaddleToEquip
-			;if PlayerREF.GetItemCount(Gold001 as form) >= 100
+		ELSEIF SaddleToEquip
+			;IF PlayerREF.GetItemCount(Gold001 as form) >= 100
 				PlayerREF.RemoveItem(Gold001 as form, 100, false, none)
 				CCHorseArmorDialogueQuest.RemoveHorseArmor()
 				HorseToReSaddle.UnequipItemSlot(45)
@@ -68,14 +61,14 @@ function ChangeHorseSaddle(armor SaddleToEquip)
 				MessageSaddleChanged.Show(0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000)
 			;else
 			;	MessageNotEnoughGold.Show(0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000)
-			;endIf
+			;ENDIF
 		else
 			CCHorseArmorDialogueQuest.RemoveHorseArmor()
 			HorseToReSaddle.UnequipItemSlot(45)
 			HorseToReSaddle.EquipItem(DummySaddle as form, 1 as Bool, false)
 			MessageSaddleRemoved.Show(0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000)
-		endIf
+		ENDIF
 	else
 		MessageNoHorsesOwned.Show(0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000)
-	endIf
-endFunction
+	ENDIF
+ENDFUNCTION

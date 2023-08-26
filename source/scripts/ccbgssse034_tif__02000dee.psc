@@ -6,9 +6,16 @@ Scriptname ccBGSSSE034_TIF__02000DEE Extends TopicInfo Hidden
 Function Fragment_0(ObjectReference akSpeakerRef)
 Actor akSpeaker = akSpeakerRef as Actor
 ;BEGIN CODE
-(Quest.GetQuest("DES_RenameHorseQuest") as DES_RenameHorseQuestScript).renameWildHorse()
+Actor MountToRename = Game.GetPlayersLastRiddenHorse()
+(GetOwningQuest() as DES_RenameHorseQuestScript).renameAnyHorse(MountToRename)
+PlayerRef.RemoveItem(Gold001, 1500)
+MountToRename.AddToFaction(DES_RegisteredHorses)
 ;END CODE
 EndFunction
 ;END FRAGMENT
 
 ;END FRAGMENT CODE - Do not edit anything between this and the begin comment
+
+MiscObject Property Gold001 auto
+Actor Property PlayerRef auto
+Faction Property DES_RegisteredHorses auto

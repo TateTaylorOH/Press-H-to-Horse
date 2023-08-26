@@ -1,10 +1,3 @@
-;/ Decompiled by Champollion V1.0.1
-Source   : CCHorseArmorChangeScript.psc
-Modified : 2020-02-19 18:48:13
-Compiled : 2021-12-15 14:09:59
-User     : builds
-Computer : RKVBGSBUILD08
-/;
 scriptName CCHorseArmorChangeScript extends Quest
 {Changes horse armors at hostlers and blacksmiths}
 
@@ -33,141 +26,141 @@ message property CCHorseArmorMessageArmorCannotUse auto
 ;-- Variables ---------------------------------------
 armor[] ArrayArmors
 
-;-- Functions ---------------------------------------
+;-- FUNCTIONs ---------------------------------------
 
-function ChangeHorseArmor(Int ArmorID)
+FUNCTION ChangeHorseArmor(Int ArmorID)
 
 	actor PlayerHorseREF = self.GetPlayerHorse()
-	if PlayerHorseREF as Bool && !PlayerHorseREF.IsDead()
-		if self.CanChangeHorseArmor(PlayerHorseREF)
-			if self.IsUnicorn(PlayerHorseREF)
+	IF PlayerHorseREF as Bool && !PlayerHorseREF.IsDead()
+		IF self.CanChangeHorseArmor(PlayerHorseREF)
+			IF self.IsUnicorn(PlayerHorseREF)
 				ArrayArmors = ArrayUnicornArmors
 			else
 				ArrayArmors = ArrayHorseArmors
-			endIf
+			ENDIF
 			armor ArmorToEquip = ArrayArmors[ArmorID]
-			if ArmorToEquip
-				if PlayerHorseREF.IsEquipped(ArmorToEquip as form)
+			IF ArmorToEquip
+				IF PlayerHorseREF.IsEquipped(ArmorToEquip as form)
 					CCHorseArmorMessageArmorAlreadyEquipped.Show(0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000)
 				else
 					Int costGold
 					miscobject inventoryItem = self.GetMiscObjectForArmor(ArmorToEquip)
 					Bool doEquipArmor = false
 					Bool removeMiscItem = false
-					if PlayerRef.GetItemCount(inventoryItem as form)
+					IF PlayerRef.GetItemCount(inventoryItem as form)
 						costGold = CCHorseArmorCostSwapOnly.GetValueInt()
 						removeMiscItem = true
 					else
 						costGold = CCHorseArmorCost.GetValueInt()
-					endIf
-					;if PlayerRef.GetItemCount(Gold001 as form) >= costGold
+					ENDIF
+					;IF PlayerRef.GetItemCount(Gold001 as form) >= costGold
 						doEquipArmor = true
 						;PlayerRef.RemoveItem(Gold001 as form, costGold, false, none)
-						;if removeMiscItem
+						;IF removeMiscItem
 						;	PlayerRef.RemoveItem(inventoryItem as form, 1, false, none)
-						;endIf
+						;ENDIF
 					;else
 					;	CCHorseArmorMessageNotEnoughGold.Show(0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000)
 					;	doEquipArmor = false
-					;endIf
-					if doEquipArmor
-						self.EquipHorseArmor(PlayerHorseREF, ArmorToEquip)
-					endIf
-				endIf
-			endIf
+					;ENDIF
+					IF doEquipArmor
+						self.FirstTimeEquipHorseArmor(PlayerHorseREF, ArmorToEquip)
+					ENDIF
+				ENDIF
+			ENDIF
 		else
 			CCHorseArmorMessageArmorCannotUse.Show(0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000)
-		endIf
+		ENDIF
 	else
 		CCHorseArmorMessageNoHorsesOwned.Show(0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000)
-	endIf
-endFunction
+	ENDIF
+ENDFUNCTION
 
-function EquipHorseArmor(actor akPlayerHorseRef, armor akArmorToEquip)
+FUNCTION FirstTimeEquipHorseArmor(actor akPlayerHorseRef, armor akArmorToEquip)
 
 	self.SwapArmorForMiscObject(akPlayerHorseRef)
 	akPlayerHorseRef.UnequipItemSlot(45)
 	akPlayerHorseRef.EquipItem(akArmorToEquip as form, 1 as Bool, false)
 	CCHorseArmorMessageArmorChanged.Show(0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000)
-	if !akPlayerHorseRef.IsEssential()
+	IF !akPlayerHorseRef.IsEssential()
 		akPlayerHorseRef.GetActorBase().SetEssential(true)
 		akPlayerHorseRef.AddSpell(CCHorseArmorAbEssentialFlag, true)
-	endIf
-endFunction
+	ENDIF
+ENDFUNCTION
 
 ; Skipped compiler generated GetState
 
-; Skipped compiler generated GotoState
+; Skipped compiler generated GoToState
 
-armor function GetArmorForMiscObject(miscobject HorseArmorMisc)
+armor FUNCTION GetArmorForMiscObject(miscobject HorseArmorMisc)
 
 	Int arrayPos = ArrayHorseArmorsMisc.find(HorseArmorMisc, 0)
 	return ArrayArmors[arrayPos]
-endFunction
+ENDFUNCTION
 
-miscobject function GetMiscObjectForArmor(armor HorseArmor)
+miscobject FUNCTION GetMiscObjectForArmor(armor HorseArmor)
 
 	Int arrayPos = ArrayArmors.find(HorseArmor, 0)
 	return ArrayHorseArmorsMisc[arrayPos]
-endFunction
+ENDFUNCTION
 
-Bool function SwapArmorForMiscObject(actor PlayerHorse)
+Bool FUNCTION SwapArmorForMiscObject(actor PlayerHorse)
 
 	Bool RemovedArmor = false
 	Int i = 0
 	while i < ArrayArmors.length
-		if PlayerHorse.IsEquipped(ArrayArmors[i] as form)
+		IF PlayerHorse.IsEquipped(ArrayArmors[i] as form)
 			;PlayerRef.AddItem(ArrayHorseArmorsMisc[i] as form, 1, false)
 			PlayerHorse.RemoveItem(ArrayArmors[i] as form, 1, false, none)
 			RemovedArmor = true
-		endIf
+		ENDIF
 		i += 1
 	endWhile
 	return RemovedArmor
-endFunction
+ENDFUNCTION
 
-function RemoveHorseArmor()
+FUNCTION RemoveHorseArmor()
 
 	actor PlayerHorseREF = self.GetPlayerHorse()
-	if PlayerHorseREF
-		if self.SwapArmorForMiscObject(PlayerHorseREF)
+	IF PlayerHorseREF
+		IF self.SwapArmorForMiscObject(PlayerHorseREF)
 			CCHorseArmorMessageArmorRemoved.Show(0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000)
-		endIf
+		ENDIF
 		PlayerHorseREF.RemoveItem(CCHorseArmorList as form, 999, false, none)
-		if PlayerHorseREF.HasSpell(CCHorseArmorAbEssentialFlag as form)
+		IF PlayerHorseREF.HasSpell(CCHorseArmorAbEssentialFlag as form)
 			PlayerHorseREF.GetActorBase().SetEssential(false)
 			PlayerHorseREF.RemoveSpell(CCHorseArmorAbEssentialFlag)
-		endIf
+		ENDIF
 	else
 		CCHorseArmorMessageNoHorsesOwned.Show(0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000)
-	endIf
-endFunction
+	ENDIF
+ENDFUNCTION
 
-actor function GetPlayerHorse()
+actor FUNCTION GetPlayerHorse()
 
-	;if game.GetPlayersLastRiddenHorse()
+	;IF game.GetPlayersLastRiddenHorse()
 	;	return game.GetPlayersLastRiddenHorse()
-	If StablesPlayersHorse.GetActorReference()
+	IF StablesPlayersHorse.GetActorReference()
 		return StablesPlayersHorse.GetActorReference()
 	else
 		return none
-	endIf
-endFunction
+	ENDIF
+ENDFUNCTION
 
-Bool function CanChangeHorseArmor(actor PlayerHorse)
+Bool FUNCTION CanChangeHorseArmor(actor PlayerHorse)
 
 	keyword ccBGSSSE034WildHorseKeyword = game.GetFormFromFile(2088, "ccBGSSSE034-MntUni.esl") as keyword
-	if DisallowedHorses.find(PlayerHorse.GetActorBase(), 0) != -1 || PlayerHorse.HasKeyword(ccDisallowSaddleSwap)
+	IF DisallowedHorses.find(PlayerHorse.GetActorBase(), 0) != -1 || PlayerHorse.HasKeyword(ccDisallowSaddleSwap)
 		return false
-	elseIf PlayerHorse.HasKeyword(ccBGSSSE034WildHorseKeyword) && !PlayerHorse.IsInFaction(PlayerHorseFaction)
+	ELSEIF PlayerHorse.HasKeyword(ccBGSSSE034WildHorseKeyword) && !PlayerHorse.IsInFaction(PlayerHorseFaction)
 		return false
 	else
 		return true
-	endIf
-endFunction
+	ENDIF
+ENDFUNCTION
 
-Bool function IsUnicorn(actor akPlayerHorseRef)
+Bool FUNCTION IsUnicorn(actor akPlayerHorseRef)
 
 	actorbase Unicorn = game.GetFormFromFile(2052, "ccBGSSSE034-MntUni.esl") as actorbase
 	return Unicorn as Bool && akPlayerHorseRef.GetActorBase() == Unicorn
-endFunction
+ENDFUNCTION

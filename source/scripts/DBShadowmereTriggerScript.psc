@@ -1,9 +1,9 @@
 Scriptname DBShadowmereTriggerScript extends ObjectReference  
 
-Event OnTriggerEnter(ObjectReference AkActivator)
+EVENT OnTriggerEnter(ObjectReference AkActivator)
 
-If(game.getPlayer()==AkActivator)
-	if pDB07.GetStage() >= (20)
+IF(game.getPlayer()==AkActivator)
+	IF pDB07.GetStage() >= (20)
 		ShadowmereEffect.Activate(Self) 
              ShadowmereSound.Play(ShadowmereEffect)
 		Utility.Wait(12)
@@ -11,13 +11,13 @@ If(game.getPlayer()==AkActivator)
 		pDB07.SetObjectiveCompleted (666)
 		pDB07.SetObjectiveDisplayed(20, 1)
 		Actor Shadowmere = ShadowmereAlias.getactorreference()
-		(Quest.GetQuest("DES_RenameHorseQuest") as DES_RenameHorseQuestScript).EquipHorse(Shadowmere)
+		(Quest.GetQuest("DES_HorseHandler") as DES_HorseInventoryScript).FirstTimeEquipHorse(Shadowmere)
 		Disable()
-	Endif
-Endif
+	ENDIF
+ENDIF
 
 
-EndEvent
+ENDEVENT
 
 Quest Property pDB07  Auto  
 

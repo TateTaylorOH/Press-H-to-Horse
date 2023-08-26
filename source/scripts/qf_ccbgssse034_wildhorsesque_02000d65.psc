@@ -1,6 +1,6 @@
 ;/ Decompiled by Champollion V1.0.1
 Source   : QF_ccBGSSSE034_WildHorsesQue_02000D65.psc
-Modified : 2021-08-19 11:15:00
+ModIFied : 2021-08-19 11:15:00
 Compiled : 2021-08-24 17:21:27
 User     : builds
 Computer : RKVBGSGPUVM04
@@ -64,14 +64,14 @@ referencealias property Alias_HorseName26 auto
 
 ;-- Variables ---------------------------------------
 
-;-- Functions ---------------------------------------
+;-- FUNCTIONs ---------------------------------------
 
-function Fragment_2()
+FUNCTION Fragment_2()
 
-	if !self.GetStageDone(1)
+	IF !self.GetStageDone(1)
 		self.SetObjectiveCompleted(0, true)
 		self.CompleteQuest()
-	endIf
+	ENDIF
 	Alias_HorseWild01_Chestnut.GetRef().Enable(false)
 	Alias_HorseWild02_Black.GetRef().Enable(false)
 	Alias_HorseWild03_GreyBlack.GetRef().Enable(false)
@@ -86,22 +86,22 @@ function Fragment_2()
 	ccBGSSSE034_Misc_Horse05_RedBrown.Start()
 	ccBGSSSE034_Misc_Horse06_WhiteSpotted.Start()
 	ccBGSSSE034_Misc_Horse07_BrownSpotted.Start()
-endFunction
+ENDFUNCTION
 
 ; Skipped compiler generated GetState
 
-; Skipped compiler generated GotoState
+; Skipped compiler generated GoToState
 
-function Fragment_7()
+FUNCTION Fragment_7()
 
-	if Alias_HostlerRef.GetRef() == none
+	IF Alias_HostlerRef.GetRef() == none
 		debug.trace("CCBGSSSE034: All hostlers are dead, use Calcelmo as backup", 0)
 		Alias_HostlerRef.ForceRefTo(CalcelmoObjectRef)
-	endIf
+	ENDIF
 	Alias_HostlerRef.GetActorRef().AddItem(Alias_HorseMap.GetRef() as form, 1, false)
 	Alias_HostlerRef.GetActorRef().AddItem(Alias_HorseNotes.GetRef() as form, 1, false)
 	self.SetStage(1)
-endFunction
+ENDFUNCTION
 ;BEGIN FRAGMENT CODE - Do not edit anything between this and the end comment
 ;NEXT FRAGMENT INDEX 0
 Scriptname QF_ccBGSSSE034_WildHorsesQue_02000D65 Extends Quest Hidden
@@ -317,21 +317,21 @@ ReferenceAlias Property Alias_HorseName07 Auto
 ;END ALIAS PROPERTY
 
 ;BEGIN FRAGMENT Fragment_7
-Function Fragment_7()
+FUNCTION Fragment_7()
 ;BEGIN CODE
-;WARNING: Unable to load fragment source from function Fragment_7 in script QF_ccBGSSSE034_WildHorsesQue_02000D65
+;WARNING: Unable to load fragment source from FUNCTION Fragment_7 in script QF_ccBGSSSE034_WildHorsesQue_02000D65
 ;Source NOT loaded
 ;END CODE
-EndFunction
+ENDFUNCTION
 ;END FRAGMENT
 
 ;BEGIN FRAGMENT Fragment_2
-Function Fragment_2()
+FUNCTION Fragment_2()
 ;BEGIN CODE
-;WARNING: Unable to load fragment source from function Fragment_2 in script QF_ccBGSSSE034_WildHorsesQue_02000D65
+;WARNING: Unable to load fragment source from FUNCTION Fragment_2 in script QF_ccBGSSSE034_WildHorsesQue_02000D65
 ;Source NOT loaded
 ;END CODE
-EndFunction
+ENDFUNCTION
 ;END FRAGMENT
 
 ;END FRAGMENT CODE - Do not edit anything between this and the begin comment
