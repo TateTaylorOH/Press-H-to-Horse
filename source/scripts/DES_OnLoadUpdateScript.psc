@@ -89,8 +89,11 @@ FUNCTION ImportCyrodiil()
 			ImportModdedHostler(BSBrumaHostler, Alias_BSBrumaHostler, CYRJobMerchantFaction)
 		ENDIF
 		IF !(DES_HorseCallTutorialTracker as DES_HorseCallTutorialTrackerScript).BSHorseshoeAdded == true
-			DES_MinimumHostler.AddForm(BSHorseshoe, 1, 4)
-			DES_LItemMiscHostlerItems75.AddForm(BSHorseshoe, 1, 4)
+			(DES_HorseCallTutorialTracker as DES_HorseCallTutorialTrackerScript).BSHorseshoeAdded = true
+			DES_MinimumHostler.Revert()
+			DES_LItemMiscHostlerItems75.Revert()
+			DES_MinimumHostler.AddForm(BSHorseshoe as form, 1, 4)
+			DES_LItemMiscHostlerItems75.AddForm(BSHorseshoe as form, 1, 4)
 		ENDIF
 	ENDIF
 ENDFUNCTION
