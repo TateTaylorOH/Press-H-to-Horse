@@ -14,6 +14,7 @@ Faction Property DES_HorsesMechanical auto
 Faction Property DES_HorsesSaddleExclusions auto
 Faction Property DES_RegisteredHorses auto
 Faction Property PlayerHorseFaction auto
+Faction Property PlayerFaction auto
 Formlist Property DES_CarFood auto
 Formlist Property DES_HorseAllForms auto
 Formlist Property DES_HorseArmors auto
@@ -106,6 +107,10 @@ FUNCTION FirstTimeEquipHorse(Actor PlayersHorse)
 	Debugging = papyrusinimanipulator.PullboolFromIni("Data/H2Horse.ini", "General", "Debugging", False)
 	IF !Alias_LastRiddenHorse
 		Alias_LastRiddenHorse.ForceRefTo(PlayersHorse)
+	ENDIF
+	IF !PlayersHorse.IsInFaction(PlayerHorseFaction)
+		PlayersHorse.SetFactionRank(PlayerHorseFaction, 1)
+		PlayersHorse.SetFactionOwner(PlayerFaction)
 	ENDIF
 	IF !PlayersHorse.IsInFaction(DES_RegisteredHorses)
 		PlayersHorse.AddToFaction(DES_RegisteredHorses)
