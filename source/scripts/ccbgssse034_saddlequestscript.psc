@@ -24,7 +24,7 @@ miscobject property Gold001 auto
 
 ;-- Variables ---------------------------------------
 Actor PlayerREF
-Actor HorseToReSaddle
+;Actor HorseToReSaddle
 Actor HorseToRename
 
 ;-- FUNCTIONs ---------------------------------------
@@ -38,11 +38,11 @@ ENDFUNCTION
 
 ; Skipped compiler generated GoToState
 
-FUNCTION ChangeHorseSaddle(armor SaddleToEquip)
+FUNCTION ChangeHorseSaddle(armor SaddleToEquip, Actor HorseToReSaddle)
 
 	;HorseToReSaddle = game.GetPlayersLastRiddenHorse()
 	;IF !HorseToReSaddle && StablesPlayersHorse.GetActorReference() as Bool
-		HorseToReSaddle = StablesPlayersHorse.GetActorReference()
+	;	HorseToReSaddle = StablesPlayersHorse.GetActorReference()
 	;ENDIF
 	IF HorseToReSaddle
 		debug.trace("ccBGSSSE034: Current horse is " + HorseToReSaddle as String, 0)
@@ -55,7 +55,7 @@ FUNCTION ChangeHorseSaddle(armor SaddleToEquip)
 		ELSEIF SaddleToEquip
 			;IF PlayerREF.GetItemCount(Gold001 as form) >= 100
 				PlayerREF.RemoveItem(Gold001 as form, 100, false, none)
-				CCHorseArmorDialogueQuest.RemoveHorseArmor()
+				CCHorseArmorDialogueQuest.RemoveHorseArmor(HorseToReSaddle)
 				HorseToReSaddle.UnequipItemSlot(45)
 				HorseToReSaddle.EquipItem(SaddleToEquip as form, 1 as Bool, false)
 				MessageSaddleChanged.Show(0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000)
@@ -63,7 +63,7 @@ FUNCTION ChangeHorseSaddle(armor SaddleToEquip)
 			;	MessageNotEnoughGold.Show(0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000)
 			;ENDIF
 		else
-			CCHorseArmorDialogueQuest.RemoveHorseArmor()
+			CCHorseArmorDialogueQuest.RemoveHorseArmor(HorseToReSaddle)
 			HorseToReSaddle.UnequipItemSlot(45)
 			HorseToReSaddle.EquipItem(DummySaddle as form, 1 as Bool, false)
 			MessageSaddleRemoved.Show(0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000)

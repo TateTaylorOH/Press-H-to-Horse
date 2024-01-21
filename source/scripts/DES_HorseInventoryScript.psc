@@ -63,9 +63,11 @@ EVENT OnKeyUp(Int KeyCode, Float HoldTime)
 				ENDIF
 			ENDIF
 		ELSE
+			Alias_PlayersHorse.Clear()
 			return
 		ENDIF
 	ELSE
+		Alias_PlayersHorse.Clear()
 		return
 	ENDIF
 ENDEVENT
@@ -139,13 +141,13 @@ FUNCTION FirstTimeEquipHorse(Actor PlayersHorse)
 			IF Debugging
 				Debug.Notification(PlayersHorse.GetDisplayName() + " is wearing armor.")
 			ENDIF
-			(CCHorseArmorDialogueQuest as CCHorseArmorChangeScript).ChangeHorseArmor(i)
+			(CCHorseArmorDialogueQuest as CCHorseArmorChangeScript).ChangeHorseArmor(i, PlayersHorse)
 			ArmorMode(PlayersHorse)
 		ELSEIF PlayersHorse.IsEquipped(DES_HorseArmors)
 			IF Debugging
 				Debug.Notification(PlayersHorse.GetDisplayName() + " is wearing a saddle.")
 			ENDIF
-			(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(DES_HorseArmors.GetAt(i) as Armor)
+			(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(DES_HorseArmors.GetAt(i) as Armor, PlayersHorse)
 			SaddleMode(PlayersHorse)
 		ENDIF
 	ENDIF
@@ -174,11 +176,11 @@ FUNCTION EquipItem(Form akBaseItem, int aiItemCount, ObjectReference akItemRefer
 		return
 	ELSEIF akBaseItem.HasKeyword(DES_ArmorKeyword)
 		Int i = DES_HorseMiscItems.Find(akBaseItem as MiscObject)
-		(CCHorseArmorDialogueQuest as CCHorseArmorChangeScript).ChangeHorseArmor(i)
+		(CCHorseArmorDialogueQuest as CCHorseArmorChangeScript).ChangeHorseArmor(i, PlayersHorse)
 		ArmorMode(PlayersHorse)
 	ELSEIF akBaseItem.HasKeyword(DES_SaddleKeyword)
 		Int i = DES_HorseMiscItems.Find(akBaseItem as MiscObject)
-		(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(DES_HorseArmors.GetAt(i) as Armor)
+		(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(DES_HorseArmors.GetAt(i) as Armor, PlayersHorse)
 		SaddleMode(PlayersHorse)
 	ENDIF
 ENDFUNCTION
@@ -191,7 +193,7 @@ FUNCTION UnequipItem(Form akBaseItem, int aiItemCount, ObjectReference akItemRef
 		UnequipRunning = true
 		UI.InvokeString("HUD Menu", "_global.skse.CloseMenu", "ContainerMenu")
 		PlayersHorse.RemoveItem(DES_HorseAllForms)
-		(CCHorseArmorDialogueQuest as CCHorseArmorChangeScript).RemoveHorseArmor()
+		(CCHorseArmorDialogueQuest as CCHorseArmorChangeScript).RemoveHorseArmor(PlayersHorse)
 		IF PlayersHorse.GetNumItems() > 0 && akBaseItem.HasKeyword(DES_SaddleKeyword)
 			Debug.Notification(PlayersHorse.GetDisplayName() + "'s saddle has been emptied into your inventory.")
 			PlayersHorse.RemoveAllItems(akTransferTo = PlayerRef)
@@ -292,7 +294,7 @@ STATE Unequipped
 		IF Debugging
 			Debug.Notification(PlayersHorse.GetDisplayName() + "'s state changed: Unequipped")
 		ENDIF
-		(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(none)
+		(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(none, PlayersHorse)
 		PlayersHorse.SetOutfit(DES_NakedHorseOutfit)
 		PlayersHorse.SetAV("CarryWeight", BaseCarryWeight)		
 		UnequipRunning = False

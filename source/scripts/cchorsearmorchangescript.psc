@@ -28,9 +28,9 @@ armor[] ArrayArmors
 
 ;-- FUNCTIONs ---------------------------------------
 
-FUNCTION ChangeHorseArmor(Int ArmorID)
+FUNCTION ChangeHorseArmor(Int ArmorID, Actor PlayerHorseREF)
 
-	actor PlayerHorseREF = self.GetPlayerHorse()
+	;actor PlayerHorseREF = self.GetPlayerHorse()
 	IF PlayerHorseREF as Bool && !PlayerHorseREF.IsDead()
 		IF self.CanChangeHorseArmor(PlayerHorseREF)
 			IF self.IsUnicorn(PlayerHorseREF)
@@ -81,7 +81,7 @@ FUNCTION FirstTimeEquipHorseArmor(actor akPlayerHorseRef, armor akArmorToEquip)
 	self.SwapArmorForMiscObject(akPlayerHorseRef)
 	akPlayerHorseRef.UnequipItemSlot(45)
 	akPlayerHorseRef.EquipItem(akArmorToEquip as form, 1 as Bool, false)
-	CCHorseArmorMessageArmorChanged.Show(0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000)
+	;CCHorseArmorMessageArmorChanged.Show(0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000)
 	IF !akPlayerHorseRef.IsEssential()
 		akPlayerHorseRef.GetActorBase().SetEssential(true)
 		akPlayerHorseRef.AddSpell(CCHorseArmorAbEssentialFlag, true)
@@ -119,12 +119,12 @@ Bool FUNCTION SwapArmorForMiscObject(actor PlayerHorse)
 	return RemovedArmor
 ENDFUNCTION
 
-FUNCTION RemoveHorseArmor()
+FUNCTION RemoveHorseArmor(Actor PlayerHorseREF)
 
-	actor PlayerHorseREF = self.GetPlayerHorse()
+	;actor PlayerHorseREF = self.GetPlayerHorse()
 	IF PlayerHorseREF
 		IF self.SwapArmorForMiscObject(PlayerHorseREF)
-			CCHorseArmorMessageArmorRemoved.Show(0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000)
+			;CCHorseArmorMessageArmorRemoved.Show(0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000)
 		ENDIF
 		PlayerHorseREF.RemoveItem(CCHorseArmorList as form, 999, false, none)
 		IF PlayerHorseREF.HasSpell(CCHorseArmorAbEssentialFlag as form)
@@ -140,11 +140,12 @@ actor FUNCTION GetPlayerHorse()
 
 	;IF game.GetPlayersLastRiddenHorse()
 	;	return game.GetPlayersLastRiddenHorse()
-	IF StablesPlayersHorse.GetActorReference()
-		return StablesPlayersHorse.GetActorReference()
-	else
-		return none
-	ENDIF
+	;IF StablesPlayersHorse.GetActorReference()
+	;	return StablesPlayersHorse.GetActorReference()
+	;else
+	;	return none
+	;ENDIF
+
 ENDFUNCTION
 
 Bool FUNCTION CanChangeHorseArmor(actor PlayerHorse)
