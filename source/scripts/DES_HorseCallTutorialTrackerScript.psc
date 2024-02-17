@@ -13,6 +13,7 @@ LeveledItem Property DES_MinimumHostler auto
 Quest Property ccBGSSSE034_WildHorsesQuest auto
 Quest Property DES_HorseCallTutorialTracker auto
 Quest Property DES_HorseHandler auto
+Quest Property DES_HorseMCMQuest auto
 ReferenceAlias Property Alias_Player  auto
 ReferenceAlias Property Alias_HorseHandlerPlayer auto
 
@@ -46,7 +47,7 @@ EVENT OnAnimationEVENT(ObjectReference akSource, string AsEventName)
 	Utility.Wait(3)
 		IF !HorseCallTutorial
 			IF game.getPlayersLastRiddenHorse().isinfaction(PlayerHorseFaction)
-				ShowTutorials = papyrusinimanipulator.PullboolFromIni("Data/H2Horse.ini", "General", "ShowTutorials", True)
+				ShowTutorials = (DES_HorseMCMQuest as DES_HorseMCMScriptOnInt).bShowTutorials
 				IF ShowTutorials && (DES_HorseHandler as DES_HorseCallScript).horsekey == 35
 					HelpMessages[0].ShowAsHelpMessage("HorseCallTutorial", messageDuration, 1.0, 1)
 					Utility.wait(messageDuration + messageInterval + 0.1)

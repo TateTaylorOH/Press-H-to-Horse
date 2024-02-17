@@ -13,6 +13,7 @@ ReferenceAlias Property Alias_PlayersHorse auto
 ReferenceAlias Property Alias_LastRiddenHorse auto
 Sound Property DES_HorseCallMarker auto
 Sound Property DES_HorseStayMarker auto
+Quest Property DES_HorseMCMQuest auto
 
 Message[] Property HelpMessages Auto
 float property messageDuration = 3.0 auto
@@ -22,14 +23,14 @@ float horseDistance = 512.0
 
 float Property LongPressTime
     float Function Get()
-        return papyrusinimanipulator.PullFloatFromIni("Data/H2Horse.ini", "General", "HoldTime", 0.9000)
+        return (DES_HorseMCMQuest as DES_HorseMCMScriptOnInt).fHoldTime
     EndFunction
 EndProperty
 
 EVENT OnKeyUp(Int KeyCode, Float HoldTime)
 {Sends an event when HorseKey is raised up. The actor called will be the last owned horse the player rode. There are checks to prevent the horse getting called into interiors as well as a mechanic to select a specIFic horse from a SkyUILib list menu.}
 	Actor LastRiddenHorse = Game.GetPlayersLastRiddenHorse()
-	Debugging = papyrusinimanipulator.PullboolFromIni("Data/H2Horse.ini", "General", "Debugging", False)
+	Debugging = (DES_HorseMCMQuest as DES_HorseMCMScriptOnInt).bDebugging
 	IF SelectedHorse && SelectedHorse == Alias_PlayersHorse.getActorReference()
 		LastRiddenHorse = SelectedHorse
 	ENDIF

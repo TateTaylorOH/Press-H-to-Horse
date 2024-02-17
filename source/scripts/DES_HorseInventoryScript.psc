@@ -32,6 +32,7 @@ Outfit Property DES_NakedHorseOutfit auto
 Quest Property ccBGSSSE034_HorseSaddleQuest auto
 Quest Property CCHorseArmorDialogueQuest auto
 Quest Property DES_HorseHandler auto
+Quest Property DES_HorseMCMQuest auto
 ReferenceAlias Property Alias_LastRiddenHorse auto
 ReferenceAlias Property Alias_PlayersHorse auto
 Spell Property DES_HorseFear auto
@@ -47,7 +48,7 @@ EVENT OnKeyUp(Int KeyCode, Float HoldTime)
 	Alias_PlayersHorse.ForceRefTo(Game.GetCurrentCrosshairRef())
 	Actor PlayersHorse = Alias_PlayersHorse.getActorReference()
 		IF PlayersHorse && PlayersHorse.IsInFaction(PlayerHorseFaction) && !PlayersHorse.IsDead()
-			IF HoldTime < papyrusinimanipulator.PullFloatFromIni("Data/H2Horse.ini", "General", "HoldTime", 0.5000)
+			IF HoldTime < (DES_HorseMCMQuest as DES_HorseMCMScriptOnInt).fHoldTime
 				RegisterForMenu("ContainerMenu")
 				UpdateMode(PlayersHorse)
 				SetCarryWeight(PlayersHorse)
@@ -106,7 +107,7 @@ ENDFUNCTION
 
 FUNCTION FirstTimeEquipHorse(Actor PlayersHorse)
 {This will prepare the horse for use within the H2Horse framework. It will set the horse's outfit to be blank, then check what armor the horse was wearing, give that horse the matching miscitem and reequip their inital gear. It is then handed of to the equip script to set carry weight and AI.}
-	Debugging = papyrusinimanipulator.PullboolFromIni("Data/H2Horse.ini", "General", "Debugging", False)
+	Debugging = (DES_HorseMCMQuest as DES_HorseMCMScriptOnInt).bDebugging
 	IF !Alias_LastRiddenHorse
 		Alias_LastRiddenHorse.ForceRefTo(PlayersHorse)
 	ENDIF
@@ -228,11 +229,11 @@ STATE Saddled
 		IF PlayersHorse == none
 			PlayersHorse = Alias_PlayersHorse.getActorReference()
 		ENDIF
-		Debugging = papyrusinimanipulator.PullboolFromIni("Data/H2Horse.ini", "General", "Debugging", False)
+		Debugging = (DES_HorseMCMQuest as DES_HorseMCMScriptOnInt).bDebugging
 		IF Debugging
 			Debug.Notification(PlayersHorse.GetDisplayName() + "'s state changed: Saddled")
 		ENDIF
-		PlayersHorse.SetAV("CarryWeight", (papyrusinimanipulator.PullFloatFromIni("Data/H2Horse.ini", "General", "CarryWeight", 105.0)))
+		PlayersHorse.SetAV("CarryWeight", (DES_HorseMCMQuest as DES_HorseMCMScriptOnInt).iCarryWeight)
 		PlayersHorse.AddSpell(DES_HorseFear)
 	ENDEVENT
 	
@@ -248,7 +249,7 @@ STATE Saddled
 		IF Debugging
 			Debug.Notification(PlayersHorse.GetDisplayName() + "'s current state: Saddled")
 		ENDIF
-		PlayersHorse.SetAV("CarryWeight", (papyrusinimanipulator.PullFloatFromIni("Data/H2Horse.ini", "General", "CarryWeight", 105.0)))
+		PlayersHorse.SetAV("CarryWeight", (DES_HorseMCMQuest as DES_HorseMCMScriptOnInt).iCarryWeight)
 	ENDFUNCTION
 ENDSTATE
 
@@ -259,7 +260,7 @@ STATE Armored
 		IF PlayersHorse == none
 			PlayersHorse = Alias_PlayersHorse.getActorReference()
 		ENDIF
-		Debugging = papyrusinimanipulator.PullboolFromIni("Data/H2Horse.ini", "General", "Debugging", False)
+		Debugging = (DES_HorseMCMQuest as DES_HorseMCMScriptOnInt).bDebugging
 		IF Debugging
 			Debug.Notification(PlayersHorse.GetDisplayName() + "'s state changed: Armored")
 		ENDIF
@@ -290,7 +291,7 @@ STATE Unequipped
 		IF PlayersHorse == none
 			PlayersHorse = Alias_PlayersHorse.getActorReference()
 		ENDIF
-		Debugging = papyrusinimanipulator.PullboolFromIni("Data/H2Horse.ini", "General", "Debugging", False)
+		Debugging = (DES_HorseMCMQuest as DES_HorseMCMScriptOnInt).bDebugging
 		IF Debugging
 			Debug.Notification(PlayersHorse.GetDisplayName() + "'s state changed: Unequipped")
 		ENDIF

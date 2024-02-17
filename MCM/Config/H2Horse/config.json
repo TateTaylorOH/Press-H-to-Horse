@@ -1,0 +1,61 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Exit-9B/MCM-Helper/main/docs/config.schema.json",
+  "modName": "H2Horse",
+  "displayName": "Press H to Horse",
+  "cursorFillMode": "topToBottom",
+  "content": [        
+	{
+	  "id": "iHorseKey:General",
+	  "text": "Horse Interaction Key",
+	  "type": "keymap",
+	  "help": "The key that will be used to interact with your horse.",
+	  "ignoreConflicts": false,
+	  "valueOptions": {
+		"sourceType": "ModSettingInt"
+	  }
+	},
+	{
+	  "id": "fHoldTime:General",
+	  "text": "Horse Treat Key Hold Time",
+	  "type": "slider",
+	  "help": "The amount of time the Horse Interaction Key needs to be held in order to open the Treat Menu.",
+	  "valueOptions": {
+		"min": 0.25,
+		"max": 1.50,
+		"step": 0.01,
+		"formatString": "{2}",
+		"sourceType": "ModSettingFloat"
+	  }
+	},
+	{
+	  "id": "iCarryWeight:General",
+	  "text": "Horse Saddle Carry Weight",
+	  "type": "slider",
+	  "help": "The amount of carry weight that saddles provide horses.",
+	  "valueOptions": {
+		"min": 55,
+		"max": 1005,
+		"step": 1,
+		"sourceType": "ModSettingInt"
+	  }
+	},
+	{
+	  "id": "bShowTutorials:General",
+	  "text": "Show Tutorials",
+	  "type": "toggle",
+	  "help": "Controls Press H to Horse's tutorial messages.",
+	  "valueOptions": {
+		"sourceType": "ModSettingBool"
+	  }
+	},
+	{
+	  "id": "bDebugging:General",
+	  "text": "Enable Debugging",
+	  "type": "toggle",
+	  "help": "Controls Press H to Horse's debug messages.",
+	  "valueOptions": {
+		"sourceType": "ModSettingBool"
+	  }
+	}
+  ]
+}

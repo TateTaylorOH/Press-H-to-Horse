@@ -12,6 +12,7 @@ MiscObject Property DES_ImperialSaddle auto
 MiscObject Property DES_StormcloakSaddle auto
 Quest Property DES_HorseHandler Auto
 Quest Property DES_HorseCallTutorialTracker Auto
+Quest Property DES_HorseMCMQuest Auto
 Formlist Property DES_ValidWorldspaces auto
 ReferenceAlias Property Alias_PlayersHorse auto
 ReferenceAlias Property Alias_LastRiddenHorse auto
@@ -45,7 +46,7 @@ FUNCTION GetBaseCarryWeight()
 ENDFUNCTION
 
 FUNCTION RegisterKey()
-	(self.GetOwningQuest() as DES_HorseCallScript).horsekey = papyrusinimanipulator.PullIntFromIni("Data/H2Horse.ini", "General", "HorseKey", 35)
+	(self.GetOwningQuest() as DES_HorseCallScript).horsekey = (DES_HorseMCMQuest as DES_HorseMCMScriptOnInt).iHorseKey
 	DES_HorseHandler.UnregisterForKey((self.GetOwningQuest() as DES_HorseCallScript).horsekey)
 	Utility.Wait(0.1)
 	DES_HorseHandler.RegisterForKey((self.GetOwningQuest() as DES_HorseCallScript).horsekey)
