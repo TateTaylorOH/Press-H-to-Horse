@@ -21,12 +21,6 @@ float property messageInterval = 1.0 auto
 float horseAngle = 180.0 ; where the horse should appear relative to the player, clockwise from north.
 float horseDistance = 512.0
 
-float Property LongPressTime
-    float Function Get()
-        return (DES_HorseMCMQuest as DES_HorseMCMScriptOnInt).fHoldTime
-    EndFunction
-EndProperty
-
 EVENT OnKeyUp(Int KeyCode, Float HoldTime)
 {Sends an event when HorseKey is raised up. The actor called will be the last owned horse the player rode. There are checks to prevent the horse getting called into interiors as well as a mechanic to select a specIFic horse from a SkyUILib list menu.}
 	Actor LastRiddenHorse = Game.GetPlayersLastRiddenHorse()
@@ -39,7 +33,7 @@ EVENT OnKeyUp(Int KeyCode, Float HoldTime)
 	ENDIF
 	IF (KeyCode == horseKey && !Utility.IsInMenuMode() && !UI.IsTextInputEnabled()) && !Game.GetCurrentCrosshairRef() && !PlayerRef.IsOnMount()
 		IF (!PlayerRef.IsInInterior() && DES_ValidWorldspaces.HasForm(PlayerRef.getWorldSpace()))
-			IF HoldTime < LongPressTime
+			IF HoldTime < (DES_HorseMCMQuest as DES_HorseMCMScriptOnInt).fHoldTime
 				IF (LastRiddenHorse && LastRiddenHorse.IsInFaction(PlayerHorseFaction)) && !LastRiddenHorse.IsDead()
 					IF (LastRiddenHorse.GetParentCell() != PlayerRef.GetParentCell())
 						GoToState("Waiting")
@@ -83,12 +77,14 @@ FUNCTION SelectHorse()
 			UISelectionMenu menu = UIExtensions.GetMenu("UISelectionMenu") as UISelectionMenu	
 			menu.OpenMenu(aForm=DES_OwnedHorses)
 			SelectedHorse = menu.GetResultForm() as Actor
-			RegisterForAnimationEVENT(PlayerRef, "tailHorseMount")
-			Debug.Notification("You call for " + SelectedHorse.GetDisplayName() + ".")
-			IF (LastRiddenHorse.GetParentCell() != PlayerRef.GetParentCell())
-				GoToState("Waiting")
+			IF SelectedHorse
+				RegisterForAnimationEVENT(PlayerRef, "tailHorseMount")
+				Debug.Notification("You call for " + SelectedHorse.GetDisplayName() + ".")
+				IF (LastRiddenHorse.GetParentCell() != PlayerRef.GetParentCell())
+					GoToState("Waiting")
+				ENDIF
+				HorseCall(SelectedHorse)
 			ENDIF
-			HorseCall(SelectedHorse)
 		ENDIF
 	ELSE
 		IF (LastRiddenHorse.GetParentCell() != PlayerRef.GetParentCell())
