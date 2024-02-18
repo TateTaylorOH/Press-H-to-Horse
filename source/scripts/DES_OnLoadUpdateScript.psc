@@ -50,8 +50,8 @@ ENDEVENT
 ;-- Functions ---------------------------------------
 
 Function Maintenance()
-	If fH2HorseVersion < 2.301 ; <--- Edit this value when updating
-		fH2HorseVersion = 2.301 ; and this
+	If fH2HorseVersion < 2.310 ; <--- Edit this value when updating
+		fH2HorseVersion = 2.310 ; and this
 		Debug.Notification("Press H to Horse " + StringUtil.getNthChar(fH2HorseVersion, 0) + "." + StringUtil.getNthChar(fH2HorseVersion, 2) + "." +  StringUtil.getNthChar(fH2HorseVersion, 3) + "." + StringUtil.getNthChar(fH2HorseVersion, 4))
 		; Update Code
 	EndIf

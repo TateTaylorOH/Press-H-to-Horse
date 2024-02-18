@@ -67,9 +67,6 @@ EVENT OnKeyUp(Int KeyCode, Float HoldTime)
 			Alias_PlayersHorse.Clear()
 			return
 		ENDIF
-	ELSE
-		Alias_PlayersHorse.Clear()
-		return
 	ENDIF
 ENDEVENT
 

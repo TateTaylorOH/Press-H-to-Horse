@@ -1,4 +1,5 @@
 Scriptname DES_FollowerMountScript extends Quest  
+{Controls the follower horse ridding feature.}
 
 Actor Property PlayerRef auto
 ReferenceAlias Property DialogueFollower_Follower auto
@@ -32,7 +33,7 @@ EVENT OnAnimationEVENT(ObjectReference akSource, string AsEventName)
 			endIf
 			i += 1
 		endWhile
-		IF closestHorse.GetParentCell() == DialogueFollower_Follower.GetActorRef().GetParentCell()
+		IF closestHorse.getDistance(follower.getactorref()) >= 4096
 			FollowerHorse.ForceRefTo(closestHorse)		
 			Follower.ForceRefTo(DialogueFollower_Follower.GetActorRef())
 			FollowerHorse.tryToEvaluatePackage()

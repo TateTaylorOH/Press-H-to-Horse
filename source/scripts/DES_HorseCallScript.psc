@@ -20,6 +20,7 @@ float property messageDuration = 3.0 auto
 float property messageInterval = 1.0 auto
 float horseAngle = 180.0 ; where the horse should appear relative to the player, clockwise from north.
 float horseDistance = 512.0
+bool CallingHorse = false
 
 EVENT OnKeyUp(Int KeyCode, Float HoldTime)
 {Sends an event when HorseKey is raised up. The actor called will be the last owned horse the player rode. There are checks to prevent the horse getting called into interiors as well as a mechanic to select a specIFic horse from a SkyUILib list menu.}
@@ -35,9 +36,6 @@ EVENT OnKeyUp(Int KeyCode, Float HoldTime)
 		IF (!PlayerRef.IsInInterior() && DES_ValidWorldspaces.HasForm(PlayerRef.getWorldSpace()))
 			IF HoldTime < (DES_HorseMCMQuest as DES_HorseMCMScriptOnInt).fHoldTime
 				IF (LastRiddenHorse && LastRiddenHorse.IsInFaction(PlayerHorseFaction)) && !LastRiddenHorse.IsDead()
-					IF (LastRiddenHorse.GetParentCell() != PlayerRef.GetParentCell())
-						GoToState("Waiting")
-					ENDIF
 					HorseCall(LastRiddenHorse)
 				ENDIF
 			ELSE
@@ -62,7 +60,7 @@ ENDEVENT
 
 FUNCTION SelectHorse()
 {IF the Player has UI Extensions installed, This function will allowed them to pick from a list of their owned horses to call to them.}
-	 Actor LastRiddenHorse = Game.GetPlayersLastRiddenHorse()
+	Actor LastRiddenHorse = Game.GetPlayersLastRiddenHorse()
 	IF Game.GetFormFromFile(0xE05, "UIExtensions.esp")
 		int n = DES_OwnedHorses.getSize()
 		while n > 0
@@ -78,44 +76,25 @@ FUNCTION SelectHorse()
 			menu.OpenMenu(aForm=DES_OwnedHorses)
 			SelectedHorse = menu.GetResultForm() as Actor
 			IF SelectedHorse
-				RegisterForAnimationEVENT(PlayerRef, "tailHorseMount")
+				Alias_PlayersHorse.Clear()
+				GoToState("Waiting")
 				Debug.Notification("You call for " + SelectedHorse.GetDisplayName() + ".")
-				IF (LastRiddenHorse.GetParentCell() != PlayerRef.GetParentCell())
-					GoToState("Waiting")
-				ENDIF
 				HorseCall(SelectedHorse)
 			ENDIF
 		ENDIF
 	ELSE
-		IF (LastRiddenHorse.GetParentCell() != PlayerRef.GetParentCell())
-			GoToState("Waiting")
+		IF (LastRiddenHorse && LastRiddenHorse.IsInFaction(PlayerHorseFaction)) && !LastRiddenHorse.IsDead()
+			HorseCall(LastRiddenHorse)
 		ENDIF
-		HorseCall(LastRiddenHorse)
 	ENDIF
 ENDFUNCTION
 
+;This function is intentionally empty and is overridden by the two whistle states.
 FUNCTION HorseWhistle(Actor LastRiddenHorse)
 {This function plays the whistling sound when the Player calls for their horse, then forces the horse to H2Horse's alias so that follow AI can take over. Code is present here for patchless compatibility with Animated Whistling.}
-    bool doingExtraBullshit = !PlayerRef.IsWeaponDrawn() && PlayerRef.GetSitSTATE() == 0
-    Alias_PlayersHorse.Clear()
-    IF doingExtraBullshit
-        Debug.SendAnimationEVENT(PlayerRef, "Whistling")
-        MfgConsoleFunc.SetPhoneMe(PlayerRef, 6, 30)
-    ENDIF
-    IF !(GetState() == "CalledHorse")
-		Alias_PlayersHorse.ForceRefTo(LastRiddenHorse)
-		GoToState("CalledHorse")
-		DES_HorseCallMarker.Play(PlayerRef)
-    ELSE
-        Alias_PlayersHorse.Clear()
-		DES_HorseStayMarker.Play(PlayerRef)
-    ENDIF
-    LastRiddenHorse.EvaluatePackage()
-    IF doingExtraBullshit
-        Utility.Wait(1.0)
-        MfgConsoleFunc.ResetPhonemeModIFier(PlayerRef)
-        Debug.SendAnimationEVENT(PlayerRef, "OffsetStop")
-    ENDIF
+	IF !CallingHorse
+		GoToState("Waiting")
+	ENDIF
 ENDFUNCTION
 
 float FUNCTION addAngles(float angle, float turn)
@@ -133,14 +112,36 @@ ENDFUNCTION
 ;This function is intentionally empty and is overridden by the two call states.
 FUNCTION HorseCall(Actor LastRiddenHorse)
 {This function controls switching between calling the horse and telling the horse to stay.}
-GoToState("Waiting")
+	IF !CallingHorse
+		GoToState("Waiting")
+	ENDIF
 ENDFUNCTION
 
 auto STATE Waiting
 	FUNCTION HorseCall(Actor LastRiddenHorse)
-		RegisterForAnimationEVENT(PlayerRef, "tailHorseMount") ;Registered to track mount, which will remove the Horse from the H2Horse alias.
-		Debug.Notification("You call for " + LastRiddenHorse.GetDisplayName() + ".")
-		HorseWhistle(LastRiddenHorse)
+		IF !CallingHorse
+			Debug.Notification("You call for " + LastRiddenHorse.GetDisplayName() + ".")
+			HorseWhistle(LastRiddenHorse)
+		ENDIF
+	ENDFUNCTION
+	
+	FUNCTION HorseWhistle(Actor LastRiddenHorse)
+		callinghorse = true
+		bool doingExtraBullshit = !PlayerRef.IsWeaponDrawn() && PlayerRef.GetSitSTATE() == 0
+		RegisterForAnimationEVENT(PlayerRef, "tailHorseMount") ;Registered to track mount, which will remove the Horse from the H2Horse alias.	
+		IF doingExtraBullshit
+			Debug.SendAnimationEVENT(PlayerRef, "Whistling")
+			MfgConsoleFunc.SetPhoneMe(PlayerRef, 6, 30)
+		ENDIF
+		DES_HorseCallMarker.Play(PlayerRef)
+		Alias_PlayersHorse.Clear()
+		Alias_PlayersHorse.ForceRefTo(LastRiddenHorse)
+		LastRiddenHorse.EvaluatePackage()
+		IF doingExtraBullshit
+			Utility.Wait(1.0)
+			MfgConsoleFunc.ResetPhonemeModIFier(PlayerRef)
+			Debug.SendAnimationEVENT(PlayerRef, "OffsetStop")
+		ENDIF
 		IF !PlayerRef.HasLOS(LastRiddenHorse)
 			float az = addAngles(PlayerRef.getAngleZ(), horseAngle)
 			LastRiddenHorse.moveTo(PlayerRef, horseDistance * math.sin(az), horseDistance * Math.cos(az), 0.0, true)
@@ -159,13 +160,35 @@ auto STATE Waiting
 				HorseSelectTutorial = True
 			ENDIF
 		ENDIF
+		GoToState("CalledHorse")
+		callinghorse = false
 	ENDFUNCTION
 ENDSTATE
 
 STATE CalledHorse
 	FUNCTION HorseCall(Actor LastRiddenHorse)
-		Debug.Notification("You tell "+ LastRiddenHorse.GetDisplayName() + " to wait.")
-		HorseWhistle(LastRiddenHorse)
+		IF !CallingHorse
+			Debug.Notification("You tell "+ LastRiddenHorse.GetDisplayName() + " to wait.")
+			HorseWhistle(LastRiddenHorse)
+		ENDIF
+	ENDFUNCTION
+	
+	FUNCTION HorseWhistle(Actor LastRiddenHorse)
+		callinghorse = true
+		bool doingExtraBullshit = !PlayerRef.IsWeaponDrawn() && PlayerRef.GetSitSTATE() == 0
+		IF doingExtraBullshit
+			Debug.SendAnimationEVENT(PlayerRef, "Whistling")
+			MfgConsoleFunc.SetPhoneMe(PlayerRef, 6, 30)
+		ENDIF
+		DES_HorseStayMarker.Play(PlayerRef)
+		Alias_PlayersHorse.Clear()
+		LastRiddenHorse.EvaluatePackage()
+		IF doingExtraBullshit
+			Utility.Wait(1.0)
+			MfgConsoleFunc.ResetPhonemeModIFier(PlayerRef)
+			Debug.SendAnimationEVENT(PlayerRef, "OffsetStop")
+		ENDIF
 		GoToState("Waiting")
+		callinghorse = false
 	ENDFUNCTION
 ENDSTATE
