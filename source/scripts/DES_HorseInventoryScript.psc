@@ -163,8 +163,10 @@ FUNCTION EquipItem(Form akBaseItem, int aiItemCount, ObjectReference akItemRefer
 		Utility.Wait(0.5)
 		IF RegistryTutorial
 			Debug.Notification("This horse is not registered.")
-		ELSE
+		ELSEIF (DES_HorseMCMQuest as DES_HorseMCMScriptOnInt).bShowTutorials
 			DES_HorseRegistryTutorial.ShowAsHelpMessage("RegistryTutorial", messageDuration, 1.0, 1)
+			RegistryTutorial = true
+		ELSEIF !(DES_HorseMCMQuest as DES_HorseMCMScriptOnInt).bShowTutorials
 			RegistryTutorial = true
 		ENDIF
 		PlayersHorse.PlayIdle(HorseIdleRearUp)

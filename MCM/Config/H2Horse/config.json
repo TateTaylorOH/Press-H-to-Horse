@@ -40,6 +40,15 @@
 	  }
 	},
 	{
+	  "id": "bFollowerHorse:General",
+	  "text": "Followers use Horses",
+	  "type": "toggle",
+	  "help": "Controls whether or not followers will ride spare owned horses.",
+	  "valueOptions": {
+		"sourceType": "ModSettingBool"
+	  }
+	},
+	{
 	  "id": "bShowTutorials:General",
 	  "text": "Show Tutorials",
 	  "type": "toggle",

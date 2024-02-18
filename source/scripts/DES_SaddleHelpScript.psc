@@ -7,6 +7,7 @@ bool property BarebackTutorial auto
 keyword property DES_SaddleKeyword auto
 keyword property DES_ArmorKeyword auto
 Quest property DES_HorseCallTutorialTracker auto
+Quest Property DES_HorseMCMQuest auto
 
 float property messageDuration = 3.0 auto
 float property messageInterval = 1.0 auto
@@ -14,7 +15,7 @@ Message[] Property HelpMessages Auto
 
 EVENT OnItemAdded(Form akBaseItem, int aiItemCount, ObjectReference akItemReference, ObjectReference akSourceContainer)
 	IF akBaseItem.HasKeyword(DES_SaddleKeyword)
-		IF (DES_HorseCallTutorialTracker as DES_HorseCallTutorialTrackerScript).ShowTutorials && !SaddleTutorial
+		IF (DES_HorseMCMQuest as DES_HorseMCMScriptOnInt).bShowTutorials && !SaddleTutorial
 			while Utility.IsInMenuMode()
 				utility.wait(0.1)
 			endwhile
@@ -26,12 +27,12 @@ EVENT OnItemAdded(Form akBaseItem, int aiItemCount, ObjectReference akItemRefere
 					BarebackTutorial = true
 				ENDIF
 			SaddleTutorial = true
-			IF (DES_HorseCallTutorialTracker as DES_HorseCallTutorialTrackerScript).HorseCallTutorial && SaddleTutorial && ArmorTutorial && BarebackTutorial || !(DES_HorseCallTutorialTracker as DES_HorseCallTutorialTrackerScript).ShowTutorials
+			IF (DES_HorseCallTutorialTracker as DES_HorseCallTutorialTrackerScript).HorseCallTutorial && SaddleTutorial && ArmorTutorial && BarebackTutorial || !(DES_HorseMCMQuest as DES_HorseMCMScriptOnInt).bShowTutorials
 				GetOwningQuest().Stop()
 			ENDIF
 		ENDIF
 	ELSEIF akBaseItem.HasKeyword(DES_ArmorKeyword)
-		IF (DES_HorseCallTutorialTracker as DES_HorseCallTutorialTrackerScript).ShowTutorials && !ArmorTutorial
+		IF (DES_HorseMCMQuest as DES_HorseMCMScriptOnInt).bShowTutorials && !ArmorTutorial
 			while Utility.IsInMenuMode()
 				utility.wait(0.1)
 			endwhile
@@ -43,7 +44,7 @@ EVENT OnItemAdded(Form akBaseItem, int aiItemCount, ObjectReference akItemRefere
 					BarebackTutorial = true
 				ENDIF
 			ArmorTutorial = true
-			IF (DES_HorseCallTutorialTracker as DES_HorseCallTutorialTrackerScript).HorseCallTutorial && SaddleTutorial && ArmorTutorial && BarebackTutorial || !(DES_HorseCallTutorialTracker as DES_HorseCallTutorialTrackerScript).ShowTutorials
+			IF (DES_HorseCallTutorialTracker as DES_HorseCallTutorialTrackerScript).HorseCallTutorial && SaddleTutorial && ArmorTutorial && BarebackTutorial || !(DES_HorseMCMQuest as DES_HorseMCMScriptOnInt).bShowTutorials
 				GetOwningQuest().Stop()
 			ENDIF
 		ENDIF

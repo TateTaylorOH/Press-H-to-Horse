@@ -138,7 +138,7 @@ ENDFUNCTION
 
 auto STATE Waiting
 	FUNCTION HorseCall(Actor LastRiddenHorse)
-		RegisterForAnimationEVENT(PlayerRef, "tailHorseMount") ;Registered to track dismount, which will remove the Horse from the H2Horse alias.
+		RegisterForAnimationEVENT(PlayerRef, "tailHorseMount") ;Registered to track mount, which will remove the Horse from the H2Horse alias.
 		Debug.Notification("You call for " + LastRiddenHorse.GetDisplayName() + ".")
 		HorseWhistle(LastRiddenHorse)
 		IF !PlayerRef.HasLOS(LastRiddenHorse)
@@ -149,9 +149,13 @@ auto STATE Waiting
 			DES_OwnedHorses.addForm(LastRiddenHorse)
 		ENDIF
 		IF DES_OwnedHorses.GetSize() > 1 && !HorseSelectTutorial ;A tutorial regarding the horse selection list will play IF the Player has UI Extentions installed. It will only play IF HorseKey is H since the tutorial specIFically refers to the key.
-			IF Game.GetFormFromFile(0xE05, "UIExtensions.esp") && HorseKey == 35
+			IF Game.GetFormFromFile(0xE05, "UIExtensions.esp") && HorseKey == 35 && (DES_HorseMCMQuest as DES_HorseMCMScriptOnInt).bShowTutorials
 				Utility.Wait(1)
 				HelpMessages[0].ShowAsHelpMessage("HorseSelectTutorial", messageDuration, 1.0, 1)
+				Utility.wait(messageDuration + messageInterval + 0.1)
+				HelpMessages[1].ShowAsHelpMessage("HorseFollowerTutorial", messageDuration, 1.0, 1)
+				HorseSelectTutorial = True
+			ELSEIF !(DES_HorseMCMQuest as DES_HorseMCMScriptOnInt).bShowTutorials
 				HorseSelectTutorial = True
 			ENDIF
 		ENDIF

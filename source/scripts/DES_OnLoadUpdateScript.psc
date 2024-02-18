@@ -20,6 +20,14 @@ ReferenceAlias Property Alias_BSBrumaHostler auto
 LeveledItem Property DES_LItemMiscHostlerItems75 auto
 LeveledItem Property DES_MinimumHostler auto
 
+float fH2HorseVersion
+
+;-- Events ---------------------------------------
+
+EVENT OnInit()
+	Maintenance()
+ENDEVENT
+
 EVENT OnPlayerLoadGame()
 	RegisterForAnimationEvent(PlayerRef, "tailHorseMount")
 	GetBaseCarryWeight()
@@ -27,6 +35,8 @@ EVENT OnPlayerLoadGame()
 	GetLastRiddenHorse()
 	InjectCWUniforms()
 	ImportCyrodiil()
+	Update()
+	Maintenance()
 ENDEVENT
 
 EVENT OnAnimationEVENT(ObjectReference akSource, string AsEventName)
@@ -36,6 +46,23 @@ EVENT OnAnimationEVENT(ObjectReference akSource, string AsEventName)
 		Alias_LastRiddenHorse.ForceRefTo(Game.GetPlayersLastRiddenHorse())
 	ENDIF
 ENDEVENT
+
+;-- Functions ---------------------------------------
+
+Function Maintenance()
+	If fH2HorseVersion < 2.300 ; <--- Edit this value when updating
+		fH2HorseVersion = 2.300 ; and this
+		Debug.Notification("Press H to Horse " + StringUtil.getNthChar(fH2HorseVersion, 0) + "." + StringUtil.getNthChar(fH2HorseVersion, 2) + "." +  StringUtil.getNthChar(fH2HorseVersion, 3) + "." + StringUtil.getNthChar(fH2HorseVersion, 4))
+		; Update Code
+	EndIf
+	; Other maintenance code that only needs to run once per save load
+EndFunction
+
+Function Update() ; <--- Edit this function when updating
+	IF fH2HorseVersion < 2.300
+		(DES_HorseMCMQuest as DES_HorseMCMScriptOnInt).NewSettings()
+	ENDIF
+EndFunction
 
 FUNCTION GetBaseCarryWeight()
 	Actor PlayersHorse = Game.GetPlayersLastRiddenHorse()
