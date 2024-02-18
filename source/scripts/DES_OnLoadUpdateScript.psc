@@ -50,15 +50,15 @@ ENDEVENT
 ;-- Functions ---------------------------------------
 
 Function Maintenance()
-	If fH2HorseVersion < 2.300 ; <--- Edit this value when updating
-		fH2HorseVersion = 2.300 ; and this
+	If fH2HorseVersion < 2.301 ; <--- Edit this value when updating
+		fH2HorseVersion = 2.301 ; and this
 		Debug.Notification("Press H to Horse " + StringUtil.getNthChar(fH2HorseVersion, 0) + "." + StringUtil.getNthChar(fH2HorseVersion, 2) + "." +  StringUtil.getNthChar(fH2HorseVersion, 3) + "." + StringUtil.getNthChar(fH2HorseVersion, 4))
 		; Update Code
 	EndIf
 	; Other maintenance code that only needs to run once per save load
 EndFunction
 
-Function Update() ; <--- Edit this function when updating
+Function Update() ; <--- Edit this function when updating if necessary
 	IF fH2HorseVersion < 2.300
 		(DES_HorseMCMQuest as DES_HorseMCMScriptOnInt).NewSettings()
 	ENDIF

@@ -239,14 +239,6 @@ STATE Saddled
 		PlayersHorse.AddSpell(DES_HorseFear)
 	ENDEVENT
 	
-	EVENT OnENDSTATE()
-		Actor PlayersHorse = HorseToEquip
-		IF PlayersHorse == none
-			PlayersHorse = Alias_PlayersHorse.getActorReference()
-		ENDIF
-		PlayersHorse.RemoveSpell(DES_HorseFear)
-	ENDEVENT
-	
 	FUNCTION SetCarryWeight(Actor PlayersHorse)
 		IF Debugging
 			Debug.Notification(PlayersHorse.GetDisplayName() + "'s current state: Saddled")
@@ -270,14 +262,6 @@ STATE Armored
 		PlayersHorse.AddSpell(DES_HorseRally)
 	ENDEVENT
 	
-	EVENT OnENDSTATE()
-		Actor PlayersHorse = HorseToEquip
-		IF PlayersHorse == none
-			PlayersHorse = Alias_PlayersHorse.getActorReference()
-		ENDIF
-		PlayersHorse.RemoveSpell(DES_HorseRally)
-	ENDEVENT
-	
 	FUNCTION SetCarryWeight(Actor PlayersHorse)
 		IF Debugging
 			Debug.Notification(PlayersHorse.GetDisplayName() + "'s current state: Armored")
@@ -299,7 +283,9 @@ STATE Unequipped
 		ENDIF
 		(ccBGSSSE034_HorseSaddleQuest as ccbgssse034_saddlequestscript).ChangeHorseSaddle(none, PlayersHorse)
 		PlayersHorse.SetOutfit(DES_NakedHorseOutfit)
-		PlayersHorse.SetAV("CarryWeight", BaseCarryWeight)		
+		PlayersHorse.SetAV("CarryWeight", BaseCarryWeight)
+		PlayersHorse.RemoveSpell(DES_HorseFear)		
+		PlayersHorse.RemoveSpell(DES_HorseRally)
 		UnequipRunning = False
 	ENDEVENT
 	
