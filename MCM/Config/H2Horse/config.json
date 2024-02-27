@@ -35,7 +35,7 @@
 	  "valueOptions": {
 		"min": 55,
 		"max": 1005,
-		"step": 1,
+		"step": 5,
 		"sourceType": "ModSettingInt"
 	  }
 	},
