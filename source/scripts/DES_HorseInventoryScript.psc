@@ -45,9 +45,10 @@ float property messageInterval = 1.0 auto
 EVENT OnKeyUp(Int KeyCode, Float HoldTime)
 {This event controls opening and closing the horse's inventory. It will check to see that the actor in your crosshair is a horse you own, then force it to H2Horse's alias, and then open the inventory. IF horsekey is held, it will open the gIFt menu so you can feed the horse.}
 	IF KeyCode == (DES_HorseHandler as DES_HorseCallScript).horsekey && !Utility.IsInMenuMode() && !UI.IsTextInputEnabled() && Game.GetCurrentCrosshairRef()
-	Alias_PlayersHorse.ForceRefTo(Game.GetCurrentCrosshairRef())
-	Actor PlayersHorse = Alias_PlayersHorse.getActorReference()
-		IF PlayersHorse && PlayersHorse.IsInFaction(PlayerHorseFaction) && !PlayersHorse.IsDead()
+	Actor a = (Game.GetCurrentCrosshairRef()) as Actor
+		IF a && a.IsInFaction(PlayerHorseFaction) && !a.IsDead()
+			Alias_PlayersHorse.ForceRefTo(a)
+			Actor PlayersHorse = Alias_PlayersHorse.getActorReference()
 			IF HoldTime < (DES_HorseMCMQuest as DES_HorseMCMScriptOnInt).fHoldTime
 				RegisterForMenu("ContainerMenu")
 				UpdateMode(PlayersHorse)
@@ -67,6 +68,9 @@ EVENT OnKeyUp(Int KeyCode, Float HoldTime)
 			Alias_PlayersHorse.Clear()
 			return
 		ENDIF
+	ELSE
+		Alias_PlayersHorse.Clear()
+		return
 	ENDIF
 ENDEVENT
 
