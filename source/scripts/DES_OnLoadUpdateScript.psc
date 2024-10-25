@@ -19,6 +19,7 @@ ReferenceAlias Property Alias_LastRiddenHorse auto
 ReferenceAlias Property Alias_BSBrumaHostler auto
 LeveledItem Property DES_LItemMiscHostlerItems75 auto
 LeveledItem Property DES_MinimumHostler auto
+MiscObject[] Property Saddles auto
 
 float fH2HorseVersion
 
@@ -26,6 +27,13 @@ float fH2HorseVersion
 
 EVENT OnInit()
 	Maintenance()
+	Utility.Wait(5)
+	GetBaseCarryWeight()
+	RegisterKey()
+	GetLastRiddenHorse()
+	InjectCWUniforms()
+	ImportCyrodiil()
+	Update()
 ENDEVENT
 
 EVENT OnPlayerLoadGame()
@@ -50,8 +58,8 @@ ENDEVENT
 ;-- Functions ---------------------------------------
 
 Function Maintenance()
-	If fH2HorseVersion < 2.33 ; <--- Edit this value when updating
-		fH2HorseVersion = 2.33 ; and this
+	If fH2HorseVersion < 2.34 ; <--- Edit this value when updating
+		fH2HorseVersion = 2.34 ; and this
 		Debug.Notification("Press H to Horse " + StringUtil.getNthChar(fH2HorseVersion, 0) + "." + StringUtil.getNthChar(fH2HorseVersion, 2) + "." +  StringUtil.getNthChar(fH2HorseVersion, 3))
 		; Update Code
 	EndIf
@@ -70,6 +78,7 @@ FUNCTION GetBaseCarryWeight()
 	IF (self.GetOwningQuest() as DES_HorseInventoryScript).BaseCarryWeight == 0
 		(self.GetOwningQuest() as DES_HorseInventoryScript).BaseCarryWeight = 999
 	ENDIF
+	(DES_HorseMCMQuest as DES_HorseMCMScriptOnInt).UpdateSaddleDescriptions()
 ENDFUNCTION
 
 FUNCTION RegisterKey()

@@ -9,6 +9,8 @@ bool property bFollowerHorse auto
 bool property bShowTutorials auto
 bool property bDebugging auto
 
+MiscObject[] Property Saddles auto
+
 Event OnConfigInit()
 	iHorseKey = GetModSettingInt("iHorseKey:General")
 	fHoldTime = GetModSettingFloat("fHoldTime:General")
@@ -26,6 +28,7 @@ Event OnSettingChange(string a_ID)
 		fHoldTime = GetModSettingFloat("fHoldTime:General")	
 	elseif a_ID == "iCarryWeight:General"
 		iCarryWeight = GetModSettingInt("iCarryWeight:General")
+		UpdateSaddleDescriptions()
 	elseif a_ID == "bFollowerHorse:General"
 		bFollowerHorse = GetModSettingBool("bFollowerHorse:General")
 	elseif a_ID == "bShowTutorials:General"
@@ -38,3 +41,19 @@ EndEvent
 Function NewSettings()
 	bFollowerHorse = GetModSettingInt("bFollowerHorse:General")
 EndFunction
+
+Function UpdateSaddleDescriptions()
+	int L = Saddles.Length
+	int i = 0
+	IF iCarryWeight == 105
+		while i < L
+			DescriptionFramework.ResetDescription(Saddles[i])
+			i +=1 
+		endWhile
+	ELSE
+		while i < L
+			DescriptionFramework.SetDescription(Saddles[i], "Increases a horse's carrying capacity by <font color='#FFFFFF'>" + (iCarryWeight - 5) + "</font> points while equipped and it will flee from combat.")
+			i +=1 
+		endWhile
+	ENDIF
+endFunction
