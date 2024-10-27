@@ -62,10 +62,11 @@ FUNCTION SelectHorse()
 {IF the Player has UI Extensions installed, This function will allowed them to pick from a list of their owned horses to call to them.}
 	Actor LastRiddenHorse = Game.GetPlayersLastRiddenHorse()
 	IF Game.GetFormFromFile(0xE05, "UIExtensions.esp")
-		int n = DES_OwnedHorses.getSize()
-		while n > 0
+		int n = DES_OwnedHorses.getSize() - 1
+		while n > -1
 			Actor OwnedHorse = DES_OwnedHorses.GetAt(n) as actor
 			IF OwnedHorse && OwnedHorse.IsDead()
+				Debug.Notification(OwnedHorse.GetDisplayName() + " is dead.")
 				DES_OwnedHorses.RemoveAddedForm(OwnedHorse)
 			ENDIF
 			n -= 1
