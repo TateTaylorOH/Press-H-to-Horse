@@ -27,17 +27,10 @@ EVENT OnInit()
 ENDEVENT
 
 EVENT OnMenuClose(String MenuName)
-	DES_OnLoadUpdateScript OnLoadScript = Alias_HorseHandlerPlayer as DES_OnLoadUpdateScript
 	IF MenuName == "RaceSex Menu"
-		Form BSHeartland = Game.GetFormFromFile(0xA764B, "BSHeartland.esm") as Worldspace
 		RegisterForAnimationEVENT(PlayerRef, "tailHorseDismount")
 		DES_HorseCallTutorialTracker.UnregisterForMenu("RaceSex Menu")
 		RegisterForAnimationEVENT(PlayerRef, "tailHorseMount")
-		OnLoadScript.GetBaseCarryWeight()
-		OnLoadScript.RegisterKey()
-		OnLoadScript.GetLastRiddenHorse()
-		OnLoadScript.InjectCWUniforms()
-		OnLoadScript.ImportCyrodiil()
 	ENDIF
 ENDEVENT
 
