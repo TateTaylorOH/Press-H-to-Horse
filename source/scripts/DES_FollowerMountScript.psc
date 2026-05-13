@@ -33,7 +33,7 @@ EVENT OnAnimationEVENT(ObjectReference akSource, string AsEventName)
 			endIf
 			i += 1
 		endWhile
-		IF closestHorse.getDistance(follower.getactorref()) >= 4096
+		IF closestHorse.getDistance(DialogueFollower_Follower.GetActorRef()) <= 4096
 			FollowerHorse.ForceRefTo(closestHorse)		
 			Follower.ForceRefTo(DialogueFollower_Follower.GetActorRef())
 			FollowerHorse.tryToEvaluatePackage()
