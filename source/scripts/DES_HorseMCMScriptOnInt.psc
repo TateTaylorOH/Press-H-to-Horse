@@ -52,7 +52,7 @@ Function UpdateSaddleDescriptions()
 		endWhile
 	ELSE
 		while i < L
-			DescriptionFramework.SetDescription(Saddles[i], "Horse's carrying capacity increased by <font color='#FFFFFF'>" + (iCarryWeight - 5) + "</font> points. Horse will flee from combat.")
+			DescriptionFramework.SetDescription(Saddles[i], "Your horse's carrying capacity is increased by <font color='#FFFFFF'>" + (iCarryWeight - 5) + "</font> points. Your horse will flee from combat.")
 			i +=1 
 		endWhile
 	ENDIF
