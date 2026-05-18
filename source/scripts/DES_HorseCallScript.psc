@@ -23,7 +23,7 @@ float horseDistance = 512.0
 bool CallingHorse = false
 
 EVENT OnKeyUp(Int KeyCode, Float HoldTime)
-{Sends an event when HorseKey is raised up. The actor called will be the last owned horse the player rode. There are checks to prevent the horse getting called into interiors as well as a mechanic to select a specIFic horse from a SkyUILib list menu.}
+{Sends an event when HorseKey is raised up. The actor called will be the last owned horse the player rode. There are checks to prevent the horse getting called into interiors as well as a mechanic to select a specific horse from a SkyUILib list menu.}
 	Actor LastRiddenHorse = Game.GetPlayersLastRiddenHorse()
 	Debugging = (DES_HorseMCMQuest as DES_HorseMCMScriptOnInt).bDebugging
 	IF SelectedHorse && SelectedHorse == Alias_PlayersHorse.getActorReference()
@@ -50,7 +50,7 @@ EVENT OnKeyUp(Int KeyCode, Float HoldTime)
 ENDEVENT
 
 EVENT OnAnimationEVENT(ObjectReference akSource, string AsEventName)
-{This EVENT clears the H2Horse alias and reverts control of the horse's AI to the "stables" quest.}
+{This event clears the H2Horse alias and reverts control of the horse's AI to the "stables" quest.}
     IF (akSource == PlayerRef) && (AsEventName == "tailHorseMount")
 		Alias_LastRiddenHorse.ForceRefTo(Game.GetPlayersLastRiddenHorse())
 		Alias_PlayersHorse.Clear()
@@ -150,7 +150,7 @@ auto STATE Waiting
 		IF !DES_OwnedHorses.HasForm(LastRiddenHorse)
 			DES_OwnedHorses.addForm(LastRiddenHorse)
 		ENDIF
-		IF DES_OwnedHorses.GetSize() > 1 && !HorseSelectTutorial ;A tutorial regarding the horse selection list will play IF the Player has UI Extentions installed. It will only play IF HorseKey is H since the tutorial specIFically refers to the key.
+		IF DES_OwnedHorses.GetSize() > 1 && !HorseSelectTutorial ;A tutorial regarding the horse selection list will play if the Player has UI Extentions installed. It will only play if HorseKey is H since the tutorial specifically refers to the key.
 			IF Game.GetFormFromFile(0xE05, "UIExtensions.esp") && HorseKey == 35 && (DES_HorseMCMQuest as DES_HorseMCMScriptOnInt).bShowTutorials
 				Utility.Wait(1)
 				HelpMessages[0].ShowAsHelpMessage("HorseSelectTutorial", messageDuration, 1.0, 1)
