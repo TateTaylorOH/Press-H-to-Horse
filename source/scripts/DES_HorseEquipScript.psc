@@ -1,5 +1,5 @@
 Scriptname DES_HorseEquipScript extends ReferenceAlias  
-{This script checks for OnItemAdded and OnItemRemoved EVENTs on the horse that is currently being interacted with. It will then call FUNCTIONs to control equipping and unequipping items.}
+{This script checks for OnItemAdded and OnItemRemoved events on the horse that is currently being interacted with. It will then call functions to control equipping and unequipping items.}
 
 Race Property Reindeer
     race Function Get()
