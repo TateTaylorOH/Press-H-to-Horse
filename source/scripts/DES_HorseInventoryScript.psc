@@ -157,7 +157,7 @@ FUNCTION FirstTimeEquipHorse(Actor PlayersHorse)
 ENDFUNCTION
 
 FUNCTION EquipItem(Form akBaseItem, int aiItemCount, ObjectReference akItemReference, ObjectReference akSourceContainer, Actor PlayersHorse)
-{This function prevents the Player from placing items on their horses unless they have a saddle. Placing the appropriate miscitems on the horse will cause This function to match the proper visual armor and equip it. Called in an OnItemAdded EVENT.}
+{This function prevents the Player from placing items on their horses unless they have a saddle. Placing the appropriate miscitems on the horse will cause This function to match the proper visual armor and equip it. Called in an OnItemAdded event.}
 	IF DES_HorseMiscItems.HasForm(akBaseItem) && !PlayersHorse.IsInFaction(DES_RegisteredHorses)
 		PlayersHorse.RemoveItem(akBaseItem, aiItemCount, True, akSourceContainer)
 		UI.InvokeString("HUD Menu", "_global.skse.CloseMenu", "ContainerMenu")
@@ -190,7 +190,7 @@ FUNCTION EquipItem(Form akBaseItem, int aiItemCount, ObjectReference akItemRefer
 ENDFUNCTION
 
 FUNCTION UnequipItem(Form akBaseItem, int aiItemCount, ObjectReference akItemReference, ObjectReference akSourceContainer, Actor PlayersHorse)
-{This function monitors the horse for when the appropriate miscitems are removed. Upon removal it will revert the horse to a bareback STATE. Called in an OnItemRemoved EVENT.}
+{This function monitors the horse for when the appropriate miscitems are removed. Upon removal it will revert the horse to a bareback STATE. Called in an OnItemRemoved event.}
 	if DES_HorseMiscItems.HasForm(akBaseItem) && PlayersHorse.GetItemCount(DES_HorseMiscItems) >= 1 || PlayersHorse.IsInFaction(DES_HorsesSaddleExclusions) || PlayersHorse.IsInFaction(DES_HorsesArmorExclusions)
 		return
 	ELSEIF akBaseItem.HasKeyword(DES_ArmorKeyword) || akBaseItem.HasKeyword(DES_SaddleKeyword)
@@ -248,7 +248,7 @@ STATE Saddled
 	ENDFUNCTION
 ENDSTATE
 
-;This state will put the horse into the "Armored Mode". It will set the carryweight to 0, prEVENT items from being placed on it, and make it so the horse will fight alongside you. A damage buff is given to the horse as well.
+;This state will put the horse into the "Armored Mode". It will set the carryweight to 0, prevent items from being placed on it, and make it so the horse will fight alongside you. A damage buff is given to the horse as well.
 STATE Armored
 	EVENT OnBeginSTATE()
 		Actor PlayersHorse = HorseToEquip
